@@ -1,0 +1,14 @@
+sourceCompatibility = 1.8
+dependencies {
+    implementation 'junit:junit:4.13.1'
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = ["resources/"]
+
+test.systemProperties["java.security.manager"] = "allow"
+
+processResources.dependsOn ':pipeline:compileAssets'
+
+eclipse.project.name = appName + "-core"

@@ -1,0 +1,108 @@
+
+TextureAtlas.jpeg
+size: 512, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+bg/GADSBG
+  rotate: false
+  xy: 0, 0
+  size: 259, 128
+  orig: 259, 128
+  offset: 0, 0
+  index: -1
+
+TextureAtlas.png
+size: 128, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+darkTile/32x_NormalCrateDark01
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+darkTile/32x_NormalCrateEdgeDetailDark01
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+TextureAtlas2.png
+size: 128, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+misc/gadsdummy
+  rotate: false
+  xy: 2, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+
+TextureAtlas3.png
+size: 256, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+tile/16x_anchor01
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+tile/16x_box01
+  rotate: false
+  xy: 172, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+tile/16x_box01DarkEdges
+  rotate: false
+  xy: 20, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+tile/32x_NormalCrate01
+  rotate: false
+  xy: 2, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile/32x_NormalCrateEdgeDetail01
+  rotate: false
+  xy: 36, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile/32x_NormalCrateEdgeDetailVeryDark01
+  rotate: false
+  xy: 70, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile/32x_anchor01
+  rotate: false
+  xy: 104, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile/32x_cardboardbox01
+  rotate: false
+  xy: 138, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

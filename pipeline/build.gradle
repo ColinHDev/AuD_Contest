@@ -1,0 +1,71 @@
+dependencies {
+    implementation 'junit:junit:4.13.1'
+}
+sourceCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+task dist(type: Jar) {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    manifest {
+        attributes 'Main-Class': 'com.gats.assets.Pipeline'
+    }
+    archiveVersion.set "1.1"
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+dist.dependsOn classes
+
+sourceSets.main.java.srcDirs = ["src/"]
+sourceSets.main.resources.srcDirs = ["res/"]
+
+
+class CompileAssets extends DefaultTask {
+
+    @InputFiles @PathSensitive(PathSensitivity.ABSOLUTE)
+    def inputDir
+
+    @InputFile @Classpath
+    def executableJar
+
+    @Internal
+    def tmpDir
+
+    @OutputDirectory
+    def outputDir
+
+
+    @TaskAction
+    public void exec() {
+
+        def cmd = ["java",
+                   "-jar",
+                   executableJar.path,
+                   inputDir.path,
+                   tmpDir.path,
+                   outputDir.path]
+
+        def proc = cmd.execute()
+        def sout = new StringBuffer(), serr = new StringBuffer();
+        proc.waitForProcessOutput(sout, serr)
+        println("\toutput: \"" + sout.toString() + "\"");
+        if(proc.exitValue() != 0) throw new GradleException("Compiling assets failed with code "+ proc.exitValue() + "\t"+ serr.toString())
+    }
+}
+
+
+tasks.register('compileAssets', CompileAssets) {
+
+    dependsOn ':pipeline:dist'
+
+    inputDir = rootProject.file('assets/res/').absoluteFile
+    executableJar = file('build/libs/pipeline-1.1.jar').absoluteFile
+    tmpDir = file('build/tmp/assets/').absoluteFile
+    outputDir = rootProject.file('core/resources/').absoluteFile
+}
+
+
+

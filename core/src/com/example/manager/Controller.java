@@ -1,0 +1,73 @@
+package com.example.manager;
+
+import com.example.manager.command.*;
+import com.example.simulation.GameCharacterController;
+import com.example.simulation.GameState;
+
+/**
+ * Provides an access-controlled interface to send commands to players
+ * <p>
+ * Ermöglicht die Kontrolle eines bestimmten Charakters.
+ * Ist nur für einen einzelnen Zug gültig und deaktiviert sich nach Ende des aktuellen Zuges.
+ */
+public class Controller {
+
+    private int uses;
+    private Game game;
+    private GameCharacterController gcController;
+    private int team;
+
+    protected Controller(Game game, GameCharacterController gcController, GameState stateCopy, int uses) {
+//        System.out.println("Created new Controller: " + this);
+        this.game = game;
+        this.gcController = gcController;
+        this.team = gcController.getTeam();
+        this.uses = uses;
+    }
+
+    /**
+     * @return Das Team, zu welchem dieser Controller gehört.
+     */
+    public int getTeam() {
+        return team;
+    }
+
+    /**
+     * This is an exposed function of the API
+     *
+     * The documentation of this has to be in german
+     */
+    public void foo(int i) {
+        queue(new FooCommand(gcController, i));
+
+    }
+
+    /**
+     * Die Zahl an Nutzungen ist für Bots auf 200 beschränkt.
+     * Die maximale Zahl sinnvoller Züge beträgt ca. 70
+     * @return Die Menge an Befehlen, die dieser Controller noch ausführen kann
+     */
+    public int getRemainingUses(){
+        return uses;
+    }
+
+
+
+    /**
+     * Internal utility method.
+     * Controls the remaining uses and submits cmd to the game.
+     * @param cmd the command to be queued
+     */
+    private void queue(Command cmd){
+        if (uses-->0) game.queueCommand(cmd);
+    }
+
+    /**
+     * Deaktiviert diesen Controller (Wenn der Zug vorbei ist). Wird von internen Komponenten genutzt, um den Zugfolge der Charaktere zu steuern.
+     */
+    protected void deactivate() {
+        uses = -1;
+        gcController.deactivate();
+    }
+
+}
