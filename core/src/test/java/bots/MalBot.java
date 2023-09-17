@@ -13,6 +13,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * MalBot is Part of a test that validates the SecurityPolicy:
+ * <p>
+ * MalBot invokes multiple security-relevant actions. The test only completes successfully,
+ * if MalBot receives a SecurityException for every attempt of breaking the Policy.
+ */
+
 public class MalBot extends Bot {
 
     private boolean first = true;
@@ -42,17 +49,18 @@ public class MalBot extends Bot {
 
     @Override
     protected void executeTurn(GameState state, Controller controller) {
-        if (first){
+        if (first) {
             first = false;
-            runExperiment(true, state);}
+            runExperiment(true, state);
+        }
     }
 
-    private void runExperiment(boolean inTurn, GameState state){
+    private void runExperiment(boolean inTurn, GameState state) {
         boolean caught = false;
 
         try {
             Object instance = Manager.class.newInstance();
-        }catch (SecurityException | IllegalAccessException e){
+        } catch (SecurityException | IllegalAccessException e) {
             caught = true;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -65,7 +73,7 @@ public class MalBot extends Bot {
             Field privateField = Manager.class.getDeclaredField("threadPoolExecutor");
             privateField.setAccessible(true);
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             caught = true;
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -78,7 +86,7 @@ public class MalBot extends Bot {
             File file = new File("");
             file.exists();
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             caught = true;
         }
         if (!caught) failedExperiments.add(failureMessage(3, inTurn, state));
@@ -89,7 +97,7 @@ public class MalBot extends Bot {
             socket = new Socket();
             socket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), 1085));
             socket.close();
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             caught = true;
         } catch (IOException e) {
             e.printStackTrace(System.err);
@@ -99,18 +107,18 @@ public class MalBot extends Bot {
         caught = false;
         try {
             Manager.getManager();
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             caught = true;
         }
         if (!caught) failedExperiments.add(failureMessage(5, inTurn, state));
 
     }
 
-    private String failureMessage(int id, boolean inTurn, GameState state){
+    private String failureMessage(int id, boolean inTurn, GameState state) {
         return "Failure{" +
                 "id=" + id +
                 "inTurn=" + inTurn +
                 ", state=" + state +
-            '}';
+                '}';
     }
 }

@@ -2,6 +2,9 @@ package com.gats.assets;
 
 import java.util.Arrays;
 
+/**
+ * A simple class to store rgb triples
+ */
 public class RGBColor {
     public int[] rgb;
 
