@@ -1,4 +1,7 @@
-sourceCompatibility = 1.8
+compileJava{
+    sourceCompatibility = 1.8
+}
+
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "com.example.DesktopLauncher"
@@ -6,7 +9,7 @@ project.ext.mainClassName = "com.example.DesktopLauncher"
 import org.gradle.internal.os.OperatingSystem
 
 task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     ignoreExitValue = true
@@ -18,7 +21,7 @@ task run(dependsOn: classes, type: JavaExec) {
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     ignoreExitValue = true
