@@ -297,18 +297,20 @@ public class Manager {
         return selectedPlayers;
     }
 
-    @SuppressWarnings({"removal"})
+//    @SuppressWarnings({"removal"})
     private Manager() {
-        java.security.Policy.setPolicy(new BotSecurityPolicy());
-        System.setProperty("java.security.manager", "allow");
-        try {
-            System.err.println("Please Ignore the following Warning---------------------");
-            System.setSecurityManager(new SecurityManager());
-            System.err.println("--------------------------------------------------------");
-        } catch (UnsupportedOperationException e) {
-            System.err.println("--------------------------------------------------------");
-            throw e;
-        }
+
+//        java.security.Policy.setPolicy(new BotSecurityPolicy());
+//        System.setProperty("java.security.manager", "allow");
+//        try {
+//            System.err.println("Please Ignore the following Warning---------------------");
+//            System.setSecurityManager(new SecurityManager());
+//            System.err.println("--------------------------------------------------------");
+//        } catch (UnsupportedOperationException e) {
+//            System.err.println("--------------------------------------------------------");
+//            throw e;
+//        }
+
         executionManager = new Thread(this::executionManager);
         executionManager.start();
     }
