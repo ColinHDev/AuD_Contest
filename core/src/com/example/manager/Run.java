@@ -1,7 +1,7 @@
 package com.example.manager;
 
 import com.example.simulation.GameState;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import jdk.jshell.spi.ExecutionControl;
 
 import java.util.ArrayList;
 
@@ -39,7 +39,7 @@ public abstract class Run {
             case Tournament_Phase_2:
                 return new TournamentRun(manager, runConfig);
             default:
-                throw new NotImplementedException();
+                throw new IllegalArgumentException(runConfig.gameMode.toString() + " is not processed by the Run interface");
         }
     }
 

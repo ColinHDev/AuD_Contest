@@ -2,7 +2,6 @@ package com.example.animation;
 
 import com.badlogic.gdx.math.Vector2;
 import com.example.simulation.Path;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * CharacterPath is a special type of path that implements the difference of origin between simulation and animation
@@ -38,12 +37,12 @@ public class CharacterPath implements Path {
 
     @Override
     public void setDuration(float duration) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
     @Override
     public void setDuration(Vector2 endPosition) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

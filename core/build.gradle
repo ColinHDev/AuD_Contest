@@ -1,6 +1,3 @@
-compileJava{
-    sourceCompatibility = 1.8
-}
 
 dependencies {
     implementation 'junit:junit:4.13.1'
