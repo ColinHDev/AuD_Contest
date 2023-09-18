@@ -52,6 +52,7 @@ public class BotThread {
         return target;
     }
 
+    @SuppressWarnings("removal")
     public void forceStop() {
 
         synchronized (lock) {
@@ -66,6 +67,7 @@ public class BotThread {
         worker.start();
     }
 
+    @SuppressWarnings("removal")
     public void shutdown() {
         synchronized (lock) {
             if (target != null) target.cancel(true);
