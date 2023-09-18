@@ -44,6 +44,8 @@ public class GameCharacterController {
         return team;
     }
 
+    //ToDo: add more calls to complete your API
+    //ToDo: all added calls should have respective Counterparts in manager.Controller and manager.command.[...]
     /**
      * Example command, replace with correct logic and add more commands
      *

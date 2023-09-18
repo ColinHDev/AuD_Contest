@@ -32,9 +32,12 @@ public class Controller {
         return team;
     }
 
+
+    //ToDo: write all required Functions similar to the template below, this will become the external API, that is exposed to the Bots
+    //ToDo: every Function in the gcController should have one Command as well as a designated call here
     /**
      * This is an exposed function of the API
-     *
+     * <p>
      * The documentation of this has to be in german
      */
     public void foo(int i) {
@@ -45,21 +48,22 @@ public class Controller {
     /**
      * Die Zahl an Nutzungen ist für Bots auf 200 beschränkt.
      * Die maximale Zahl sinnvoller Züge beträgt ca. 70
+     *
      * @return Die Menge an Befehlen, die dieser Controller noch ausführen kann
      */
-    public int getRemainingUses(){
+    public int getRemainingUses() {
         return uses;
     }
-
 
 
     /**
      * Internal utility method.
      * Controls the remaining uses and submits cmd to the game.
+     *
      * @param cmd the command to be queued
      */
-    private void queue(Command cmd){
-        if (uses-->0) game.queueCommand(cmd);
+    private void queue(Command cmd) {
+        if (uses-- > 0) game.queueCommand(cmd);
     }
 
     /**

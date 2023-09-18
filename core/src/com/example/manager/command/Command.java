@@ -3,6 +3,10 @@ package com.example.manager.command;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.action.ActionLog;
 
+/**
+ * Base Class
+ * Every Command has to inherit from this
+ */
 public abstract class Command {
 
     protected boolean isEndTurn = false;
