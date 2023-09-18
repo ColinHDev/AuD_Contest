@@ -31,7 +31,6 @@ task dist(type: Jar) {
         attributes 'Main-Class': project.mainClassName
     }
     archiveVersion.set "1.0.0"
-    baseName 'contest'
     dependsOn configurations.runtimeClasspath
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
