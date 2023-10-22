@@ -147,6 +147,8 @@ an sich ist die Hirarchie der Einstellungen bestimmt durch
 
 	public Table buildMenuLayout(Skin skin) {
 
+		//ToDo TextButton erstellen und StartButton und ExitButton Klasse entfernen
+
 		StartButton startButton = new StartButton("Spiel starten", skin, this);
 		ExitButton exitButton = new ExitButton("Beenden", skin);
 		//------------------------
@@ -177,7 +179,7 @@ an sich ist die Hirarchie der Einstellungen bestimmt durch
 		menuTable.add(getGameModeLayout(gameModeSelector.getSelected())).colspan(4);
 		menuTable.row();
 
-		//ganz unten im  ist der Exit button
+		//ganz unten ist der Exit button
 		menuTable.add(exitButton).colspan(4).pad(10);
 
 		if (passedRunConfig != null) {
@@ -342,7 +344,7 @@ an sich ist die Hirarchie der Einstellungen bestimmt durch
 	}
 
 	/**
-	 * Initializes the map selecter with the normal maps
+	 * Initializes the map selector with the normal maps
 	 *
 	 * @param skin
 	 * @return

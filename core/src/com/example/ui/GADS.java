@@ -58,14 +58,7 @@ public class GADS extends Game {
 	}
 
 	public void setScreenMenu() {
-		//ToDo we can use runconfig to save the users selection while we are at it
+		//we can use runconfig to save the users selection while we are at it
 		setScreen(new MenuScreen(this, this.runConfig));
-	}
-
-
-	public String[] getGameModes() {
-		//Todo, ~maybe move to simulation?~ -> move to RunConfig
-
-		return new String[]{"Normal","Weihnachtsaufgabe"};
 	}
 }

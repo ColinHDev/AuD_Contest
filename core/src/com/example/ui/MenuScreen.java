@@ -70,7 +70,6 @@ public class MenuScreen implements Screen {
 
 	}
 
-
 	@Override
 	public void render(float delta) {
 		camera.update();
