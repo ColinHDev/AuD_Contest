@@ -1,23 +1,28 @@
 package com.example.simulation.action;
-
-import com.badlogic.gdx.math.Vector2;
+import com.example.simulation.IntVector2;
 
 public class EnemyAction extends Action{
-    private final Vector2 pos;
+    private final IntVector2 pos;
+    private final int level;
 
-    public EnemyAction(float delay, Vector2 pos) {
+    public EnemyAction(float delay, IntVector2 pos, int level) {
         super(delay);
         this.pos = pos;
+        this.level = level;
     }
 
-    public Vector2 getPosition(){
+    public IntVector2 getPosition(){
         return pos;
+    }
+    public int getLevel(){
+        return level;
     }
 
     @Override
     public String toString() {
         return "EnemyAction{" +
                 "pos=" + pos +
+                ", level=" + level +
                 '}';
     }
 }
