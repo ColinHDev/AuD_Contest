@@ -5,6 +5,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.example.manager.RunConfiguration;
 import com.example.ui.assets.GADSAssetManager;
+import com.example.ui.menu.MainScreen;
+import com.sun.tools.javac.Main;
 
 /**
  * GADS ist die verantwortliche Klasse im LifeCycle der Anwendung.
@@ -33,7 +35,7 @@ public class GADS extends Game {
 
 		//ToDo: add Loading Screen
 
-		setScreen(new MenuScreen(this, runConfig));
+		setScreen(new MainScreen(this, runConfig));
 	}
 
 	public void render() {
@@ -58,14 +60,7 @@ public class GADS extends Game {
 	}
 
 	public void setScreenMenu() {
-		//ToDo we can use runconfig to save the users selection while we are at it
-		setScreen(new MenuScreen(this, this.runConfig));
-	}
-
-
-	public String[] getGameModes() {
-		//Todo, ~maybe move to simulation?~ -> move to RunConfig
-
-		return new String[]{"Normal","Weihnachtsaufgabe"};
+		//we can use runconfig to save the users selection while we are at it
+		setScreen(new MainScreen(this, this.runConfig));
 	}
 }
