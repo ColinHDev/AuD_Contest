@@ -279,22 +279,23 @@ public class Manager {
     }
 
     public static ArrayList<Class<? extends Player>> getPlayers(String[] names, boolean noGUI) {
-        NamedPlayerClass[] allPlayers = getPossiblePlayers();
         ArrayList<Class<? extends Player>> selectedPlayers = new ArrayList<>();
         for (String cur : names) {
-            boolean playerFound = false;
-            for (NamedPlayerClass candidate : allPlayers) {
-                if (candidate.fileName.equals(cur)) {
-                    if (noGUI && candidate.classRef.equals(HumanPlayer.class))
-                        throw new RuntimeException("Human Players cannot be used with option --nogui");
-                    selectedPlayers.add(candidate.classRef);
-                    playerFound = true;
-                    break;
-                }
-            }
-            if (!playerFound) throw new RuntimeException(String.format("Couldn't find bots.%s.class", cur));
+            selectedPlayers.add(getPlayer(cur, noGUI));
         }
         return selectedPlayers;
+    }
+
+    public static Class<? extends Player> getPlayer(String name, boolean noGUI) {
+        for (NamedPlayerClass candidate : getPossiblePlayers()) {
+            if (candidate.fileName.equals(name)) {
+                if (noGUI && candidate.classRef.equals(HumanPlayer.class)) {
+                    throw new RuntimeException("Human Players cannot be used with option --nogui");
+                }
+                return candidate.classRef;
+            }
+        }
+        throw new RuntimeException(String.format("Couldn't find bots.%s.class", name));
     }
 
 //    @SuppressWarnings({"removal"})
