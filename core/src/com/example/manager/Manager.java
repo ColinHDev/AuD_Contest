@@ -15,8 +15,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class Manager {
 
-    public static final RuntimePermission CHECK_MANAGER_ACCESS_PERMISSION =
-            new RuntimePermission("accessManagerInstance");
     private static final String RESULT_DIR_NAME = "results";
     private static final File RESULT_DIR = new File(RESULT_DIR_NAME);
     private static int systemReservedProcessorCount = 2;
@@ -45,13 +43,7 @@ public class Manager {
 
     private static int availableCores = 0;
 
-
-    @SuppressWarnings("removal")
     public static Manager getManager() {
-        SecurityManager sm = System.getSecurityManager();
-        if (sm != null) {
-            sm.checkPermission(CHECK_MANAGER_ACCESS_PERMISSION);
-        }
         return singleton;
     }
 
@@ -298,20 +290,7 @@ public class Manager {
         throw new RuntimeException(String.format("Couldn't find bots.%s.class", name));
     }
 
-//    @SuppressWarnings({"removal"})
     private Manager() {
-
-//        java.security.Policy.setPolicy(new BotSecurityPolicy());
-//        System.setProperty("java.security.manager", "allow");
-//        try {
-//            System.err.println("Please Ignore the following Warning---------------------");
-//            System.setSecurityManager(new SecurityManager());
-//            System.err.println("--------------------------------------------------------");
-//        } catch (UnsupportedOperationException e) {
-//            System.err.println("--------------------------------------------------------");
-//            throw e;
-//        }
-
         executionManager = new Thread(this::executionManager);
         executionManager.start();
     }
