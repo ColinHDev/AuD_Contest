@@ -1,6 +1,6 @@
 package com.example.simulation.campaign;
 
-import com.example.manager.Player;
+import com.example.manager.player.Player;
 
 import java.util.ArrayList;
 

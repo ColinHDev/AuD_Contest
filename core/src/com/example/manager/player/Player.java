@@ -1,12 +1,13 @@
-package com.example.manager;
+package com.example.manager.player;
 
+import com.example.manager.Controller;
 import com.example.simulation.GameState;
 
 import java.util.Random;
 
 public abstract class Player {
 
-    enum PlayerType{
+    public enum PlayerType {
         Human,
         AI
     }
@@ -22,7 +23,7 @@ public abstract class Player {
      * einmalig, sehr rechenaufwändige Operationen durchzuführen.
      * @param state Der {@link GameState Spielzustand} zu Beginn des Spiels
      */
-    protected abstract void init(GameState state);
+    public abstract void init(GameState state);
 
     /**
      * Wird aufgerufen, wenn der Spieler einen Zug für einen seiner Charaktere durchführen soll.
@@ -32,13 +33,13 @@ public abstract class Player {
      * @param state Der {@link GameState Spielzustand} während des Zuges
      * @param controller Der {@link Controller Controller}, zum Charakter gehört, welcher am Zug ist
      */
-    protected abstract void executeTurn(GameState state, Controller controller);
+    public abstract void executeTurn(GameState state, Controller controller);
 
     /**
      * Wird für interne Zwecke verwendet und besitzt keine Relevanz für die Bot-Entwicklung.
      * @return What kind of implementation the Player is
      */
-    protected abstract PlayerType getType();
+    public abstract PlayerType getType();
 
     /**
      * @param characterIndex Index des Charakters

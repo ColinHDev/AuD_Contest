@@ -1,7 +1,7 @@
 package com.example.manager;
 
 
-import com.example.manager.*;
+import com.example.manager.player.IdleBot;
 import com.example.simulation.GameState;
 import org.junit.Assert;
 import org.junit.Test;

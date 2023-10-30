@@ -1,5 +1,6 @@
-package com.example.manager;
+package com.example.manager.player;
 
+import com.example.manager.Controller;
 import com.example.simulation.GameState;
 
 import java.util.Random;
@@ -23,13 +24,13 @@ public class IdleBot extends Bot{
     private static Random random;
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
         long seed = 420L;
         random = new Random(seed);
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
 
     }
 

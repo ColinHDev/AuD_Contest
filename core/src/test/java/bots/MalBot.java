@@ -1,6 +1,6 @@
 package bots;
 
-import com.example.manager.Bot;
+import com.example.manager.player.Bot;
 import com.example.manager.Controller;
 import com.example.manager.Manager;
 import com.example.simulation.GameState;
@@ -43,12 +43,12 @@ public class MalBot extends Bot {
     }
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
         runExperiment(false, state);
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         if (first) {
             first = false;
             runExperiment(true, state);

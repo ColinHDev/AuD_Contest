@@ -1,6 +1,6 @@
 package com.example.ui.menu.specificRunConfig;
 
-import com.example.manager.Player;
+import com.example.manager.player.Player;
 import com.example.manager.RunConfiguration;
 
 /**

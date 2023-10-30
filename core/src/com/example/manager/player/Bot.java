@@ -1,4 +1,4 @@
-package com.example.manager;
+package com.example.manager.player;
 
 import java.util.Random;
 
@@ -19,7 +19,7 @@ public abstract class Bot extends Player{
     public abstract int getMatrikel();
 
     @Override
-    protected final PlayerType getType() {
+    public final PlayerType getType() {
         return PlayerType.AI;
     }
 

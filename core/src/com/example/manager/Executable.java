@@ -1,5 +1,6 @@
 package com.example.manager;
 
+import com.example.manager.player.HumanPlayer;
 import com.example.ui.hud.UiMessenger;
 
 import java.util.ArrayList;

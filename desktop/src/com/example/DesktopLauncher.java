@@ -4,6 +4,8 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.example.manager.*;
+import com.example.manager.player.Bot;
+import com.example.manager.player.Player;
 import com.example.simulation.GameState;
 import com.example.ui.GADS;
 import org.apache.commons.cli.*;

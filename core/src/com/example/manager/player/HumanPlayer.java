@@ -1,12 +1,8 @@
-package com.example.manager;
+package com.example.manager.player;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
+import com.example.manager.Controller;
 import com.example.simulation.GameState;
-
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Arrays;
 
 //ToDo migrate to UI
 public class HumanPlayer extends Player {
@@ -53,7 +49,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
 
     }
 
@@ -67,7 +63,7 @@ public class HumanPlayer extends Player {
      */
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         this.state = state;
         this.controller = controller;
         for (int i = 0; i < lastTick.length; i++) lastTick[i] = NO_TICK;
@@ -155,7 +151,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    protected PlayerType getType() {
+    public PlayerType getType() {
         return PlayerType.Human;
     }
 

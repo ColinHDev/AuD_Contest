@@ -1,7 +1,7 @@
 package com.example.networking;
 
 import com.example.manager.Manager;
-import com.example.manager.Player;
+import com.example.manager.player.Player;
 import org.apache.commons.cli.*;
 
 /**

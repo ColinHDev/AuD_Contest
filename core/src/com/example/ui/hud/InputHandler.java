@@ -3,7 +3,7 @@ package com.example.ui.hud;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
-import com.example.manager.HumanPlayer;
+import com.example.manager.player.HumanPlayer;
 import com.example.ui.Hud;
 import com.example.ui.InGameScreen;
 
