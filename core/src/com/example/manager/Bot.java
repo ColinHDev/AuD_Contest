@@ -19,7 +19,7 @@ public abstract class Bot extends Player{
     public abstract int getMatrikel();
 
     @Override
-    protected final PlayerType getType() {
+    public final PlayerType getType() {
         return PlayerType.AI;
     }
 

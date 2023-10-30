@@ -43,12 +43,12 @@ public class MalBot extends Bot {
     }
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
         runExperiment(false, state);
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         if (first) {
             first = false;
             runExperiment(true, state);

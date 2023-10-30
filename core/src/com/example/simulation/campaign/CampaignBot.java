@@ -24,12 +24,12 @@ public class CampaignBot extends Bot {
     protected int turnCount = -1;
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
 
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         turnCount++;
     }
 

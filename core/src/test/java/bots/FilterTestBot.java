@@ -27,12 +27,12 @@ public class FilterTestBot extends Bot {
     }
 
     @Override
-    protected void init(GameState state) {
+    public void init(GameState state) {
         new Thread();
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
     }
 }
