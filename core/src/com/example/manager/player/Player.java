@@ -7,7 +7,7 @@ import java.util.Random;
 
 public abstract class Player {
 
-    enum PlayerType{
+    public enum PlayerType {
         Human,
         AI
     }
