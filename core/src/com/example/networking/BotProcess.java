@@ -1,7 +1,7 @@
 package com.example.networking;
 
 import com.example.manager.CompletionHandler;
-import com.example.manager.Player;
+import com.example.manager.player.Player;
 
 /**
  * Diese Klasse repräsentiert den Prozess, auf welchem der Bot eines Spielers ausgeführt wird.

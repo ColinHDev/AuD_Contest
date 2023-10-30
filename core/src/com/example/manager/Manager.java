@@ -1,5 +1,10 @@
 package com.example.manager;
 
+import com.example.manager.player.Bot;
+import com.example.manager.player.HumanPlayer;
+import com.example.manager.player.IdleBot;
+import com.example.manager.player.Player;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;

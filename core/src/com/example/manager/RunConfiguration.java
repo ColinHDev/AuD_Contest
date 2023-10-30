@@ -1,5 +1,6 @@
 package com.example.manager;
 
+import com.example.manager.player.Player;
 import com.example.simulation.GameState;
 import com.example.ui.hud.UiMessenger;
 

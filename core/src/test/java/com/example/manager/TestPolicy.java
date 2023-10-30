@@ -1,10 +1,7 @@
 package com.example.manager;
 
 import bots.MalBot;
-import com.example.manager.IdleBot;
-import com.example.manager.Manager;
-import com.example.manager.Run;
-import com.example.manager.RunConfiguration;
+import com.example.manager.player.IdleBot;
 import com.example.simulation.GameState;
 import org.junit.Assert;
 import org.junit.Test;

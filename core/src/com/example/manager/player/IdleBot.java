@@ -1,5 +1,6 @@
-package com.example.manager;
+package com.example.manager.player;
 
+import com.example.manager.Controller;
 import com.example.simulation.GameState;
 
 import java.util.Random;

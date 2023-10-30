@@ -3,7 +3,7 @@ package com.example.ui.menu.buttons;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.example.manager.Manager;
-import com.example.manager.Player;
+import com.example.manager.player.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,5 +1,8 @@
 package com.example.manager;
 
+import com.example.manager.player.Bot;
+import com.example.manager.player.HumanPlayer;
+import com.example.manager.player.Player;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
 import com.example.simulation.Simulation;

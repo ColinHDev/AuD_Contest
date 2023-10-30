@@ -1,5 +1,7 @@
 package com.example.manager;
 
+import com.example.manager.player.Player;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 

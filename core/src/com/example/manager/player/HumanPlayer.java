@@ -1,6 +1,7 @@
-package com.example.manager;
+package com.example.manager.player;
 
 import com.badlogic.gdx.Input;
+import com.example.manager.Controller;
 import com.example.simulation.GameState;
 
 //ToDo migrate to UI

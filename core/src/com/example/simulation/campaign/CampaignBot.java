@@ -1,7 +1,7 @@
 package com.example.simulation.campaign;
 
 import com.example.simulation.GameState;
-import com.example.manager.Bot;
+import com.example.manager.player.Bot;
 import com.example.manager.Controller;
 
 public class CampaignBot extends Bot {
