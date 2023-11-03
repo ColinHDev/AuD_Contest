@@ -43,10 +43,10 @@ public class MainScreen implements Screen {
 
     /**
      * Konstruktor, welcher Kamera, Viewports, Stage und SpriteBatch initialisiert. ruft setupMenuScreen auf, um UI für Hauptmenü einzurichten
+     *
      * @param gameInstance
-     * @param runConfig
      */
-    public MainScreen(GADS gameInstance, RunConfiguration runConfig) {
+    public MainScreen(GADS gameInstance) {
 
         this.gameInstance = gameInstance;
         TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
@@ -67,8 +67,9 @@ public class MainScreen implements Screen {
 
     /**
      * Erstellt Nachrichten Box für Informationen.
+     *
      * @param infoMessage Text Inhalt des Fensters
-     * @param titleBar Titel des Fensters
+     * @param titleBar    Titel des Fensters
      */
     public static void infoBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.ERROR_MESSAGE);
@@ -82,18 +83,14 @@ public class MainScreen implements Screen {
         Skin skin = AssetContainer.MainMenuAssets.skin;
         TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         Manager.NamedPlayerClass[] availableBots = Manager.getPossiblePlayers();
+
         Label titelLabel = new Label("Titel", skin);
         titelLabel.setAlignment(Align.center);
-
-        menuTable = new Table(skin);
-        menuTable.setFillParent(true);
-        menuTable.center();
-
         TextButton normalGameModeButton = new TextButton("Normal", skin);
         normalGameModeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                infoBox("Diese Funktion ist noch in Arbeit.", "Information");
+                gameInstance.getScreenManager().setGamemodeNormalScreen();
             }
         });
         TextButton exitButton = new TextButton("Beenden", skin);
@@ -104,6 +101,9 @@ public class MainScreen implements Screen {
             }
         });
 
+        menuTable = new Table(skin);
+        menuTable.setFillParent(true);
+        menuTable.center();
         menuTable.add(titelLabel).colspan(4).pad(10);
         menuTable.row();
         menuTable.add(normalGameModeButton).colspan(4).pad(10).width(200);
@@ -115,6 +115,7 @@ public class MainScreen implements Screen {
     /**
      * Aktualisieren der Darstellung des Hauptmenüs.
      * Rendert die Hintergrundtextur und Benutzeroberfläche wird aktualisiert und gezeichnet.
+     *
      * @param delta The time in seconds since the last render.
      */
     @Override
@@ -135,7 +136,8 @@ public class MainScreen implements Screen {
 
     /**
      * Passt die Viewports bei Änderung der Bildschirmgröße an die neue Auflösung an, um Hauptmenü und Hintergrund korrekt anzuzeigen.
-     * @param width Breite des Bildschirms nach Änderung
+     *
+     * @param width  Breite des Bildschirms nach Änderung
      * @param height Höhe des Bildschirms nach Änderung
      */
     @Override

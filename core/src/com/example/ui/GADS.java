@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.example.manager.RunConfiguration;
 import com.example.ui.assets.GADSAssetManager;
 import com.example.ui.menu.MainScreen;
+import com.example.ui.menu.ScreenManager;
 import com.sun.tools.javac.Main;
 
 /**
@@ -19,6 +20,8 @@ public class GADS extends Game {
 	GADSAssetManager assetManager;
 	private RunConfiguration runConfig;
 
+	private ScreenManager screenManager;
+
 
 	public GADS(RunConfiguration runConfig) {
 		this.runConfig = runConfig;
@@ -30,12 +33,19 @@ public class GADS extends Game {
 	}
 	@Override
 	public void create() {
+
+		//ToDo: Ladebildschirm
+
 		//size of the viewport is subject to change
 		assetManager = new GADSAssetManager();
 
-		//ToDo: add Loading Screen
+		screenManager = new ScreenManager(this);
+		setScreen(screenManager.getMainScreen());
 
-		setScreen(new MainScreen(this, runConfig));
+	}
+
+	public ScreenManager getScreenManager() {
+		return screenManager;
 	}
 
 	public void render() {
@@ -61,6 +71,6 @@ public class GADS extends Game {
 
 	public void setScreenMenu() {
 		//we can use runconfig to save the users selection while we are at it
-		setScreen(new MainScreen(this, this.runConfig));
+		setScreen(new MainScreen(this));
 	}
 }
