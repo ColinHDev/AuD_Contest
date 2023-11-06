@@ -90,7 +90,7 @@ public class MainScreen implements Screen {
         normalGameModeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameInstance.getScreenManager().setGamemodeNormalScreen();
+                gameInstance.setScreen(GADS.ScreenState.NORMALMODESCREEN);
             }
         });
         TextButton exitButton = new TextButton("Beenden", skin);

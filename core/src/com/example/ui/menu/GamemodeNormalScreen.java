@@ -18,7 +18,6 @@ import com.example.manager.Manager;
 import com.example.manager.RunConfiguration;
 import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
-import com.sun.tools.javac.Main;
 
 import javax.swing.*;
 
@@ -100,7 +99,7 @@ public class GamemodeNormalScreen implements Screen {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameInstance.getScreenManager().setMainScreen();
+                gameInstance.setScreen(GADS.ScreenState.MAINSCREEN);
             }
         });
 

@@ -2,12 +2,12 @@ package com.example.ui;
 
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.example.manager.RunConfiguration;
 import com.example.ui.assets.GADSAssetManager;
+import com.example.ui.menu.GamemodeNormalScreen;
 import com.example.ui.menu.MainScreen;
-import com.example.ui.menu.ScreenManager;
-import com.sun.tools.javac.Main;
 
 /**
  * GADS ist die verantwortliche Klasse im LifeCycle der Anwendung.
@@ -19,18 +19,20 @@ import com.sun.tools.javac.Main;
 public class GADS extends Game {
 	GADSAssetManager assetManager;
 	private RunConfiguration runConfig;
+	private Screen[] screens;
+	private Screen currentScreen;
 
-	private ScreenManager screenManager;
-
+	public enum ScreenState {
+		MAINSCREEN,
+		NORMALMODESCREEN,
+		INGAMESCREEN
+	}
 
 	public GADS(RunConfiguration runConfig) {
 		this.runConfig = runConfig;
+		screens = new Screen[ScreenState.values().length];
 	}
 
-	public void startGame(RunConfiguration config){
-		this.runConfig = config;
-		setScreenIngame(config);
-	}
 	@Override
 	public void create() {
 
@@ -38,14 +40,40 @@ public class GADS extends Game {
 
 		//size of the viewport is subject to change
 		assetManager = new GADSAssetManager();
-
-		screenManager = new ScreenManager(this);
-		setScreen(screenManager.getMainScreen());
+		initScreens();
+		setScreen(ScreenState.MAINSCREEN);
 
 	}
 
-	public ScreenManager getScreenManager() {
-		return screenManager;
+	private void initScreens() {
+		for (ScreenState state : ScreenState.values()) {
+			screens[state.ordinal()] = createScreen(state);
+		}
+	}
+
+	private Screen createScreen(ScreenState state) {
+		switch (state) {
+			case MAINSCREEN:
+				return new MainScreen(this);
+			case INGAMESCREEN:
+				return new InGameScreen(this, runConfig);
+			case NORMALMODESCREEN:
+				return new GamemodeNormalScreen(this);
+			default:
+				return null;
+		}
+	}
+
+	public void setScreen(ScreenState screenState) {
+		if (screens[screenState.ordinal()] == null) {
+			initScreens();
+		}
+		setScreen(screens[screenState.ordinal()]);
+	}
+
+	public void setScreen(Screen screen) {
+		currentScreen = screen;
+		super.setScreen(screen);
 	}
 
 	public void render() {
@@ -63,14 +91,5 @@ public class GADS extends Game {
 		//apparently Gdx.app.exit() does not close the game completely
 		//probably the runtime survives and needs to be killed via System.exit
 		System.exit(0);
-	}
-
-	public void setScreenIngame(RunConfiguration runConfig) {
-		setScreen(new InGameScreen(this, runConfig));
-	}
-
-	public void setScreenMenu() {
-		//we can use runconfig to save the users selection while we are at it
-		setScreen(new MainScreen(this));
 	}
 }

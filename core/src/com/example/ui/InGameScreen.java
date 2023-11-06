@@ -134,7 +134,7 @@ public class InGameScreen implements Screen, AnimationLogProcessor {
         animator.dispose();
         manager.stop(run);
         hud.dispose();
-        gameManager.setScreenMenu();
+        gameManager.setScreen(GADS.ScreenState.MAINSCREEN);
     }
     public void setupInput(){
 
