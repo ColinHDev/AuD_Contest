@@ -45,6 +45,8 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private TileMap map;
 
+    private static GameTower[][][] towers;
+
     private final BlockingQueue<ActionLog> pendingLogs = new LinkedBlockingQueue<>();
 
 
@@ -108,6 +110,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+                        put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                     }
                 };
 
@@ -141,6 +144,19 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
+        private static ExpandedAction convertTowerPlaceAction(com.example.simulation.action.Action action, Animator animator) {
+            TowerPlaceAction placeAction = (TowerPlaceAction) action;
+
+            SummonAction summonTower = new SummonAction(action.getDelay(), target -> {
+                towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
+            }, () -> {
+                Entity tower = new GameTower(1, placeAction.getType());
+
+                return tower;
+            });
+
+            return new ExpandedAction(summonTower);
+        }
 
         private static ExpandedAction convertTurnStartAction(com.example.simulation.action.Action action, Animator animator) {
             TurnStartAction startAction = (TurnStartAction) action;
