@@ -148,7 +148,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             TowerPlaceAction placeAction = (TowerPlaceAction) action;
 
             SummonAction summonTower = new SummonAction(action.getDelay(), target -> {
-                towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
+                // ToDo: change sim TowerPlaceAction to include a team
+                //towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
             }, () -> {
                 Entity tower = new GameTower(1, placeAction.getType());
 
