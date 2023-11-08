@@ -12,10 +12,10 @@ import java.util.TreeMap;
 
 public class MapLoader {
     static MapLoader mapLoader = null;
-    int[][][] board;
 
-    private int width = 0;
-    private int height = 0;
+
+    int width = 0;
+    int height = 0;
 
     static MapLoader getInstance() {
         if (mapLoader == null) {
@@ -31,66 +31,39 @@ public class MapLoader {
      *
      * @param mapName Name of the map without type as String
      */
-    List<List<IntVector2>> loadMap(String mapName) {
+    GameState.MapTileType[][] loadMap(String mapName) {
         JsonReader reader = new JsonReader();
-        JsonValue map;
+        JsonValue json;
+        GameState.MapTileType[][] map;
         try {
             //attempt to load map from jar
-            map = reader.parse(getClass().getClassLoader().getResourceAsStream("maps/" + mapName + ".json"));
-            width = map.get("width").asInt();
-            height = map.get("height").asInt();
-            board = new int[2][width][height];
+            json = reader.parse(getClass().getClassLoader().getResourceAsStream("maps/" + mapName + ".json"));
         } catch (Exception e) {
-            map = null;
+            json = null;
         }
-        if (map == null) {
+        if (json == null) {
             try {
                 //attempt to load map from external maps dir
-                map = reader.parse(new FileHandle(Paths.get("./maps/" + mapName + ".json").toFile()));
+                json = reader.parse(new FileHandle(Paths.get("./maps/" + mapName + ".json").toFile()));
             } catch (Exception e) {
                 throw new RuntimeException("Could not find or load map:" + mapName);
             }
         }
 
-        width = map.get("width").asInt();
-        height = map.get("height").asInt();
-        //board = new Tile[width][height];
+        width = json.get("width").asInt();
+        height = json.get("height").asInt();
+        map = new GameState.MapTileType[width][height];
 
-        JsonValue tileData = map.get("layers").get(0).get("data");
-
-        // List<List<IntVector2>> spawnpoints = new LinkedList<>();
-        Map<Integer, List<IntVector2>> teams = new TreeMap<>();
+        JsonValue tileData = json.get("layers").get(0).get("data");
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int type = tileData.get(i + (height - j - 1) * width).asInt();
-                if (type > 100) {
-                    //int team = type - 101; //teams starting at 0
-                    if (teams.containsKey(type)) {
-                        teams.get(type).add(new IntVector2(i, j));
-                    } else {
-                        teams.put(type, new LinkedList<>());
-                        teams.get(type).add(new IntVector2(i, j));
-                    }
-                    //while (spawnpoints.size() <= team)
-                    //    spawnpoints.add(new LinkedList<>()); //Increase list of spawnpoints as necessary
-                    //spawnpoints.get(team).add(new IntVector2(i, j)); // Add current tile
-                } else
-                    switch (type) {
-                        case 0:
-                            break;
-                        case 1:
-                            //board[i][j] = new Tile(i, j, this, true);
-                            break;
-                        default:
-                            //board[i][j] = new Tile(i, j, this, false);
-                    }
+                    map[i][j] = GameState.MapTileType.values()[type-2];
             }
         }
 
-        List<List<IntVector2>> spawns = new LinkedList<>(teams.values());
-
-        return spawns;
+        return map;
 
     }
 }
