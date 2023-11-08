@@ -11,8 +11,17 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MapLoader {
+    static MapLoader mapLoader = null;
+
     private int width = 0;
     private int height = 0;
+
+    static MapLoader getInstance() {
+        if (mapLoader == null) {
+            mapLoader = new MapLoader();
+        }
+        return mapLoader;
+    }
 
     /**
      * Loads a Map from the asset-directory

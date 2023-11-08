@@ -72,7 +72,7 @@ public class GameState implements Serializable {
     GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
         this.gameMode = gameMode;
         this.mapName = mapName;
-        List<List<IntVector2>> spawnpoints = new MapLoader().loadMap(
+        List<List<IntVector2>> spawnpoints = MapLoader.getInstance().loadMap(
                 gameMode == GameMode.Campaign ? "campaign/" + mapName : mapName
         );
         this.playerCount = playerCount;
