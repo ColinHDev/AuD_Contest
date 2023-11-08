@@ -18,6 +18,11 @@ public class GameState implements Serializable {
     // y - Zeile
 
     private final float[] healths;
+    private int turn;
+
+    public int getTurn() {
+        return turn;
+    }
 
     public float[] getScores() {
         return Arrays.copyOf(healths, healths.length);
