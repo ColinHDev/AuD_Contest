@@ -1,5 +1,6 @@
 package com.example.simulation;
 
+import com.badlogic.gdx.utils.JsonValue;
 import com.example.manager.Timer;
 import com.example.simulation.action.Action;
 import com.example.simulation.action.ScoreAction;
@@ -17,11 +18,28 @@ public class GameState implements Serializable {
     // x - Spalten
     // y - Zeile
 
-    private final float[] healths;
+
+    private PlayerState[] playerStates;
+
     private int turn;
+
+    protected enum MapTileType {
+        LAND,
+        OBSTACLE,
+        PATH_RIGHT,
+        PATH_DOWN,
+        PATH_LEFT,
+        PATH_UP
+    }
+
+    protected MapTileType[][] map;
 
     public int getTurn() {
         return turn;
+    }
+
+    private void nextTurn(){
+        ++turn;
     }
 
     public float[] getScores() {
@@ -37,6 +55,8 @@ public class GameState implements Serializable {
         //ToDo this needs to deep copy all read only attributes
         gameMode = original.gameMode;
         turnTimer = original.turnTimer;
+        turn = original.turn;
+        board = Arrays.copyOf(original.board, original.board.length);
 
         playerCount = original.playerCount;
         active = original.active;
@@ -77,14 +97,16 @@ public class GameState implements Serializable {
     GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
         this.gameMode = gameMode;
         this.mapName = mapName;
-        List<List<IntVector2>> spawnpoints = MapLoader.getInstance().loadMap(
+        this.map = MapLoader.getInstance().loadMap(
                 gameMode == GameMode.Campaign ? "campaign/" + mapName : mapName
         );
+
         this.playerCount = playerCount;
         this.active = true;
         this.sim = sim;
         this.healths = new float[playerCount];
-        this.initPlayers(spawnpoints);
+
+
     }
 
     /**
@@ -99,13 +121,7 @@ public class GameState implements Serializable {
     /**
      * Spawns players randomly distributed over the possible spawn-location, specified by the map.
      */
-    void initPlayers(List<List<IntVector2>> spawnpoints) {
-        if (gameMode == GameMode.Campaign) {
-            //ToDo retrieve campaign resources
-        } else {
 
-        }
-    }
 
 
     //ToDo migrate to Simulation
@@ -116,16 +132,6 @@ public class GameState implements Serializable {
      */
     public boolean isActive() {
         return active;
-    }
-
-    protected Action addScore(Action head, int team, float score) {
-        if (score == Simulation.SCORE_WIN[0]) {
-            healths[team] = 1;
-        } else
-            return head;
-        ScoreAction scoreAction = new ScoreAction(0, team, healths[team]);
-        head.addChild(scoreAction);
-        return scoreAction;
     }
 
     //ToDo migrate to Simulation
@@ -159,16 +165,16 @@ public class GameState implements Serializable {
     /**
      * @return Horizontale Größe des Spielfeldes in #Boxen
      */
-//    public int getBoardSizeX() {
-//        return width;
-//    }
+    public int getBoardSizeX() {
+        return MapLoader.getInstance().width;
+    }
 
     /**
      * @return Vertikale Größe des Spielfeldes in #Boxen
      */
-//    public int getBoardSizeY() {
-//        return height;
-//    }
+    public int getBoardSizeY() {
+        return MapLoader.getInstance().height;
+    }
 
     public Timer getTurnTimer() {
         return turnTimer;
