@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Tile {
 
-    enum tileTypes {
-        FREE,
+    private enum tileTypes {
+        FREE ,
         PATH,
         TOWER,
         OBSTACLE,
@@ -16,12 +16,26 @@ public class Tile {
     private tileTypes tileType;
 
     private IntVector2 pos;
-    
-    public IntVector2 getPos() {
+
+    Tile(int x, int y, int type){
+        this.pos = new IntVector2(x, y);
+        this.tileType =  tileTypes.valueOf(String.valueOf(type));
+    }
+
+    public IntVector2 getPosition() {
         return pos;
     }
 
-    public tileTypes getTileType() {
+    public tileTypes getType() {
         return tileType;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "tileType=" + tileType +
+                ", pos=" + pos +
+                '}';
     }
 }
