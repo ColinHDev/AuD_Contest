@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 public class MapLoader {
     static MapLoader mapLoader = null;
+    int[][][] board;
 
     private int width = 0;
     private int height = 0;
@@ -36,6 +37,9 @@ public class MapLoader {
         try {
             //attempt to load map from jar
             map = reader.parse(getClass().getClassLoader().getResourceAsStream("maps/" + mapName + ".json"));
+            width = map.get("width").asInt();
+            height = map.get("height").asInt();
+            board = new int[2][width][height];
         } catch (Exception e) {
             map = null;
         }
