@@ -1,15 +1,19 @@
 package com.example.simulation;
 
+import com.example.simulation.action.Action;
+import com.example.simulation.action.EnemyAction;
+import com.example.simulation.action.EnemyMoveAction;
+
 public class Enemy {
 
     private int health;
     private int level;
-    private IntVector2 position;
+    private PathTile posTile;
 
-    public Enemy(int health, int level, IntVector2 position){
+    public Enemy(int health, int level, PathTile posTile){
         this.health = health;
         this.level = level;
-        this.position = position;
+        this.posTile = posTile;
     }
 
     private void updateHealth(int damage){
@@ -17,9 +21,19 @@ public class Enemy {
         } else health -= damage;
     }
 
-    private void move(){
-        //TODO: Implement Move
+    private void move(Action head){
+        if (posTile.next != null) {
+            posTile.enemies.remove(this);
+            posTile = posTile.next;
+            posTile.next.enemies.add(this);
+            head.addChild(new EnemyMoveAction(0, posTile.prev.getPosition(), posTile.getPosition(), level));
+        }
+        else{
+
+            //TODO Player gets damage
+        }
     }
+
 
     public int getHealth() {
         return health;
@@ -30,7 +44,7 @@ public class Enemy {
     }
 
     public IntVector2 getPosition() {
-        return position;
+        return new IntVector2(posTile.getPosition());
     }
 
 

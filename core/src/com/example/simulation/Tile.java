@@ -12,9 +12,7 @@ public class Tile {
         return pos;
     }
 
-
-
-    public Tile copy(){
+    protected Tile copy(){
         return new Tile(pos.x, pos.y);
     }
 
