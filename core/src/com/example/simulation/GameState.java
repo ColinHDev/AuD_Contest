@@ -43,7 +43,11 @@ public class GameState implements Serializable {
     }
 
     public float[] getScores() {
-        return Arrays.copyOf(healths, healths.length);
+        float[] healths = new float[playerStates.length];
+        for (int i = 0; i < playerStates.length; i++) {
+            healths[i] = playerStates[i].getHealth();
+        }
+        return healths;
     }
 
     public GameState copy() {
@@ -56,12 +60,12 @@ public class GameState implements Serializable {
         gameMode = original.gameMode;
         turnTimer = original.turnTimer;
         turn = original.turn;
-        board = Arrays.copyOf(original.board, original.board.length);
+
+        map = Arrays.copyOf(original.map, original.map.length);
 
         playerCount = original.playerCount;
         active = original.active;
         sim = null;
-        healths = Arrays.copyOf(original.healths, original.healths.length);
     }
 
     public enum GameMode {
@@ -104,9 +108,6 @@ public class GameState implements Serializable {
         this.playerCount = playerCount;
         this.active = true;
         this.sim = sim;
-        this.healths = new float[playerCount];
-
-
     }
 
     /**

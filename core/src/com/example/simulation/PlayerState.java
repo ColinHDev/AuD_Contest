@@ -1,5 +1,7 @@
 package com.example.simulation;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -10,6 +12,9 @@ public class PlayerState implements Serializable {
     private int health;
     private int money;
 
+    public int getHealth() {
+        return health;
+    }
 
     public PlayerState copy(GameState newGameState){
         return new PlayerState(this, newGameState);
@@ -21,6 +26,13 @@ public class PlayerState implements Serializable {
         for (int i = 0; i < original.board.length; i++) {
             for (int j = 0; j < original.board[0].length; j++) {
                 board[i][j] = original.board[i][j].copy();
+            }
+        }
+        for (int i = 0; i < original.board.length; i++) {
+            for (int j = 0; j < original.board.length; j++) {
+                if (board[i][j] instanceof PathTile){
+                    //TODO Search for last PathTile -> Copy Backwards
+                }
             }
         }
         health = original.health;
@@ -61,7 +73,6 @@ public class PlayerState implements Serializable {
             }
         }
 
-        //TODO Initialize TileMap
     }
 
 
