@@ -16,12 +16,14 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.manager.Manager;
 import com.example.manager.RunConfiguration;
+import com.example.ui.ConfigScreen;
 import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
 
 import javax.swing.*;
 
-public class GamemodeNormalScreen implements Screen {
+public class GamemodeNormalScreen extends ConfigScreen {
+    Table playerChoosTable;
     Table menuTable;
     private RunConfiguration passedRunConfig;
     private Image title;
@@ -78,7 +80,7 @@ public class GamemodeNormalScreen implements Screen {
     }
 
     /**
-     * erstellt die Titel Seite mithilfe der Tabelle aus LibGDX mit zugehörigem Titel und Schaltflächen
+     * erstellt die Spielmodus "Normal" Seite mithilfe der Tabelle aus LibGDX mit zugehörigem Titel und Schaltflächen
      */
     public void setupMenuScreen() {
 
@@ -103,15 +105,18 @@ public class GamemodeNormalScreen implements Screen {
             }
         });
 
-        //ToDo Tabelle anpassen, dass alles ordentlich zentriert ist
         menuTable = new Table(skin);
+        playerChoosTable = new Table(skin);
         menuTable.setFillParent(true);
         menuTable.center();
         menuTable.add(titelLabel).colspan(4).pad(10).row();
-        menuTable.add(textLabel1).colspan(4).pad(10);
-        menuTable.add(player1).colspan(4).pad(10).row();
-        menuTable.add(textLabel2).colspan(4).pad(10);
-        menuTable.add(player2).colspan(4).pad(10).row();
+        playerChoosTable.columnDefaults(0).width(100);
+        playerChoosTable.columnDefaults(1).width(100);
+        playerChoosTable.add(textLabel1).colspan(4).pad(10);
+        playerChoosTable.add(player1).colspan(4).pad(10).row();
+        playerChoosTable.add(textLabel2).colspan(4).pad(10);
+        playerChoosTable.add(player2).colspan(4).pad(10).row();
+        menuTable.add(playerChoosTable).row();
         menuTable.add(backButton).colspan(4).pad(10).width(200);
 
         mainMenuStage.addActor(menuTable);

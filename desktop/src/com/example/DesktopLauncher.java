@@ -105,7 +105,7 @@ public class DesktopLauncher {
             if(runConfig.players!=null) runConfig.teamCount = runConfig.players.size();
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setForegroundFPS(60);
-            config.setTitle("Game Title"); //ToDo find game titel
+            config.setTitle("GATDSEN"); //ToDo find game titel
             config.setWindowIcon(Files.FileType.Classpath, "icon/icon.png");
             new Lwjgl3Application(new GADS(runConfig), config);
         } else {
@@ -130,7 +130,6 @@ public class DesktopLauncher {
                     invalidConfig = true;
                 }
             }else if (runConfig.players.size() < 2) {
-
                 System.err.println("At least two players are required");
                 invalidConfig = true;
             }

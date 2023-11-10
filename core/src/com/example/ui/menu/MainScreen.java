@@ -1,7 +1,6 @@
 package com.example.ui.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,12 +15,13 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.manager.Manager;
 import com.example.manager.RunConfiguration;
+import com.example.ui.ConfigScreen;
 import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
 
 import javax.swing.*;
 
-public class MainScreen implements Screen {
+public class MainScreen extends ConfigScreen {
     Table menuTable;
     private RunConfiguration passedRunConfig;
     private Image title;
