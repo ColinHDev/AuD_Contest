@@ -2,7 +2,7 @@ package com.example.manager;
 
 import com.example.manager.command.Command;
 import com.example.manager.command.EndTurnCommand;
-import com.example.manager.concurrent.BotThread;
+import com.example.manager.concurrent.ThreadExecutor;
 import com.example.manager.player.*;
 import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
@@ -45,7 +45,7 @@ public class Game extends Executable {
 
     private static final AtomicInteger gameNumber = new AtomicInteger(0);
 
-    private BotThread executor;
+    private ThreadExecutor executor;
 
     private final BlockingQueue<Command> commandQueue = new ArrayBlockingQueue<>(256);
     private Thread simulationThread;
@@ -96,7 +96,7 @@ public class Game extends Executable {
         synchronized (schedulingLock) {
             if (getStatus() == Status.ABORTED) return;
             setStatus(Status.ACTIVE);
-            executor = new BotThread();
+            executor = new ThreadExecutor();
             create();
             //Init the Log Processor
             if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), new String[][]{});

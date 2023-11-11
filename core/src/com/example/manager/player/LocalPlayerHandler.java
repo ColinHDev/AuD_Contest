@@ -1,6 +1,6 @@
 package com.example.manager.player;
 
-import com.example.manager.concurrent.BotThread;
+import com.example.manager.concurrent.ThreadExecutor;
 import com.example.manager.Manager;
 import com.example.simulation.GameState;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 public final class LocalPlayerHandler implements PlayerHandler {
 
     private final Class<? extends Player> playerClass;
-    private final BotThread executor = new BotThread();
+    private final ThreadExecutor executor = new ThreadExecutor();
 
     private Player player;
 

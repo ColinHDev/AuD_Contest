@@ -2,12 +2,8 @@ package com.example.manager.concurrent;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class BotThread {
-
-    private static final String namePrefix = "BotThread";
-    private static final AtomicInteger threadNumber = new AtomicInteger(0);
+public class ThreadExecutor {
 
     private final Object lock = new Object();
 
@@ -17,7 +13,7 @@ public class BotThread {
 
     private FutureTask<?> target = null;
 
-    public BotThread() {
+    public ThreadExecutor() {
         worker = new Thread(this::waitAndExecute);
         worker.start();
     }
