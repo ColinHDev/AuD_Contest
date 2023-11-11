@@ -10,12 +10,13 @@ import com.example.simulation.action.ActionLog;
  */
 public class EndTurnCommand extends Command {
 
-    public EndTurnCommand() {
-        isEndTurn = true;
-    }
-
     @Override
     public ActionLog onExecute(GameCharacterController controller) {
         return null;
+    }
+
+    @Override
+    public boolean endsTurn() {
+        return true;
     }
 }

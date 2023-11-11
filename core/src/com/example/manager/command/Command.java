@@ -11,8 +11,6 @@ import java.io.Serializable;
  */
 public abstract class Command implements Serializable {
 
-    protected boolean isEndTurn = false;
-
     public abstract ActionLog onExecute(GameCharacterController controller);
 
     public ActionLog run(GameCharacterController controller) {
@@ -23,6 +21,6 @@ public abstract class Command implements Serializable {
     }
 
     public boolean endsTurn() {
-        return isEndTurn;
+        return false;
     }
 }
