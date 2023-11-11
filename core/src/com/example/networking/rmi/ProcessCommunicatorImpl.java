@@ -1,6 +1,7 @@
 package com.example.networking.rmi;
 
 import com.example.manager.command.Command;
+import com.example.networking.data.CommunicatedInformation;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,13 +11,34 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ProcessCommunicatorImpl implements ProcessCommunicator {
 
-    BlockingQueue<Command> queuedCommands = new LinkedBlockingQueue<>();
+    private final BlockingQueue<CommunicatedInformation> informationQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Command> commandQueue = new LinkedBlockingQueue<>();
 
-    public void queueCommand(Command command) {
-        queuedCommands.add(command);
+    @Override
+    public void queueInformation(CommunicatedInformation information) {
+        informationQueue.add(information);
     }
 
+    @Override
+    public CommunicatedInformation dequeueInformation() {
+        try {
+            return informationQueue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void queueCommand(Command command) {
+        commandQueue.add(command);
+    }
+
+    @Override
     public Command dequeueCommand() {
-        return queuedCommands.poll();
+        try {
+            return commandQueue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

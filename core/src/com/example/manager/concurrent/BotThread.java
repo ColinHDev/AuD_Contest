@@ -1,4 +1,6 @@
-package com.example.manager;
+package com.example.manager.concurrent;
+
+import com.example.manager.Game;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;

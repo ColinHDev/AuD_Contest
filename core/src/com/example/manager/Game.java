@@ -1,20 +1,17 @@
 package com.example.manager;
 
-import com.example.manager.player.Bot;
-import com.example.manager.player.HumanPlayer;
-import com.example.manager.player.Player;
+import com.example.manager.command.Command;
+import com.example.manager.command.EndTurnCommand;
+import com.example.manager.concurrent.BotThread;
+import com.example.manager.player.*;
+import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
 import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
-import com.example.manager.command.Command;
-import com.example.manager.command.EndTurnCommand;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,12 +37,12 @@ public class Game extends Executable {
     static {
         isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
         if (isDebug) System.err.println("Warning: Debugger engaged; Disabling Bot-Timeout!");
-
     }
 
     private GameResults gameResults;
     private Simulation simulation;
     private GameState state;
+    private PlayerHandler[] playerHandlers;
     private Player[] players;
 
     private float[] scores;
@@ -53,7 +50,6 @@ public class Game extends Executable {
     private static final AtomicInteger gameNumber = new AtomicInteger(0);
 
     private BotThread executor;
-    private final List<HumanPlayer> humanList = new ArrayList<>();
 
     private final BlockingQueue<Command> commandQueue = new ArrayBlockingQueue<>(256);
     private Thread simulationThread;
@@ -80,47 +76,23 @@ public class Game extends Executable {
         if (saveReplay)
             gameResults.setInitialState(state);
 
-        players = new Player[config.teamCount];
+        playerHandlers = new PlayerHandler[config.teamCount];
 
         for (int i = 0; i < config.teamCount; i++) {
-            final Player curPlayer;
-            executor.waitForCompletion();
-            try {
-                players[i] = (Player) config.players.get(i).getDeclaredConstructors()[0].newInstance();
-                curPlayer = players[i];
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+            PlayerHandler handler;
+            Class<? extends Player> playerClass = config.players.get(i);
+            if (playerClass.isInstance(Bot.class)) {
+                handler = new ProcessPlayerHandler(playerClass);
+            } else {
+                if (!gui) {
+                    throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
+                }
+                handler = new LocalPlayerHandler(playerClass);
             }
-            switch (curPlayer.getType()) {
-                case Human:
-                    if (!gui) throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
-                    humanList.add((HumanPlayer) curPlayer);
-                    break;
-                case AI:
-                    Future<?> future = executor.execute(() -> {
-                        Thread.currentThread().setName("Init_Thread_Player_" + curPlayer.getName());
-                        ((Bot) curPlayer).setRnd(Manager.getSeed());
-                        curPlayer.init(state);
-                    });
-                    try {
-                        if (isDebug) future.get();
-                        else
-                            future.get(AI_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    } catch (InterruptedException e) {
-                        System.out.println("bot was interrupted");
-                    } catch (ExecutionException e) {
-                        System.out.println("bot failed initialization with exception: " + e.getCause());
-                    } catch (TimeoutException e) {
-                        future.cancel(true);
-                        executor.forceStop();
-
-                        System.out.println("bot" + i + "(" + curPlayer.getName() + ") initialization surpassed timeout");
-                    }
-                    break;
-            }
+            playerHandlers[i] = handler;
+            handler.create(state);
         }
         gameResults.setPlayerNames(getPlayerNames());
-        gameResults.setSkins(getSkins(players));
         config = null;
     }
 
@@ -131,22 +103,13 @@ public class Game extends Executable {
             executor = new BotThread();
             create();
             //Init the Log Processor
-            if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), getSkins(players));
+            if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), new String[][]{});
             //Run the Game
             simulationThread = new Thread(this::run);
             simulationThread.setName("Game_Simulation_Thread");
             simulationThread.setUncaughtExceptionHandler(this::crashHandler);
             simulationThread.start();
         }
-    }
-
-    private String[][] getSkins(Player[] players) {
-        int skinsetCount = 0; //ToDo make global constant
-        String[][] skins = new String[players.length][skinsetCount];
-        for (int i = 0; i < players.length; i++)
-            for (int j = 0; j < skinsetCount; j++)
-                skins[i][j] = players[i].getSkin(j);
-        return skins;
     }
 
     @Override
@@ -354,10 +317,6 @@ public class Game extends Executable {
         gameResults = null;
     }
 
-    public List<HumanPlayer> getHumanList() {
-        return humanList;
-    }
-
     protected void queueCommand(Command cmd) {
         commandQueue.add(cmd);
     }
@@ -398,7 +357,6 @@ public class Game extends Executable {
                 ", state=" + state +
                 ", players=" + Arrays.toString(players) +
                 ", executor=" + executor +
-                ", humanList=" + humanList +
                 ", commandQueue=" + commandQueue +
                 ", simulationThread=" + simulationThread +
                 ", uiMessenger=" + uiMessenger +

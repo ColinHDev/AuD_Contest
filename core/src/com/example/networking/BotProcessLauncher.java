@@ -48,7 +48,7 @@ public class BotProcessLauncher {
             printHelp();
             return;
         }
-        Class<? extends Player> player = Manager.getPlayer(params.getOptionValue("p").trim(), false);
+        Class<? extends Player> playerClass = Manager.getPlayer(params.getOptionValue("p").trim(), false);
 
         BotProcess botProcess;
         Object lock = new Object();
@@ -59,7 +59,7 @@ public class BotProcessLauncher {
                             lock.notify();
                         }
                     },
-                    player
+                    playerClass
             );
             botProcess.start();
             try {
