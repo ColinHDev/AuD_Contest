@@ -17,10 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
 
-
-    protected static final ThreadGroup PLAYER_THREAD_GROUP = new ThreadGroup("players");
-
-
     protected final Object schedulingLock = new Object();
     private static final int AI_EXECUTION_TIMEOUT = 500;
     private static final int AI_EXECUTION_GRACE_PERIODE = 100;

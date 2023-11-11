@@ -1,7 +1,5 @@
 package com.example.manager.concurrent;
 
-import com.example.manager.Game;
-
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +18,7 @@ public class BotThread {
     private FutureTask<?> target = null;
 
     public BotThread() {
-        worker = new Thread(Game.PLAYER_THREAD_GROUP, this::waitAndExecute);
+        worker = new Thread(this::waitAndExecute);
         worker.start();
     }
 
@@ -65,7 +63,7 @@ public class BotThread {
             }
         }
         worker.stop();
-        worker = new Thread(Game.PLAYER_THREAD_GROUP, this::waitAndExecute);
+        worker = new Thread(this::waitAndExecute);
         worker.start();
     }
 
