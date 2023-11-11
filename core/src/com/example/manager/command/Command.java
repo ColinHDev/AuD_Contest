@@ -3,11 +3,13 @@ package com.example.manager.command;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.action.ActionLog;
 
+import java.io.Serializable;
+
 /**
- * Base Class
- * Every Command has to inherit from this
+ * Die Basisklasse für alle Commands.
+ * Ein Command repräsentiert eine Aktion, die von einem Spieler ausgeführt wird.
  */
-public abstract class Command {
+public abstract class Command implements Serializable {
 
     protected boolean isEndTurn = false;
     protected GameCharacterController controller;
