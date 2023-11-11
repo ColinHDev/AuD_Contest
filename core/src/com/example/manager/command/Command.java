@@ -25,7 +25,7 @@ public abstract class Command implements Serializable {
         return null;
     }
 
-    public boolean isEndTurn() {
+    public boolean endsTurn() {
         return controller.isActive() && isEndTurn;
     }
 }

@@ -39,7 +39,6 @@ public class Game extends Executable {
     private Simulation simulation;
     private GameState state;
     private PlayerHandler[] playerHandlers;
-    private Player[] players;
 
     private float[] scores;
 
@@ -242,7 +241,7 @@ public class Game extends Executable {
                 while (true) {
 
                     Command nextCmd = commandQueue.take();
-                    if (nextCmd.isEndTurn()) break;
+                    if (nextCmd.endsTurn()) break;
                     //Contains action produced by the commands execution
                     log = nextCmd.run();
                     if (log == null) continue;
