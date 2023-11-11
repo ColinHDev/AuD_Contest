@@ -12,20 +12,17 @@ import java.io.Serializable;
 public abstract class Command implements Serializable {
 
     protected boolean isEndTurn = false;
-    protected GameCharacterController controller;
 
-    public Command(GameCharacterController controller) {
-        this.controller = controller;
-    }
+    public abstract ActionLog onExecute(GameCharacterController controller);
 
-    public abstract ActionLog onExecute();
-
-    public ActionLog run(){
-        if (controller.isActive()) return onExecute();
+    public ActionLog run(GameCharacterController controller) {
+        if (controller.isActive()) {
+            return onExecute(controller);
+        }
         return null;
     }
 
     public boolean endsTurn() {
-        return controller.isActive() && isEndTurn;
+        return isEndTurn;
     }
 }

@@ -243,7 +243,7 @@ public class Game extends Executable {
                     Command nextCmd = commandQueue.take();
                     if (nextCmd.endsTurn()) break;
                     //Contains action produced by the commands execution
-                    log = nextCmd.run();
+                    log = nextCmd.run(gcController);
                     if (log == null) continue;
                     if (saveReplay)
                         gameResults.addActionLog(log);

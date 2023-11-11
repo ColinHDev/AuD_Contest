@@ -4,20 +4,18 @@ import com.example.simulation.GameCharacterController;
 import com.example.simulation.action.ActionLog;
 
 /**
- * Command used for administrative purposes.
- * <p>
- * Marks the end of a turn and breaks command execution for the current player in the current turn.
- * Should NOT be available via the {@link com.example.manager.Controller}.
+ * Dieser Befehl markiert das Ende eines Zuges und bricht die Befehlsausführung für den aktuellen Spieler im aktuellen
+ * Zug ab.
+ * Sollte NICHT direkt über den {@link com.example.manager.Controller} verfügbar sein.
  */
-public class EndTurnCommand extends Command{
-    public EndTurnCommand(GameCharacterController controller) {
-        super(controller);
+public class EndTurnCommand extends Command {
+
+    public EndTurnCommand() {
         isEndTurn = true;
     }
 
     @Override
-    public ActionLog onExecute() {
+    public ActionLog onExecute(GameCharacterController controller) {
         return null;
     }
-
 }
