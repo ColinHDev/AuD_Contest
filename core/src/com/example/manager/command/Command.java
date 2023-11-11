@@ -13,7 +13,7 @@ public abstract class Command implements Serializable {
 
     public abstract ActionLog onExecute(GameCharacterController controller);
 
-    public ActionLog run(GameCharacterController controller) {
+    public final ActionLog run(GameCharacterController controller) {
         if (controller.isActive()) {
             return onExecute(controller);
         }
