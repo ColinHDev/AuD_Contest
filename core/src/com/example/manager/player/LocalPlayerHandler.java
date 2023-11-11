@@ -49,6 +49,11 @@ public final class LocalPlayerHandler implements PlayerHandler {
     }
 
     @Override
+    public void update(GameState gameState) {
+
+    }
+
+    @Override
     public void dispose() {
 
     }

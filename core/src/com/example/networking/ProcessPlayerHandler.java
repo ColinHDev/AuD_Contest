@@ -76,6 +76,11 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
+    public void update(GameState gameState) {
+
+    }
+
+    @Override
     public void dispose() {
         try {
             registry.unbind(stubNamePrefix + process.pid());

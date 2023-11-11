@@ -6,5 +6,7 @@ public interface PlayerHandler {
 
     void create(GameState gameState);
 
+    void update(GameState gameState);
+
     void dispose();
 }
