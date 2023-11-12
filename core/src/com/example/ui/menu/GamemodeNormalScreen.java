@@ -21,10 +21,12 @@ import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class GamemodeNormalScreen extends ConfigScreen {
-    Table playerChoosTable;
+    Table playerChooseTable;
     Table menuTable;
+    Table navigationTable;
     private RunConfiguration passedRunConfig;
     private Image title;
     private Viewport menuViewport;
@@ -84,6 +86,8 @@ public class GamemodeNormalScreen extends ConfigScreen {
      */
     public void setupMenuScreen() {
 
+        Manager.getPossiblePlayers();
+
         Skin skin = AssetContainer.MainMenuAssets.skin;
         TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         Manager.NamedPlayerClass[] availableBots = Manager.getPossiblePlayers();
@@ -93,33 +97,52 @@ public class GamemodeNormalScreen extends ConfigScreen {
         titelLabel.setAlignment(Align.center);
         Label textLabel2 = new Label("Spieler 2:", skin);
         titelLabel.setAlignment(Align.center);
-        final SelectBox<String> player1 = new SelectBox<>(skin);
-        player1.setItems("Menschlicher Spieler", "Bot1", "Bot2", "Test");
-        final SelectBox<String> player2 = new SelectBox<>(skin);
-        player2.setItems("Menschlicher Spieler", "Bot1", "Bot2", "Test");
+        final SelectBox<Manager.NamedPlayerClass> player1 = new SelectBox<>(skin);
+        player1.setItems(availableBots);
+        final SelectBox<Manager.NamedPlayerClass> player2 = new SelectBox<>(skin);
+        player2.setItems(availableBots);
         TextButton backButton = new TextButton("Zurück", skin);
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameInstance.setScreen(GADS.ScreenState.MAINSCREEN);
+                gameInstance.setScreen(GADS.ScreenState.MAINSCREEN, null);
             }
         });
+        TextButton startGameButtton = getStartButton(skin, player1, player2);
 
         menuTable = new Table(skin);
-        playerChoosTable = new Table(skin);
+        playerChooseTable = new Table(skin);
+        navigationTable = new Table(skin);
         menuTable.setFillParent(true);
         menuTable.center();
         menuTable.add(titelLabel).colspan(4).pad(10).row();
-        playerChoosTable.columnDefaults(0).width(100);
-        playerChoosTable.columnDefaults(1).width(100);
-        playerChoosTable.add(textLabel1).colspan(4).pad(10);
-        playerChoosTable.add(player1).colspan(4).pad(10).row();
-        playerChoosTable.add(textLabel2).colspan(4).pad(10);
-        playerChoosTable.add(player2).colspan(4).pad(10).row();
-        menuTable.add(playerChoosTable).row();
-        menuTable.add(backButton).colspan(4).pad(10).width(200);
-
+        playerChooseTable.columnDefaults(0).width(100);
+        playerChooseTable.columnDefaults(1).width(100);
+        playerChooseTable.add(textLabel1).colspan(4).pad(10);
+        playerChooseTable.add(player1).colspan(4).pad(10).row();
+        playerChooseTable.add(textLabel2).colspan(4).pad(10);
+        playerChooseTable.add(player2).colspan(4).pad(10).row();
+        menuTable.add(playerChooseTable).row();
+        navigationTable.add(backButton).colspan(4).pad(10).width(200);
+        navigationTable.add(startGameButtton).colspan(4).pad(10).width(200);
+        menuTable.add(navigationTable);
         mainMenuStage.addActor(menuTable);
+    }
+
+    private TextButton getStartButton(Skin skin, SelectBox<Manager.NamedPlayerClass> player1, SelectBox<Manager.NamedPlayerClass> player2) {
+        TextButton startGameButtton = new TextButton("Start", skin);
+        startGameButtton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+                runConfiguration.players = new ArrayList<>();
+                runConfiguration.players.add (player1.getSelected().getClassRef());
+                runConfiguration.players.add (player2.getSelected().getClassRef());
+
+                gameInstance.setScreen(GADS.ScreenState.INGAMESCREEN, runConfiguration);
+            }
+        });
+        return startGameButtton;
     }
 
     /**

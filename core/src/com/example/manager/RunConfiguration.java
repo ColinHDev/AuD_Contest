@@ -1,5 +1,6 @@
 package com.example.manager;
 
+import com.badlogic.gdx.utils.Null;
 import com.example.manager.player.Player;
 import com.example.simulation.GameState;
 import com.example.ui.hud.UiMessenger;
@@ -7,6 +8,24 @@ import com.example.ui.hud.UiMessenger;
 import java.util.ArrayList;
 
 public class RunConfiguration {
+
+    public RunConfiguration(){}
+    private RunConfiguration(RunConfiguration original) {
+        gameMode = original.gameMode;
+        gui = original.gui;
+        animationLogProcessor = original.animationLogProcessor;
+        inventorySize = original.inventorySize;
+        uiMessenger = original.uiMessenger;
+        inputProcessor = original.inputProcessor;
+        mapName = original.mapName;
+        replay = original.replay;
+        teamCount = original.teamCount;
+        if (original.players == null) {
+            players = null;
+        } else {
+            players = new ArrayList<>(original.players);
+        }
+    }
 
     //Todo add default values
     public GameState.GameMode gameMode = GameState.GameMode.Normal;
@@ -74,5 +93,9 @@ public class RunConfiguration {
        else {
            return null;
        }
+    }
+
+    public RunConfiguration copy(){
+        return new RunConfiguration(this);
     }
 }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.manager.Manager;
 import com.example.manager.RunConfiguration;
+import com.example.simulation.GameState;
 import com.example.ui.ConfigScreen;
 import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
@@ -90,7 +91,8 @@ public class MainScreen extends ConfigScreen {
         normalGameModeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameInstance.setScreen(GADS.ScreenState.NORMALMODESCREEN);
+                runConfiguration.gameMode = GameState.GameMode.Normal;
+                gameInstance.setScreen(GADS.ScreenState.NORMALMODESCREEN,runConfiguration);
             }
         });
         TextButton exitButton = new TextButton("Beenden", skin);
