@@ -1,4 +1,4 @@
-package com.example.ui;
+package com.example.ui.menu;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;

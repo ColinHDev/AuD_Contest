@@ -1,4 +1,4 @@
-package com.example.ui;
+package com.example.ui.menu;
 
 
 import com.badlogic.gdx.Gdx;
@@ -12,13 +12,15 @@ import com.example.manager.*;
 import com.example.simulation.GameState;
 import com.example.simulation.action.Action;
 import com.example.simulation.action.ActionLog;
+import com.example.ui.ConfigScreen;
+import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
 import com.example.ui.debugView.DebugView;
 
 /**
  * Der Screen welcher ein aktives Spiel anzeigt.
  */
-public class InGameScreen implements Screen, AnimationLogProcessor {
+public class InGameScreen extends ConfigScreen implements AnimationLogProcessor  {
 
     private final Manager manager;
     private Viewport gameViewport;
@@ -46,20 +48,24 @@ public class InGameScreen implements Screen, AnimationLogProcessor {
 
         setupInput();
 
-        //update runconfig
-        runConfig.gui = true;
-        runConfig.animationLogProcessor = this;
-        runConfig.uiMessenger = hud.getUiMessenger();
-        runConfig.inputProcessor = hud.getInputHandler();
-
         manager = Manager.getManager();
         animator = new Animator(gameViewport, runConfig.gameMode, runConfig.uiMessenger);
-        //ToDo this should be happening in Menu
-        run = manager.startRun(runConfig);
+    }
+
+    @Override
+    protected void setRunConfiguration(RunConfiguration runConfiguration) {
+        //update runconfig
+        runConfiguration.gui = true;
+        runConfiguration.animationLogProcessor = this;
+        runConfiguration.uiMessenger = hud.getUiMessenger();
+        runConfiguration.inputProcessor = hud.getInputHandler();
+
+        super.setRunConfiguration(runConfiguration);
+        run = manager.startRun(runConfiguration);
         Executable game = run.getGames().get(0);
     }
 
-    //gets called when the screen becomes the main screen of GADS
+//gets called when the screen becomes the main screen of GADS
     @Override
     public void show() {
         animator.show();
@@ -134,7 +140,7 @@ public class InGameScreen implements Screen, AnimationLogProcessor {
         animator.dispose();
         manager.stop(run);
         hud.dispose();
-        gameManager.setScreenMenu();
+        gameManager.setScreen(GADS.ScreenState.MAINSCREEN, null);
     }
     public void setupInput(){
 

@@ -1,6 +1,7 @@
 package com.example.ui.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,15 +16,17 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.manager.Manager;
 import com.example.manager.RunConfiguration;
-import com.example.simulation.GameState;
 import com.example.ui.ConfigScreen;
 import com.example.ui.GADS;
 import com.example.ui.assets.AssetContainer;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
-public class MainScreen extends ConfigScreen {
+public class GamemodeNormalScreen extends ConfigScreen {
+    Table playerChooseTable;
     Table menuTable;
+    Table navigationTable;
     private RunConfiguration passedRunConfig;
     private Image title;
     private Viewport menuViewport;
@@ -33,6 +36,8 @@ public class MainScreen extends ConfigScreen {
     private Camera camera;
     private TextureRegion backgroundTextureRegion;
     private SpriteBatch menuSpriteBatch;
+
+    private MainScreen mainScreen;
 
     /**
      * setzt Eingaben auf die mainMenuStage. Sorgt dafür, dass Benutzereingaben während des Menüs verarbeitet werden.
@@ -47,7 +52,7 @@ public class MainScreen extends ConfigScreen {
      *
      * @param gameInstance
      */
-    public MainScreen(GADS gameInstance) {
+    public GamemodeNormalScreen(GADS gameInstance) {
 
         this.gameInstance = gameInstance;
         TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
@@ -77,41 +82,67 @@ public class MainScreen extends ConfigScreen {
     }
 
     /**
-     * erstellt die Titel Seite mithilfe der Tabelle aus LibGDX mit zugehörigem Titel und Schaltflächen
+     * erstellt die Spielmodus "Normal" Seite mithilfe der Tabelle aus LibGDX mit zugehörigem Titel und Schaltflächen
      */
     public void setupMenuScreen() {
+
+        Manager.getPossiblePlayers();
 
         Skin skin = AssetContainer.MainMenuAssets.skin;
         TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         Manager.NamedPlayerClass[] availableBots = Manager.getPossiblePlayers();
-
-        Label titelLabel = new Label("Titel", skin);
+        Label titelLabel = new Label("Normaler Spielmodus", skin);
         titelLabel.setAlignment(Align.center);
-        TextButton normalGameModeButton = new TextButton("Normal", skin);
-        normalGameModeButton.addListener(new ChangeListener() {
+        Label textLabel1 = new Label("Spieler 1:", skin);
+        titelLabel.setAlignment(Align.center);
+        Label textLabel2 = new Label("Spieler 2:", skin);
+        titelLabel.setAlignment(Align.center);
+        final SelectBox<Manager.NamedPlayerClass> player1 = new SelectBox<>(skin);
+        player1.setItems(availableBots);
+        final SelectBox<Manager.NamedPlayerClass> player2 = new SelectBox<>(skin);
+        player2.setItems(availableBots);
+        TextButton backButton = new TextButton("Zurück", skin);
+        backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                runConfiguration.gameMode = GameState.GameMode.Normal;
-                gameInstance.setScreen(GADS.ScreenState.NORMALMODESCREEN,runConfiguration);
+                gameInstance.setScreen(GADS.ScreenState.MAINSCREEN, null);
             }
         });
-        TextButton exitButton = new TextButton("Beenden", skin);
-        exitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
+        TextButton startGameButtton = getStartButton(skin, player1, player2);
 
         menuTable = new Table(skin);
+        playerChooseTable = new Table(skin);
+        navigationTable = new Table(skin);
         menuTable.setFillParent(true);
         menuTable.center();
-        menuTable.add(titelLabel).colspan(4).pad(10);
-        menuTable.row();
-        menuTable.add(normalGameModeButton).colspan(4).pad(10).width(200);
-        menuTable.row();
-        menuTable.add(exitButton).colspan(4).pad(10).width(200);
+        menuTable.add(titelLabel).colspan(4).pad(10).row();
+        playerChooseTable.columnDefaults(0).width(100);
+        playerChooseTable.columnDefaults(1).width(100);
+        playerChooseTable.add(textLabel1).colspan(4).pad(10);
+        playerChooseTable.add(player1).colspan(4).pad(10).row();
+        playerChooseTable.add(textLabel2).colspan(4).pad(10);
+        playerChooseTable.add(player2).colspan(4).pad(10).row();
+        menuTable.add(playerChooseTable).row();
+        navigationTable.add(backButton).colspan(4).pad(10).width(200);
+        navigationTable.add(startGameButtton).colspan(4).pad(10).width(200);
+        menuTable.add(navigationTable);
         mainMenuStage.addActor(menuTable);
+    }
+
+    private TextButton getStartButton(Skin skin, SelectBox<Manager.NamedPlayerClass> player1, SelectBox<Manager.NamedPlayerClass> player2) {
+        TextButton startGameButtton = new TextButton("Start", skin);
+        startGameButtton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+                runConfiguration.players = new ArrayList<>();
+                runConfiguration.players.add (player1.getSelected().getClassRef());
+                runConfiguration.players.add (player2.getSelected().getClassRef());
+
+                gameInstance.setScreen(GADS.ScreenState.INGAMESCREEN, runConfiguration);
+            }
+        });
+        return startGameButtton;
     }
 
     /**
