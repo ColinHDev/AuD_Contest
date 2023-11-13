@@ -175,6 +175,8 @@ public class IntRectangle implements Serializable, Shape2D {
      * @param point the position to be tested as a 2D float vector
      * @return True, if point is located within this rectangle
      */
+
+    //TODO: add IntVector Overload
     @Override
     public boolean contains(Vector2 point) {
         return contains(point.x, point.y);

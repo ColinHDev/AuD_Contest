@@ -3,7 +3,7 @@ import com.example.simulation.IntVector2;
 
 public class EnemyMoveAction extends EnemyAction{
 
-    public EnemyMoveAction(float delay, IntVector2 pos, int level) {
+    public EnemyMoveAction(float delay, IntVector2 pos, IntVector2 des, int level) {
         super(delay, pos, level);
     }
 
