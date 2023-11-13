@@ -45,6 +45,8 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private TileMap map;
 
+    private static GameEnemy[][][] enemies;
+
     private final BlockingQueue<ActionLog> pendingLogs = new LinkedBlockingQueue<>();
 
 
@@ -108,6 +110,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+                        put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
                     }
                 };
 
@@ -140,6 +143,32 @@ public class Animator implements Screen, AnimationLogProcessor {
             return children;
         }
 
+
+        private static ExpandedAction convertEnemySpawnAction(com.example.simulation.action.Action action, Animator animator) {
+            EnemySpawnAction spawnAction = (EnemySpawnAction) action;
+
+            SummonAction spawnEnemy = new SummonAction(spawnAction.getDelay(), target -> {
+                enemies[spawnAction.getTeam()][spawnAction.getPosition().x][spawnAction.getPosition().y]
+            }, () -> {
+
+                return (Entity) new GameEnemy(spawnAction.getLevel());
+            });
+
+            return new ExpandedAction(spawnEnemy);
+        }
+
+
+        private static ExpandedAction convertEnemyDefeatAction(com.example.simulation.action.Action action, Animator animator) {
+            EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
+
+            DestroyAction killEnemy = new DestroyAction(
+                    defeatAction.getDelay(),
+                    enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y],
+                    null,
+                    enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null);
+
+            return new ExpandedAction(killEnemy);
+        }
 
 
         private static ExpandedAction convertTurnStartAction(com.example.simulation.action.Action action, Animator animator) {
