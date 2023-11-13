@@ -1,13 +1,11 @@
 package com.example.simulation;
 
 import com.example.manager.Timer;
+import com.example.simulation.GameState.GameMode;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.action.GameOverAction;
 import com.example.simulation.action.InitAction;
 import com.example.simulation.action.TurnStartAction;
-import com.example.simulation.GameState.GameMode;
-
-import java.util.*;
 
 /**
  * Enthält die Logik, welche die Spielmechaniken bestimmt.
@@ -106,7 +104,7 @@ public class Simulation {
                 //Reward score to surviving winner
                 for (int i = 0; i < teamCount; i++) {
                     if (remainingCharacters[i] > 0) {
-                        gameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
+                        //gameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
                         actionLog.getRootAction().addChild(new GameOverAction(i));
                         break;
                     }
