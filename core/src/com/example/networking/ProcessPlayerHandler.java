@@ -3,6 +3,7 @@ package com.example.networking;
 import com.example.manager.player.Player;
 import com.example.manager.player.PlayerHandler;
 import com.example.networking.data.GameInformation;
+import com.example.networking.data.TurnInformation;
 import com.example.networking.rmi.ProcessCommunicator;
 import com.example.networking.rmi.ProcessCommunicatorImpl;
 import com.example.simulation.GameState;
@@ -69,7 +70,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
             // Exportieren des Objekts, damit es von anderen Prozessen verwendet werden kann
             communicator = (ProcessCommunicator) UnicastRemoteObject.exportObject(localCommunicator, 0);
             registry.rebind(stubNamePrefix + process.pid(), communicator);
-            communicator.queueInformation(new GameInformation());
+            communicator.queueInformation(new GameInformation(gameState));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -77,7 +78,11 @@ public final class ProcessPlayerHandler implements PlayerHandler {
 
     @Override
     public void update(GameState gameState) {
-
+        try {
+            communicator.queueInformation(new TurnInformation(gameState));
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

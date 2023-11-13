@@ -1,8 +1,9 @@
 package com.example.manager;
 
-import com.example.manager.command.*;
-import com.example.simulation.GameCharacterController;
-import com.example.simulation.GameState;
+import com.example.manager.command.Command;
+
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Provides an access-controlled interface to send commands to players
@@ -12,37 +13,11 @@ import com.example.simulation.GameState;
  */
 public class Controller {
 
+    private final Queue<Command> commands = new ArrayBlockingQueue<>(256);
     private int uses;
-    private Game game;
-    private GameCharacterController gcController;
-    private int team;
 
-    protected Controller(Game game, GameCharacterController gcController, GameState stateCopy, int uses) {
-//        System.out.println("Created new Controller: " + this);
-        this.game = game;
-        this.gcController = gcController;
-        this.team = gcController.getTeam();
+    protected Controller(int uses) {
         this.uses = uses;
-    }
-
-    /**
-     * @return Das Team, zu welchem dieser Controller gehört.
-     */
-    public int getTeam() {
-        return team;
-    }
-
-
-    //ToDo: write all required Functions similar to the template below, this will become the external API, that is exposed to the Bots
-    //ToDo: every Function in the gcController should have one Command as well as a designated call here
-    /**
-     * This is an exposed function of the API
-     * <p>
-     * The documentation of this has to be in german
-     */
-    public void foo(int i) {
-        queue(new FooCommand(gcController, i));
-
     }
 
     /**
@@ -60,10 +35,12 @@ public class Controller {
      * Internal utility method.
      * Controls the remaining uses and submits cmd to the game.
      *
-     * @param cmd the command to be queued
+     * @param command the command to be queued
      */
-    private void queue(Command cmd) {
-        if (uses-- > 0) game.queueCommand(cmd);
+    private void queue(Command command) {
+        if (uses-- > 0) {
+            commands.add(command);
+        }
     }
 
     /**
@@ -71,7 +48,5 @@ public class Controller {
      */
     protected void deactivate() {
         uses = -1;
-        gcController.deactivate();
     }
-
 }

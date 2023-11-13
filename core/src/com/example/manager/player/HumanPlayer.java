@@ -117,7 +117,7 @@ public class HumanPlayer extends Player {
             case KEY_CHARACTER_EXAMPLE:
                 foo += 1;
                 foo = foo % 360;
-                controller.foo(foo);
+                //controller.foo(foo);
                 break;
             case KEY_CHARACTER_END_TURN:
                 this.endCurrentTurn();
