@@ -19,7 +19,7 @@ public class ScoreBoard extends VerticalGroup {
 
 			//setValues
 			float[] scores = state.getScores();
-			int numTeams = state.getTeamCount();
+			int numTeams = state.getPlayerCount();
 			if(playerNames==null){
 				playerNames = new String[numTeams];
 			}
