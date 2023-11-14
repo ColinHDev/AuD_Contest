@@ -24,9 +24,9 @@ jobs:
 
     - name: Build Pipeline
       run: gradle --build-cache pipeline:build
-    - name: Build with Core
+    - name: Build Core
       run: gradle --build-cache core:build
-    - name: Build with Desktop
+    - name: Build Desktop
       run: gradle --build-cache desktop:build
 
   test:
