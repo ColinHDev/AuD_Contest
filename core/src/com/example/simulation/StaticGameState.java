@@ -16,7 +16,7 @@ public class StaticGameState implements Serializable {
     // y - Zeile
 
 
-    private StaticPlayerState[] staticPlayerStates;
+    StaticPlayerState[] staticPlayerStates;
 
     private int turn;
 

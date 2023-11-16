@@ -6,8 +6,12 @@ public class StaticPlayerState implements Serializable {
 
     private final StaticGameState staticGameState;
     private Tile[][] board;
+
+
     private int health;
     private int money;
+    private int enemyNumber;
+    private int playerNumber;
 
     public int getHealth() {
         return health;
@@ -45,9 +49,21 @@ public class StaticPlayerState implements Serializable {
         }
         health = original.health;
         money = original.money;
-
     }
-    public StaticPlayerState(StaticGameState staticGameState, int health, int money){
+
+
+    private Tile[][] getMap(){
+        return board;
+    }
+
+    private Tile[][] getEnemyMap(){
+        return staticGameState.staticPlayerStates[enemyNumber].getMap();
+    }
+
+
+    public StaticPlayerState(StaticGameState staticGameState, int health, int money, int playerNumber){
+        this.playerNumber = playerNumber;
+        this.enemyNumber = playerNumber == 0 ? 1 : 0;
         this.staticGameState = staticGameState;
         int width = staticGameState.getBoardSizeX();
         int height = staticGameState.getBoardSizeY();
