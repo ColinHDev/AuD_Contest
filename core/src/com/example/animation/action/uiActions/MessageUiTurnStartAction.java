@@ -1,6 +1,6 @@
 package com.example.animation.action.uiActions;
 
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.ui.hud.UiMessenger;
 
 /**
@@ -10,9 +10,9 @@ public class MessageUiTurnStartAction extends MessageUiAction {
 
 
 	private int team;
-	GameState state;
+	StaticGameState state;
 
-	public MessageUiTurnStartAction(float start, UiMessenger uiMessenger, int team, GameState state) {
+	public MessageUiTurnStartAction(float start, UiMessenger uiMessenger, int team, StaticGameState state) {
 		super(start, uiMessenger);
 		this.team = team;
 		this.state = state;

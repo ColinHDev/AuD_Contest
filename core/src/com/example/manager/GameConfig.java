@@ -1,7 +1,7 @@
 package com.example.manager;
 
 import com.example.manager.player.Player;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.ui.hud.UiMessenger;
 
 import java.io.Serializable;
@@ -25,7 +25,7 @@ class GameConfig implements Serializable {
     }
 
     //Todo add default values
-    public GameState.GameMode gameMode = null;
+    public StaticGameState.GameMode gameMode = null;
 
     public boolean gui = false;
 
