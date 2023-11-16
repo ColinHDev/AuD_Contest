@@ -1,12 +1,14 @@
 package com.example.simulation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StaticPlayerState implements Serializable {
 
     private final StaticGameState staticGameState;
     private Tile[][] board;
-
+    private List<Tower> towerList;
 
     private int health;
     private int money;
@@ -52,14 +54,17 @@ public class StaticPlayerState implements Serializable {
     }
 
 
-    private Tile[][] getMap(){
+    public Tile[][] getMap(){
         return board;
     }
 
-    private Tile[][] getEnemyMap(){
+    public Tile[][] getEnemyMap(){
         return staticGameState.staticPlayerStates[enemyNumber].getMap();
     }
-
+    void addTower(Tower tower){
+        tower.setEnemyList(board);
+        towerList.add(tower);
+    }
 
     public StaticPlayerState(StaticGameState staticGameState, int health, int money, int playerNumber){
         this.playerNumber = playerNumber;
