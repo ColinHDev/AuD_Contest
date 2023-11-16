@@ -4,7 +4,8 @@ import com.example.simulation.IntVector2;
 public class EnemyMoveAction extends EnemyAction{
 
     public EnemyMoveAction(float delay, IntVector2 pos, IntVector2 des, int level) {
-        super(delay, pos, level);
+        super(delay, pos, level, 0);
+        //Handling which team?
     }
 
     @Override

@@ -2,13 +2,13 @@ package com.example.simulation.action;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class TowerPlaceAction extends Action{
+public class TowerPlaceAction extends TeamAction{
 
     private final Vector2 pos;
     private final int type;
 
-    public TowerPlaceAction(float delay, Vector2 pos, int type) {
-        super(delay);
+    public TowerPlaceAction(float delay, Vector2 pos, int type, int team) {
+        super(delay, team);
         this.pos = pos;
         this.type = type;
     }
