@@ -2,7 +2,7 @@ package com.example.manager;
 
 import bots.MalBot;
 import com.example.manager.player.IdleBot;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class TestPolicy {
     @Test
     public void TestMalBot() {
         RunConfiguration config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Normal;
+        config.gameMode = StaticGameState.GameMode.Normal;
         config.mapName = "MangoMap";
         config.teamCount = 2;
         config.players = new ArrayList<>();

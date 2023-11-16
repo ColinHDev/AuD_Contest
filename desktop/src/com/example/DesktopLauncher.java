@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.example.manager.*;
 import com.example.manager.player.Bot;
 import com.example.manager.player.Player;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.ui.GADS;
 import org.apache.commons.cli.*;
 
@@ -93,13 +93,13 @@ public class DesktopLauncher {
         if (params.hasOption("r"))
             runConfig.replay = true;
         int gameMode = Integer.parseInt(params.getOptionValue("g", "0"));
-        if (gameMode < 0 || gameMode >= GameState.GameMode.values().length) {
+        if (gameMode < 0 || gameMode >= StaticGameState.GameMode.values().length) {
             System.err.println("Valid GameModes range from 0 to 4");
             printHelp();
             return;
         }
-        runConfig.gameMode = GameState.GameMode.values()[gameMode];
-        if (runConfig.gameMode == GameState.GameMode.Tournament_Phase_1)
+        runConfig.gameMode = StaticGameState.GameMode.values()[gameMode];
+        if (runConfig.gameMode == StaticGameState.GameMode.Tournament_Phase_1)
             runConfig.teamCount = 4;
         if (runConfig.gui) {
             if(runConfig.players!=null) runConfig.teamCount = runConfig.players.size();
@@ -111,20 +111,20 @@ public class DesktopLauncher {
         } else {
             Manager.setSystemReservedProcessorCount(1);
             boolean invalidConfig = false;
-            if (runConfig.gameMode != GameState.GameMode.Exam_Admission && runConfig.mapName == null) {
+            if (runConfig.gameMode != StaticGameState.GameMode.Exam_Admission && runConfig.mapName == null) {
                 System.err.println("Param -m is required for no GUI mode (except Exam Admission)");
                 invalidConfig = true;
             }
             if (runConfig.players == null) {
                 System.err.println("Param -p is required for no GUI mode");
                 invalidConfig = true;
-            } else if (runConfig.gameMode == GameState.GameMode.Campaign){
+            } else if (runConfig.gameMode == StaticGameState.GameMode.Campaign){
                 if( runConfig.players.size() != 1) {
                     System.err.println("The Campaign can only be played by exactly one player");
                     invalidConfig = true;
                 }
 
-            }  else if (runConfig.gameMode == GameState.GameMode.Exam_Admission){
+            }  else if (runConfig.gameMode == StaticGameState.GameMode.Exam_Admission){
                 if( runConfig.players.size() != 1) {
                     System.err.println("The Exam Admission can only be played by exactly one player");
                     invalidConfig = true;

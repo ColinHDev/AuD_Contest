@@ -11,7 +11,7 @@ import com.example.animation.action.*;
 import com.example.animation.action.Action;
 import com.example.animation.action.uiActions.*;
 import com.example.animation.entity.*;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.simulation.action.*;
 import com.example.manager.AnimationLogProcessor;
 import com.example.ui.assets.AssetContainer.IngameAssets;
@@ -24,19 +24,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Kernklasse für die Visualisierung des Spielgeschehens.
- * Übersetzt {@link GameState GameState} und {@link ActionLog ActionLog}
+ * Übersetzt {@link StaticGameState StaticGameState} und {@link ActionLog ActionLog}
  * des {@link com.example.simulation Simulation-Package} in für libGDX renderbare Objekte
  */
 public class Animator implements Screen, AnimationLogProcessor {
     private AnimatorCamera camera;
-    private GameState state;
+    private StaticGameState state;
     private final UiMessenger uiMessenger;
 
     private Viewport viewport;
     private Viewport backgroundViewport;
 
     private SpriteEntity background;
-    private final GameState.GameMode gameMode;
+    private final StaticGameState.GameMode gameMode;
 
 
     private final Batch batch;
@@ -176,7 +176,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             if (winAction.getTeam() < 0) {
                 gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true);
             } else {
-                if (animator.gameMode == GameState.GameMode.Campaign || animator.gameMode == GameState.GameMode.Exam_Admission) {
+                if (animator.gameMode == StaticGameState.GameMode.Campaign || animator.gameMode == StaticGameState.GameMode.Exam_Admission) {
                     //ToDo rewrite this to fit your PvP structure
                     if (winAction.getTeam() == 0) {
                         //if the player 0 (human or bot of student) has not won then display defeat
@@ -238,7 +238,7 @@ public class Animator implements Screen, AnimationLogProcessor {
      *
      * @param viewport viewport used for rendering
      */
-    public Animator(Viewport viewport, GameState.GameMode gameMode, UiMessenger uiMessenger) {
+    public Animator(Viewport viewport, StaticGameState.GameMode gameMode, UiMessenger uiMessenger) {
         this.gameMode = gameMode;
         this.uiMessenger = uiMessenger;
         this.batch = new SpriteBatch();
@@ -252,7 +252,7 @@ public class Animator implements Screen, AnimationLogProcessor {
     }
 
     @Override
-    public void init(GameState state, String[] playerNames, String[][] skins) {
+    public void init(StaticGameState state, String[] playerNames, String[][] skins) {
         synchronized (root) {
             this.state = state;
             map = new TileMap(state);

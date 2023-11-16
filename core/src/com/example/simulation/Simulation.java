@@ -1,7 +1,7 @@
 package com.example.simulation;
 
 import com.example.manager.Timer;
-import com.example.simulation.GameState.GameMode;
+import com.example.simulation.StaticGameState.GameMode;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.action.GameOverAction;
 import com.example.simulation.action.InitAction;
@@ -25,7 +25,7 @@ public class Simulation {
     }
 
     public static final float SCORE_ASSIST = 25;
-    private final GameState gameState;
+    private final StaticGameState staticGameState;
     private ActionLog actionLog;
 
     private int remainingTeams;
@@ -39,8 +39,8 @@ public class Simulation {
      * @param teamAm   Anzahl Teams
      */
     public Simulation(GameMode gameMode, String mapName, int teamAm) {
-        gameState = new GameState(gameMode, mapName, teamAm, this);
-        //Integer team = gameState.getTurn().peek();
+        staticGameState = new StaticGameState(gameMode, mapName, teamAm, this);
+        //Integer team = staticGameState.getTurn().peek();
         //assert team != null;
         actionLog = new ActionLog(new TurnStartAction(0));
         remainingTeams = teamAm;
@@ -60,12 +60,12 @@ public class Simulation {
     }
 
     /**
-     * gibt den aktuellen GameState zurück
+     * gibt den aktuellen StaticGameState zurück
      *
-     * @return aktueller GameState
+     * @return aktueller StaticGameState
      */
-    public GameState getState() {
-        return gameState;
+    public StaticGameState getState() {
+        return staticGameState;
     }
 
     ActionLog getActionLog() {
@@ -73,13 +73,13 @@ public class Simulation {
     }
 
     public void setTurnTimer(Timer timer) {
-        gameState.setTurnTimer(timer);
+        staticGameState.setTurnTimer(timer);
     }
 
     public GameCharacterController getController() {
-        //Integer team = gameState.getTurn().peek();
+        //Integer team = staticGameState.getTurn().peek();
         //assert team != null;
-        //return new GameCharacterController(team, gameState);
+        //return new GameCharacterController(team, staticGameState);
         return null;
     }
 
@@ -88,8 +88,8 @@ public class Simulation {
 
         //   int activeTeam = getActiveTeam();
 
-        //  ArrayDeque<Integer> turn = gameState.getTurn();
-        int teamCount = gameState.getPlayerCount();
+        //  ArrayDeque<Integer> turn = staticGameState.getTurn();
+        int teamCount = staticGameState.getPlayerCount();
         int[] remainingCharacters = new int[teamCount];
         boolean[] lostChar = new boolean[teamCount];
 
@@ -104,7 +104,7 @@ public class Simulation {
                 //Reward score to surviving winner
                 for (int i = 0; i < teamCount; i++) {
                     if (remainingCharacters[i] > 0) {
-                        //gameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
+                        //staticGameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
                         actionLog.getRootAction().addChild(new GameOverAction(i));
                         break;
                     }
@@ -113,11 +113,11 @@ public class Simulation {
                 actionLog.getRootAction().addChild(new GameOverAction(-1));
             }
             //End game
-            gameState.deactivate();
+            staticGameState.deactivate();
             return this.actionLog;
         }
 
-        // Integer team = gameState.getTurn().peek();
+        // Integer team = staticGameState.getTurn().peek();
         ActionLog lastTurn = this.actionLog;
         //     assert team != null;
         this.actionLog = new ActionLog(new TurnStartAction(0));
@@ -132,11 +132,11 @@ public class Simulation {
     }
 
     // public int getActiveTeam() {
-    //     return Objects.requireNonNull(gameState.getTurn().peek());
+    //     return Objects.requireNonNull(staticGameState.getTurn().peek());
     // }
 
 
     public void penalizeCurrentPlayer() {
-        //gameState.addScore(actionLog.getRootAction(), getActiveTeam(), SCORE_ERROR_PENALTY);
+        //staticGameState.addScore(actionLog.getRootAction(), getActiveTeam(), SCORE_ERROR_PENALTY);
     }
 }

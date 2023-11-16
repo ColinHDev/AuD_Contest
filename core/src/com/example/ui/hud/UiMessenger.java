@@ -1,7 +1,7 @@
 package com.example.ui.hud;
 
 import com.badlogic.gdx.graphics.Color;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.ui.menu.Hud;
 
 
@@ -22,7 +22,7 @@ public class UiMessenger {
 	 * Applies the necessary changes to the Hud for a new turn.
 	 * @param team
 	 */
-	public void turnChanged(GameState state, int team){
+	public void turnChanged(StaticGameState state, int team){
 		//Todo update/notify every element so it sets its status to that of the current player
 	}
 

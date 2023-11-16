@@ -1,9 +1,6 @@
 package com.example.simulation;
 
-import com.badlogic.gdx.utils.JsonValue;
 import com.example.manager.Timer;
-import com.example.simulation.action.Action;
-import com.example.simulation.action.ScoreAction;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,14 +9,14 @@ import java.util.*;
 /**
  * Repräsentiert ein laufendes Spiel mit allen dazugehörigen Daten
  */
-public class GameState implements Serializable {
+public class StaticGameState implements Serializable {
 
     // Spielbrett
     // x - Spalten
     // y - Zeile
 
 
-    private PlayerState[] playerStates;
+    private StaticPlayerState[] staticPlayerStates;
 
     private int turn;
 
@@ -43,19 +40,19 @@ public class GameState implements Serializable {
     }
 
     public float[] getScores() {
-        float[] healths = new float[playerStates.length];
-        for (int i = 0; i < playerStates.length; i++) {
-            healths[i] = playerStates[i].getHealth();
+        float[] healths = new float[staticPlayerStates.length];
+        for (int i = 0; i < staticPlayerStates.length; i++) {
+            healths[i] = staticPlayerStates[i].getHealth();
         }
         return healths;
     }
 
-    public GameState copy() {
-        return new GameState(this);
+    public StaticGameState copy() {
+        return new StaticGameState(this);
     }
 
 
-    private GameState(GameState original) {
+    private StaticGameState(StaticGameState original) {
         //ToDo this needs to deep copy all read only attributes
         gameMode = original.gameMode;
         turnTimer = original.turnTimer;
@@ -91,14 +88,14 @@ public class GameState implements Serializable {
 
 
     /**
-     * Creates a new GameState for the specified attributes.
+     * Creates a new StaticGameState for the specified attributes.
      *
      * @param gameMode    selected game mode
      * @param mapName     name of the selected map as String
      * @param playerCount number of players
      * @param sim         the respective simulation instance
      */
-    GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
+    StaticGameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
         this.gameMode = gameMode;
         this.mapName = mapName;
         this.map = MapLoader.getInstance().loadMap(

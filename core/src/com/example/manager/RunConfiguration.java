@@ -1,8 +1,7 @@
 package com.example.manager;
 
-import com.badlogic.gdx.utils.Null;
 import com.example.manager.player.Player;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import com.example.ui.hud.UiMessenger;
 
 import java.util.ArrayList;
@@ -28,11 +27,11 @@ public class RunConfiguration {
     }
 
     //Todo add default values
-    public GameState.GameMode gameMode = GameState.GameMode.Normal;
+    public StaticGameState.GameMode gameMode = StaticGameState.GameMode.Normal;
     public int inventorySize = 6;
 
-    public GameState.GameMode[] getGameModes() {
-        return GameState.GameMode.values();
+    public StaticGameState.GameMode[] getGameModes() {
+        return StaticGameState.GameMode.values();
     }
 
     public boolean gui = false;

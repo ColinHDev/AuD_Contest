@@ -1,6 +1,6 @@
 package com.example.manager;
 
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 
 import java.util.Arrays;
 
@@ -11,7 +11,7 @@ public class SingleGameRun extends Run {
 
     public SingleGameRun(Manager manager, RunConfiguration runConfig) {
         super(manager, runConfig);
-        Executable game = runConfig.gameMode == GameState.GameMode.Replay ? new ReplayGame(new GameConfig(runConfig)) : new Game(new GameConfig(runConfig));
+        Executable game = runConfig.gameMode == StaticGameState.GameMode.Replay ? new ReplayGame(new GameConfig(runConfig)) : new Game(new GameConfig(runConfig));
         game.addCompletionListener(this::onGameCompletion);
         addGame(game);
     }

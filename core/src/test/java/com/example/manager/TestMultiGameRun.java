@@ -2,7 +2,7 @@ package com.example.manager;
 
 
 import com.example.manager.player.IdleBot;
-import com.example.simulation.GameState;
+import com.example.simulation.StaticGameState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +55,7 @@ public class TestMultiGameRun {
         RunConfiguration config;
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 2;
         config.players = new ArrayList<>();
@@ -64,7 +64,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 2;
         config.players = new ArrayList<>();
@@ -74,7 +74,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 2;
         config.players = new ArrayList<>();
@@ -85,7 +85,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 2;
         config.players = new ArrayList<>();
@@ -97,7 +97,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 3;
         config.players = new ArrayList<>();
@@ -107,7 +107,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 3;
         config.players = new ArrayList<>();
@@ -118,7 +118,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 3;
         config.players = new ArrayList<>();
@@ -130,7 +130,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "MangoMap";
         config.teamCount = 3;
         config.players = new ArrayList<>();
@@ -143,7 +143,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -154,7 +154,7 @@ public class TestMultiGameRun {
         samples.add(new TestExample(config));
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -167,7 +167,7 @@ public class TestMultiGameRun {
 
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -181,7 +181,7 @@ public class TestMultiGameRun {
 
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "christmasMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -196,7 +196,7 @@ public class TestMultiGameRun {
 
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "MangoMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -212,7 +212,7 @@ public class TestMultiGameRun {
 
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "MangoMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();
@@ -229,7 +229,7 @@ public class TestMultiGameRun {
 
 
         config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Tournament_Phase_1;
+        config.gameMode = StaticGameState.GameMode.Tournament_Phase_1;
         config.mapName = "MangoMap";
         config.teamCount = 4;
         config.players = new ArrayList<>();

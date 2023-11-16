@@ -1,6 +1,5 @@
 package com.example.simulation;
 
-import com.badlogic.gdx.math.Vector2;
 import com.example.simulation.action.Action;
 import com.example.simulation.action.ActionLog;
 
@@ -12,7 +11,7 @@ import com.example.simulation.action.ActionLog;
 public class GameCharacterController {
 
     private int team;
-    private final GameState state;
+    private final StaticGameState state;
     boolean active = true;
 
     /**
@@ -35,7 +34,7 @@ public class GameCharacterController {
      * @param team          the team this Controller will grant access to
      * @param state         the current state of the game
      */
-    protected GameCharacterController(int team, GameState state) {
+    protected GameCharacterController(int team, StaticGameState state) {
         this.team = team;
         this.state = state;
     }
