@@ -20,6 +20,9 @@ public class PlayerState implements Serializable {
         return new PlayerState(this, newGameState);
     }
 
+    /**
+     * Creates a Deep-Copy of the player state
+     */
     private PlayerState(PlayerState original, GameState gameState){
         this.gameState = gameState;
         board = new Tile[original.board.length][original.board[0].length];
@@ -28,10 +31,18 @@ public class PlayerState implements Serializable {
                 board[i][j] = original.board[i][j].copy();
             }
         }
+
         for (int i = 0; i < original.board.length; i++) {
             for (int j = 0; j < original.board.length; j++) {
-                if (board[i][j] instanceof PathTile){
-                    //TODO Search for last PathTile -> Copy Backwards
+                if (board[i][j] instanceof PathTile && ((PathTile) board[i][j]).next == null){
+                    PathTile actual = (PathTile) board[i][j];
+                    while (actual.prev!= null) {
+                        actual.prev = (PathTile) board[((PathTile) original.board[actual.getPosition().x][actual.getPosition().y]).prev.getPosition().x][((PathTile) original.board[actual.getPosition().x][actual.getPosition().y]).prev.getPosition().y];
+                        //TODO make it more simple
+                        actual.prev.next = actual;
+                        actual = actual.prev;
+                    }
+                        break;
                 }
             }
         }

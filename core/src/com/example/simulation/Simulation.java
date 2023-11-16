@@ -13,8 +13,8 @@ import com.example.simulation.action.TurnStartAction;
  */
 public class Simulation {
 
-    public static final float SCORE_KILL = 50;
-    public static final float SCORE_ELIMINATION = 50;
+    //public static final float SCORE_KILL = 50;
+    //public static final float SCORE_ELIMINATION = 50;
     protected static final float[] SCORE_WIN = new float[]{200, 100, 50};
 
     public static final float SCORE_ERROR_PENALTY = -50;
