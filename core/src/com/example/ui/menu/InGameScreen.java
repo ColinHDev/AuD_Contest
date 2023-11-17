@@ -2,7 +2,6 @@ package com.example.ui.menu;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.*;
@@ -55,14 +54,14 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     @Override
     protected void setRunConfiguration(RunConfiguration runConfiguration) {
         //update runconfig
-        runConfiguration.gui = true;
-        runConfiguration.animationLogProcessor = this;
-        runConfiguration.uiMessenger = hud.getUiMessenger();
-        runConfiguration.inputProcessor = hud.getInputHandler();
-
         super.setRunConfiguration(runConfiguration);
-        run = manager.startRun(runConfiguration);
-        Executable game = run.getGames().get(0);
+        this.runConfiguration.gui = true;
+        this.runConfiguration.animationLogProcessor = this;
+        this.runConfiguration.uiMessenger = hud.getUiMessenger();
+        this.runConfiguration.inputProcessor = hud.getInputHandler();
+
+        //run = manager.startRun(this.runConfiguration);
+        //Executable game = run.getGames().get(0);
     }
 
 //gets called when the screen becomes the main screen of GADS
