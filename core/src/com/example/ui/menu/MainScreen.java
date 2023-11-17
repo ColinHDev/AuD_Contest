@@ -44,24 +44,25 @@ public class MainScreen extends ConfigScreen {
 
     /**
      * Konstruktor, welcher Kamera, Viewports, Stage und SpriteBatch initialisiert. ruft setupMenuScreen auf, um UI für Hauptmenü einzurichten
-     *
-     * @param gameInstance
+     * Ruft setupMenuScreen auf, um das UI für das Hauptmenü einzurichten.
+     * @param gameInstance Die Instanz des Hauptspiels (GADS), die diesem Bildschirm gehört.
      */
     public MainScreen(GADS gameInstance) {
 
         this.gameInstance = gameInstance;
-        TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
 
+        TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         this.backgroundTextureRegion = AssetContainer.MainMenuAssets.background;
+
         this.camera = new OrthographicCamera(30, 30 * (Gdx.graphics.getHeight() * 1f / Gdx.graphics.getWidth()));
-        //set the viewport, world with and height are currently the one of the title sprite, so the table is always on screen
-        //the world sizes are roughly estimating the table size in title image width, no way of getting the size of the button table/it did not really work out
+
         menuViewport = new ExtendViewport(titleSprite.getRegionWidth() / 3f, titleSprite.getRegionWidth() + 100, camera);
+
         backgroundViewport = new FillViewport(backgroundTextureRegion.getRegionWidth(), backgroundTextureRegion.getRegionHeight());
+
         mainMenuStage = new Stage(menuViewport);
 
         menuSpriteBatch = new SpriteBatch();
-        //create a table, holds ui widgets like buttons and textfields
 
         setupMenuScreen();
     }

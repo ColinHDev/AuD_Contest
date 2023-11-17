@@ -2,6 +2,7 @@ package com.example.ui.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,6 +29,7 @@ public class GamemodeNormalScreen extends ConfigScreen {
     Table playerChooseTable;
     Table menuTable;
     Table navigationTable;
+    Table mapTable;
     private RunConfiguration passedRunConfig;
     private Image title;
     private Viewport menuViewport;
@@ -49,24 +52,26 @@ public class GamemodeNormalScreen extends ConfigScreen {
 
     /**
      * Konstruktor, welcher Kamera, Viewports, Stage und SpriteBatch initialisiert. ruft setupMenuScreen auf, um UI für Hauptmenü einzurichten
+     * Ruft setupMenuScreen auf, um das UI für das Hauptmenü einzurichten.
      *
-     * @param gameInstance
+     * @param gameInstance Die Instanz des Hauptspiels (GADS), die diesem Bildschirm gehört.
      */
     public GamemodeNormalScreen(GADS gameInstance) {
 
         this.gameInstance = gameInstance;
-        TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
 
+        TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         this.backgroundTextureRegion = AssetContainer.MainMenuAssets.background;
+
         this.camera = new OrthographicCamera(30, 30 * (Gdx.graphics.getHeight() * 1f / Gdx.graphics.getWidth()));
-        //set the viewport, world with and height are currently the one of the title sprite, so the table is always on screen
-        //the world sizes are roughly estimating the table size in title image width, no way of getting the size of the button table/it did not really work out
+
         menuViewport = new ExtendViewport(titleSprite.getRegionWidth() / 3f, titleSprite.getRegionWidth() + 100, camera);
+
         backgroundViewport = new FillViewport(backgroundTextureRegion.getRegionWidth(), backgroundTextureRegion.getRegionHeight());
+
         mainMenuStage = new Stage(menuViewport);
 
         menuSpriteBatch = new SpriteBatch();
-        //create a table, holds ui widgets like buttons and textfields
 
         setupMenuScreen();
     }
@@ -97,10 +102,15 @@ public class GamemodeNormalScreen extends ConfigScreen {
         titelLabel.setAlignment(Align.center);
         Label textLabel2 = new Label("Spieler 2:", skin);
         titelLabel.setAlignment(Align.center);
-        final SelectBox<Manager.NamedPlayerClass> player1 = new SelectBox<>(skin);
-        player1.setItems(availableBots);
-        final SelectBox<Manager.NamedPlayerClass> player2 = new SelectBox<>(skin);
-        player2.setItems(availableBots);
+        Label textLabel3 = new Label("Karte:", skin);
+        titelLabel.setAlignment(Align.center);
+        final SelectBox<Manager.NamedPlayerClass> player1SelectBox = new SelectBox<>(skin);
+        player1SelectBox.setItems(availableBots);
+        final SelectBox<Manager.NamedPlayerClass> player2SelectBox = new SelectBox<>(skin);
+        player2SelectBox.setItems(availableBots);
+        final SelectBox<String> mapSelectBox = new SelectBox<>(skin);
+        Array<String> mapNames = loadFileNames("assets/res/maps", "json");
+        mapSelectBox.setItems(mapNames);
         TextButton backButton = new TextButton("Zurück", skin);
         backButton.addListener(new ChangeListener() {
             @Override
@@ -108,41 +118,76 @@ public class GamemodeNormalScreen extends ConfigScreen {
                 gameInstance.setScreen(GADS.ScreenState.MAINSCREEN, null);
             }
         });
-        TextButton startGameButtton = getStartButton(skin, player1, player2);
+        TextButton startGameButton = getStartButton(skin, player1SelectBox, player2SelectBox, mapSelectBox);
 
         menuTable = new Table(skin);
         playerChooseTable = new Table(skin);
         navigationTable = new Table(skin);
+        mapTable = new Table(skin);
         menuTable.setFillParent(true);
         menuTable.center();
         menuTable.add(titelLabel).colspan(4).pad(10).row();
         playerChooseTable.columnDefaults(0).width(100);
         playerChooseTable.columnDefaults(1).width(100);
         playerChooseTable.add(textLabel1).colspan(4).pad(10);
-        playerChooseTable.add(player1).colspan(4).pad(10).row();
+        playerChooseTable.add(player1SelectBox).colspan(4).pad(10).row();
         playerChooseTable.add(textLabel2).colspan(4).pad(10);
-        playerChooseTable.add(player2).colspan(4).pad(10).row();
+        playerChooseTable.add(player2SelectBox).colspan(4).pad(10).row();
         menuTable.add(playerChooseTable).row();
+        mapTable.columnDefaults(0).width(100);
+        mapTable.columnDefaults(1).width(100);
+        mapTable.add(textLabel3).colspan(4).pad(10);
+        mapTable.add(mapSelectBox).colspan(4).pad(10);
+        menuTable.add(mapTable).row();
         navigationTable.add(backButton).colspan(4).pad(10).width(200);
-        navigationTable.add(startGameButtton).colspan(4).pad(10).width(200);
+        navigationTable.add(startGameButton).colspan(4).pad(10).width(200);
         menuTable.add(navigationTable);
         mainMenuStage.addActor(menuTable);
     }
 
-    private TextButton getStartButton(Skin skin, SelectBox<Manager.NamedPlayerClass> player1, SelectBox<Manager.NamedPlayerClass> player2) {
-        TextButton startGameButtton = new TextButton("Start", skin);
-        startGameButtton.addListener(new ChangeListener() {
+    /**
+     * Erstellt und gibt einen "Start"-Button zurück, der auf Benutzerinteraktion reagiert.
+     * @param skin Der Skin für das UI-Element.
+     * @param player1SelectBox Die SelectBox für Spieler 1 mit ausgewählten Spielerklassen.
+     * @param player2SelectBox Die SelectBox für Spieler 2 mit ausgewählten Spielerklassen
+     * @param mapSelectBox Die SelectBox für die Auswahl der Spielkarte.
+     * @return Der konfigurierte "Start"-Button.
+     */
+    private TextButton getStartButton(Skin skin, SelectBox<Manager.NamedPlayerClass> player1SelectBox, SelectBox<Manager.NamedPlayerClass> player2SelectBox, SelectBox<String> mapSelectBox) {
+        TextButton startGameButton = new TextButton("Start", skin);
+        startGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
                 runConfiguration.players = new ArrayList<>();
-                runConfiguration.players.add (player1.getSelected().getClassRef());
-                runConfiguration.players.add (player2.getSelected().getClassRef());
+                runConfiguration.players.add (player1SelectBox.getSelected().getClassRef());
+                runConfiguration.players.add (player2SelectBox.getSelected().getClassRef());
+                runConfiguration.mapName = mapSelectBox.getSelected();
 
                 gameInstance.setScreen(GADS.ScreenState.INGAMESCREEN, runConfiguration);
             }
         });
-        return startGameButtton;
+        return startGameButton;
+    }
+
+    /**
+     * Liest die Namen der gesuchten Dateien aus dem angegebenen Ordner, die die gesuchte Erweiterung haben in ein Array.
+     * @param folderPath Der Pfad zum Ordner, aus dem die Karten geladen werden sollen.
+     * @return Eine Array-Liste von Karten-Namen ohne Dateierweiterung.
+     */
+    private Array<String> loadFileNames(String folderPath, String fileExtension) {
+        Array<String> mapNames = new Array<>();
+        FileHandle folder = Gdx.files.internal(folderPath);
+
+        if (folder.isDirectory()) {
+            for (FileHandle file : folder.list()) {
+                if (file.extension().equals(fileExtension)) {
+                    String mapName = file.nameWithoutExtension();
+                    mapNames.add(mapName);
+                }
+            }
+        }
+        return mapNames;
     }
 
     /**
