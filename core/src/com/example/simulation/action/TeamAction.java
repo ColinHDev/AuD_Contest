@@ -11,6 +11,9 @@ public class TeamAction extends Action{
         super(delay);
         this.team = team;
     }
+    public int getTeam() {
+        return team;
+    }
 
     @Override
     public String toString() {
