@@ -23,10 +23,16 @@ public class PathTile extends Tile {
         this.enemies = enemies;
     }
 
-    public void setNext(PathTile next) {
+    protected void setNext(PathTile next) {
         this.next = next;
         if (next != null)
             next.prev = this;
+    }
+    protected void setPrev(PathTile prev){
+        this.prev = prev;
+        if (prev != null){
+            prev.next = this;
+        }
     }
     
     private List<Enemy> copyList(List<Enemy> enemies){
