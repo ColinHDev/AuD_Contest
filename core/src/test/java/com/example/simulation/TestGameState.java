@@ -2,14 +2,14 @@ package com.example.simulation;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestStaticGameState {
+public class TestGameState {
 
-    private StaticGameState state;
+    private GameState state;
     private Simulation sim;
 
     @Before
     public void init() {
-        sim = new Simulation(StaticGameState.GameMode.Normal, "map1", 2);
+        sim = new Simulation(GameState.GameMode.Normal, "map1", 2);
         state = sim.getState();
     }
 

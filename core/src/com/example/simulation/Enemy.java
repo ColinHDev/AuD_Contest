@@ -27,6 +27,7 @@ public class Enemy {
             posTile = posTile.next;
             posTile.enemies.add(this);
             head.addChild(new EnemyMoveAction(0, posTile.prev.getPosition(), posTile.getPosition(), level));
+
         }
         else{
 

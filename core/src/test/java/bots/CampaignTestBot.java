@@ -2,7 +2,7 @@ package bots;
 
 import com.example.manager.player.Bot;
 import com.example.manager.Controller;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 public class CampaignTestBot extends Bot {
     @Override
@@ -21,12 +21,12 @@ public class CampaignTestBot extends Bot {
     }
 
     @Override
-    public void init(StaticGameState state) {
+    public void init(GameState state) {
 
     }
 
     @Override
-    public void executeTurn(StaticGameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         controller.foo(1);
     }
 }

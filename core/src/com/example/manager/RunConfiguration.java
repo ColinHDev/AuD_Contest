@@ -1,7 +1,7 @@
 package com.example.manager;
 
 import com.example.manager.player.Player;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.ui.hud.UiMessenger;
 
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ public class RunConfiguration {
     }
 
     //Todo add default values
-    public StaticGameState.GameMode gameMode = StaticGameState.GameMode.Normal;
+    public GameState.GameMode gameMode = GameState.GameMode.Normal;
     public int inventorySize = 6;
 
-    public StaticGameState.GameMode[] getGameModes() {
-        return StaticGameState.GameMode.values();
+    public GameState.GameMode[] getGameModes() {
+        return GameState.GameMode.values();
     }
 
     public boolean gui = false;

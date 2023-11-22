@@ -1,7 +1,7 @@
 package com.example.manager.player;
 
 import com.example.manager.Controller;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 import java.util.Random;
 
@@ -21,19 +21,19 @@ public abstract class Player {
      * Wird vor Beginn des Spiels aufgerufen. Besitzt eine sehr hohe maximale Berechnungszeit von TBA ms.
      * Diese Funktion kann daher verwendet werden, um Variablen zu initialisieren und
      * einmalig, sehr rechenaufwändige Operationen durchzuführen.
-     * @param state Der {@link StaticGameState Spielzustand} zu Beginn des Spiels
+     * @param state Der {@link GameState Spielzustand} zu Beginn des Spiels
      */
-    public abstract void init(StaticGameState state);
+    public abstract void init(GameState state);
 
     /**
      * Wird aufgerufen, wenn der Spieler einen Zug für einen seiner Charaktere durchführen soll.
-     * Der {@link StaticGameState Spielzustand} state reflektiert dabei den Zug des Spielers ohne Verzögerung.
+     * Der {@link GameState Spielzustand} state reflektiert dabei den Zug des Spielers ohne Verzögerung.
      * Der Controller ermöglicht die Steuerung des Charakters, welcher am Zug ist.
      * Die übergebene Controller-Instanz deaktiviert sich nach Ende des Zuges permanent.
-     * @param state Der {@link StaticGameState Spielzustand} während des Zuges
+     * @param state Der {@link GameState Spielzustand} während des Zuges
      * @param controller Der {@link Controller Controller}, zum Charakter gehört, welcher am Zug ist
      */
-    public abstract void executeTurn(StaticGameState state, Controller controller);
+    public abstract void executeTurn(GameState state, Controller controller);
 
     /**
      * Wird für interne Zwecke verwendet und besitzt keine Relevanz für die Bot-Entwicklung.

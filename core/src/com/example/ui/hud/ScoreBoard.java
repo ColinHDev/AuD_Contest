@@ -2,14 +2,14 @@ package com.example.ui.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.ui.assets.AssetContainer;
 import com.example.ui.menu.buttons.ScoreBoardLabel;
 
 public class ScoreBoard extends VerticalGroup {
 
 
-	public ScoreBoard(Color[] tcolors, String[] playerNames, StaticGameState state){
+	public ScoreBoard(Color[] tcolors, String[] playerNames, GameState state){
 		super();
 		if (state!=null){
 			//placement of the scorebeard

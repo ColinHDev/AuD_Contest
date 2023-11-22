@@ -1,6 +1,6 @@
 package com.example.manager;
 
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.action.ActionLog;
 
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class GameResults implements Serializable {
     private final ArrayList<ActionLog> actionLogs = new ArrayList<>();
     private transient final GameConfig config;
-    private StaticGameState initialState;
+    private GameState initialState;
 
     private String[] playerNames;
 
@@ -23,7 +23,7 @@ public class GameResults implements Serializable {
 
     }
 
-    protected void setInitialState(StaticGameState initialState) {
+    protected void setInitialState(GameState initialState) {
         this.initialState = initialState.copy();
     }
 
@@ -39,7 +39,7 @@ public class GameResults implements Serializable {
         return config;
     }
 
-    public StaticGameState getInitialState() {
+    public GameState getInitialState() {
         return initialState;
     }
 

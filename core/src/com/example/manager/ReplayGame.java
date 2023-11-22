@@ -1,6 +1,6 @@
 package com.example.manager;
 
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.action.ActionLog;
 
 import java.io.*;
@@ -20,7 +20,7 @@ public class ReplayGame extends Executable {
             System.err.println("Replays require a gui");
             abort();
         }
-        if (config.gameMode != StaticGameState.GameMode.Replay) {
+        if (config.gameMode != GameState.GameMode.Replay) {
             throw new RuntimeException("Invalid state detected");
         }
         loadGameResults(config.mapName);

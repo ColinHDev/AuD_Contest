@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.manager.player.HumanPlayer;
 import com.example.manager.RunConfiguration;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.Simulation;
 import com.example.ui.assets.AssetContainer;
 import com.example.ui.hud.*;
@@ -118,7 +118,7 @@ public class Hud implements Disposable {
 		return table;
     }
 
-	public void setupScoreboard(StaticGameState game){
+	public void setupScoreboard(GameState game){
 
 		//ToDo read player count and assign individual colors
 		ScoreBoard scores = new ScoreBoard(new Color[]{Color.WHITE, Color.WHITE},names, game);
@@ -353,7 +353,7 @@ public class Hud implements Disposable {
 	}
 
 
-	public void newGame(StaticGameState state){
+	public void newGame(GameState state){
 		layoutTable.setBackground((Drawable) null);
 		if(turnPopupContainer.hasChildren()) {
 			turnPopupContainer.removeActorAt(0, false);

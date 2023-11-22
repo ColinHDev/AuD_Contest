@@ -3,7 +3,7 @@ package com.example.manager;
 
 import com.example.manager.player.IdleBot;
 import com.example.manager.player.Player;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class ParallelMultiGameRun extends Run {
 
     protected ParallelMultiGameRun(Manager manager, RunConfiguration runConfig) {
         super(manager, runConfig);
-        if (runConfig.gameMode == StaticGameState.GameMode.Exam_Admission) {
+        if (runConfig.gameMode == GameState.GameMode.Exam_Admission) {
 
             //ToDo this is the configuration for the exam admission
 

@@ -9,17 +9,15 @@ import java.util.*;
 /**
  * Repräsentiert ein laufendes Spiel mit allen dazugehörigen Daten
  */
-public class StaticGameState implements Serializable {
-
-    // Spielbrett
-    // x - Spalten
-    // y - Zeile
-
-
-    StaticPlayerState[] staticPlayerStates;
-
-    private int turn;
-
+public class GameState implements Serializable {
+    public enum GameMode {
+        Normal,
+        Campaign,
+        Exam_Admission,
+        Tournament_Phase_1,
+        Tournament_Phase_2,
+        Replay
+        }
     protected enum MapTileType {
         LAND,
         OBSTACLE,
@@ -27,77 +25,30 @@ public class StaticGameState implements Serializable {
         PATH_DOWN,
         PATH_LEFT,
         PATH_UP
+
     }
 
+    PlayerState[] playerStates;
     protected MapTileType[][] map;
-
-    public int getTurn() {
-        return turn;
-    }
-
-    private void nextTurn(){
-        ++turn;
-    }
-
-    public float[] getScores() {
-        float[] healths = new float[staticPlayerStates.length];
-        for (int i = 0; i < staticPlayerStates.length; i++) {
-            healths[i] = staticPlayerStates[i].getHealth();
-        }
-        return healths;
-    }
-
-    public StaticGameState copy() {
-        return new StaticGameState(this);
-    }
-
-
-    private StaticGameState(StaticGameState original) {
-        //ToDo this needs to deep copy all read only attributes
-        gameMode = original.gameMode;
-        turnTimer = original.turnTimer;
-        turn = original.turn;
-
-        map = Arrays.copyOf(original.map, original.map.length);
-
-        playerCount = original.playerCount;
-        active = original.active;
-        sim = null;
-    }
-
-    public enum GameMode {
-        Normal,
-        Campaign,
-
-        Exam_Admission,
-        Tournament_Phase_1,
-        Tournament_Phase_2,
-        Replay
-    }
-
+    private int turn;
+    private boolean active;
     private final GameMode gameMode;
-    private String mapName;
-
-
+    private final int playerCount;
+    private final transient Simulation sim;
     private transient Timer turnTimer;
 
 
-    private final int playerCount;
-    private boolean active;
-    private final transient Simulation sim;
-
 
     /**
-     * Creates a new StaticGameState for the specified attributes.
+     * Creates a new GameState for the specified attributes.
      *
      * @param gameMode    selected game mode
      * @param mapName     name of the selected map as String
      * @param playerCount number of players
      * @param sim         the respective simulation instance
      */
-    StaticGameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
+    GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
         this.gameMode = gameMode;
-        this.mapName = mapName;
         this.map = MapLoader.getInstance().loadMap(
                 gameMode == GameMode.Campaign ? "campaign/" + mapName : mapName
         );
@@ -106,6 +57,43 @@ public class StaticGameState implements Serializable {
         this.active = true;
         this.sim = sim;
     }
+
+    private GameState(GameState original) {
+        //ToDo this needs to deep copy all read only attributes
+        gameMode = original.gameMode;
+        turnTimer = original.turnTimer;
+        turn = original.turn;
+        map = Arrays.copyOf(original.map, original.map.length);
+        playerStates = new PlayerState[original.playerStates.length];
+        for (int i = 0; i < playerStates.length; i++) {
+            playerStates[i] = original.playerStates[i].copy(this);
+        }
+        playerCount = original.playerCount;
+        active = original.active;
+        sim = null;
+    }
+
+    private void nextTurn(){
+        ++turn;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public float[] getScores() {
+        float[] healths = new float[playerStates.length];
+        for (int i = 0; i < playerStates.length; i++) {
+            healths[i] = playerStates[i].getHealth();
+        }
+        return healths;
+    }
+
+    public GameState copy() {
+        return new GameState(this);
+    }
+
+
 
     /**
      * Gibt den Spiel-Modus des laufenden Spiels zurück.
@@ -119,8 +107,6 @@ public class StaticGameState implements Serializable {
     /**
      * Spawns players randomly distributed over the possible spawn-location, specified by the map.
      */
-
-
 
     //ToDo migrate to Simulation
     /**
@@ -164,14 +150,14 @@ public class StaticGameState implements Serializable {
      * @return Horizontale Größe des Spielfeldes in #Boxen
      */
     public int getBoardSizeX() {
-        return MapLoader.getInstance().width;
+        return map.length;
     }
 
     /**
      * @return Vertikale Größe des Spielfeldes in #Boxen
      */
     public int getBoardSizeY() {
-        return MapLoader.getInstance().height;
+        return map[0].length;
     }
 
     public Timer getTurnTimer() {

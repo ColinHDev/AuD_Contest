@@ -2,7 +2,7 @@ package bots;
 
 import com.example.manager.player.Bot;
 import com.example.manager.Controller;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 import java.util.concurrent.*;
 
@@ -27,12 +27,12 @@ public class FilterTestBot extends Bot {
     }
 
     @Override
-    public void init(StaticGameState state) {
+    public void init(GameState state) {
         new Thread();
     }
 
     @Override
-    public void executeTurn(StaticGameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
     }
 }
