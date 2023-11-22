@@ -8,7 +8,7 @@ public class StaticPlayerState implements Serializable {
 
     private final StaticGameState staticGameState;
     private Tile[][] board;
-    private List<Tower> towerList;
+    //private List<Tower> towerList;
 
     private int health;
     private int money;
@@ -60,10 +60,6 @@ public class StaticPlayerState implements Serializable {
 
     public Tile[][] getEnemyMap(){
         return staticGameState.staticPlayerStates[enemyNumber].getMap();
-    }
-    void addTower(Tower tower){
-        tower.setEnemyList(board);
-        towerList.add(tower);
     }
 
     public StaticPlayerState(StaticGameState staticGameState, int health, int money, int playerNumber){

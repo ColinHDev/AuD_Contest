@@ -1,8 +1,8 @@
 package com.example.simulation;
 
-public class Tile {
+public abstract class Tile {
 
-    private IntVector2 pos;
+    protected IntVector2 pos;
 
     Tile(int x, int y) {
         this.pos = new IntVector2(x, y);
@@ -12,9 +12,7 @@ public class Tile {
         return pos;
     }
 
-    protected Tile copy() {
-        return new Tile(pos.x, pos.y);
-    }
+    protected abstract Tile copy();
 
 
     /**

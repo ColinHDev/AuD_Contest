@@ -5,7 +5,12 @@ package com.example.simulation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tower {
+public class Tower extends Tile{
+
+    @Override
+    protected Tile copy() {
+        return new Tower(type, pos.x, pos.y);
+    }
 
     public enum TowerType {
         BASIC_TOWER,
@@ -17,13 +22,14 @@ public class Tower {
     int damage;
     int range;
     int rechargeTime;
-    Tile pos;
     List<Enemy> enemiesInRange = new ArrayList<>();
 
 
-    public Tower(TowerType type, Tile pos) {
+    public Tower(TowerType type, int x, int y) {
+        super(x, y);
         this.type = type;
-        this.pos = pos;
+
+
 
         switch (type) {
             case BASIC_TOWER -> {
@@ -32,9 +38,15 @@ public class Tower {
                 rechargeTime = 0;
             }
             case AOE_TOWER -> {
+                damage = 2;
+                range = 1;
+                rechargeTime = 1;
             }
 
             case SNIPER_TOWER -> {
+                damage = 3;
+                range = 3;
+                rechargeTime = 2;
             }
 
             default -> System.out.println("This case should not be reached");
@@ -42,12 +54,8 @@ public class Tower {
 
     }
 
-    /**
-     * Nimmt alle Tiles im Umkreis von Radius von Tower und fügt die Gegner zur enemylist des Towers hinzu
-     * @param board
-     */
-    public void setEnemyList(Tile[][] board){
-        Tile[][] inRange = pos.getNeighbours(range, board);
+    private void setEnemyList(Tile[][] board){
+        Tile[][] inRange = this.getNeighbours(range, board);
         for (Tile[] tiles : inRange) {
             for (Tile tile : tiles) {
                 if (tile instanceof PathTile && !((PathTile) tile).enemies.isEmpty()) {
@@ -73,11 +81,7 @@ public class Tower {
         return rechargeTime;
     }
 
-    public Tile getPos() {
-        return pos; //Return x and y from Tile?
-    }
-
-    public List<Enemy> getEnemiesInRange() {
+    private List<Enemy> getEnemiesInRange() {
         return enemiesInRange;
     }
 }
