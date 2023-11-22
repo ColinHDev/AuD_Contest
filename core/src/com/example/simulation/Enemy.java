@@ -15,6 +15,9 @@ public class Enemy {
         this.level = level;
         this.posTile = posTile;
     }
+    Enemy copy(PathTile posTile){
+        return new Enemy(this.health, this.level, posTile);
+    }
 
     private void updateHealth(int damage){
         if (health-damage <= 0){

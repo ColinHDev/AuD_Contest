@@ -38,10 +38,8 @@ public class PathTile extends Tile {
     private List<Enemy> copyList(List<Enemy> enemies){
         List<Enemy> newEnemyList = new ArrayList<>();
         for (Enemy enemy: enemies) {
-            newEnemyList.add(enemy);
+            newEnemyList.add(enemy.copy(this));
         }
         return newEnemyList;
     }
-
-
 }

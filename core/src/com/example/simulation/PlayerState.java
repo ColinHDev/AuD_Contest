@@ -48,6 +48,7 @@ public class PlayerState implements Serializable {
                         next = (PathTile) board[nextPos.x][nextPos.y];
                     }
                     actual.setNext(next);
+
                 }
             }
         }
