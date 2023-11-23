@@ -5,14 +5,16 @@ import com.example.simulation.GameState;
 
 public final class LocalPlayerHandler implements PlayerHandler {
 
-    private final PlayerThread playerThread;
+    private final Class<? extends Player> playerClass;
+    private PlayerThread playerThread;
 
     public LocalPlayerHandler(Class<? extends Player> playerClass) {
-        playerThread = new PlayerThread(playerClass);
+        this.playerClass = playerClass;
     }
 
     @Override
-    public void create(GameState gameState) {
+    public void create(GameState gameState, boolean isDebug) {
+        playerThread = new PlayerThread(playerClass, isDebug);
     }
 
     @Override
