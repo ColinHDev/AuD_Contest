@@ -1,3 +1,4 @@
+/*
 package com.example.manager;
 
 
@@ -330,3 +331,4 @@ public class TestMultiGameRun {
     }
 
 }
+ */

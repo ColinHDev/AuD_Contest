@@ -1,9 +1,6 @@
 package com.example.simulation;
 
-import com.badlogic.gdx.utils.JsonValue;
 import com.example.manager.Timer;
-import com.example.simulation.action.Action;
-import com.example.simulation.action.ScoreAction;
 
 import java.io.Serializable;
 import java.util.*;
@@ -13,16 +10,14 @@ import java.util.*;
  * Repräsentiert ein laufendes Spiel mit allen dazugehörigen Daten
  */
 public class GameState implements Serializable {
-
-    // Spielbrett
-    // x - Spalten
-    // y - Zeile
-
-
-    private PlayerState[] playerStates;
-
-    private int turn;
-
+    public enum GameMode {
+        Normal,
+        Campaign,
+        Exam_Admission,
+        Tournament_Phase_1,
+        Tournament_Phase_2,
+        Replay
+        }
     protected enum MapTileType {
         LAND,
         OBSTACLE,
@@ -30,16 +25,60 @@ public class GameState implements Serializable {
         PATH_DOWN,
         PATH_LEFT,
         PATH_UP
+
     }
 
+    PlayerState[] playerStates;
     protected MapTileType[][] map;
+    private int turn;
+    private boolean active;
+    private final GameMode gameMode;
+    private final int playerCount;
+    private final transient Simulation sim;
+    private transient Timer turnTimer;
 
-    public int getTurn() {
-        return turn;
+
+
+    /**
+     * Creates a new GameState for the specified attributes.
+     *
+     * @param gameMode    selected game mode
+     * @param mapName     name of the selected map as String
+     * @param playerCount number of players
+     * @param sim         the respective simulation instance
+     */
+    GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
+        this.gameMode = gameMode;
+        this.map = MapLoader.getInstance().loadMap(
+                gameMode == GameMode.Campaign ? "campaign/" + mapName : mapName
+        );
+
+        this.playerCount = playerCount;
+        this.active = true;
+        this.sim = sim;
+    }
+
+    private GameState(GameState original) {
+        //ToDo this needs to deep copy all read only attributes
+        gameMode = original.gameMode;
+        turnTimer = original.turnTimer;
+        turn = original.turn;
+        map = Arrays.copyOf(original.map, original.map.length);
+        playerStates = new PlayerState[original.playerStates.length];
+        for (int i = 0; i < playerStates.length; i++) {
+            playerStates[i] = original.playerStates[i].copy(this);
+        }
+        playerCount = original.playerCount;
+        active = original.active;
+        sim = null;
     }
 
     private void nextTurn(){
         ++turn;
+    }
+
+    public int getTurn() {
+        return turn;
     }
 
     public float[] getScores() {
@@ -55,60 +94,6 @@ public class GameState implements Serializable {
     }
 
 
-    private GameState(GameState original) {
-        //ToDo this needs to deep copy all read only attributes
-        gameMode = original.gameMode;
-        turnTimer = original.turnTimer;
-        turn = original.turn;
-
-        map = Arrays.copyOf(original.map, original.map.length);
-
-        playerCount = original.playerCount;
-        active = original.active;
-        sim = null;
-    }
-
-    public enum GameMode {
-        Normal,
-        Campaign,
-
-        Exam_Admission,
-        Tournament_Phase_1,
-        Tournament_Phase_2,
-        Replay
-    }
-
-    private final GameMode gameMode;
-    private String mapName;
-
-
-    private transient Timer turnTimer;
-
-
-    private final int playerCount;
-    private boolean active;
-    private final transient Simulation sim;
-
-
-    /**
-     * Creates a new GameState for the specified attributes.
-     *
-     * @param gameMode    selected game mode
-     * @param mapName     name of the selected map as String
-     * @param playerCount number of players
-     * @param sim         the respective simulation instance
-     */
-    GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
-        this.gameMode = gameMode;
-        this.mapName = mapName;
-        this.map = MapLoader.getInstance().loadMap(
-                gameMode == GameMode.Campaign ? "campaign/" + mapName : mapName
-        );
-
-        this.playerCount = playerCount;
-        this.active = true;
-        this.sim = sim;
-    }
 
     /**
      * Gibt den Spiel-Modus des laufenden Spiels zurück.
@@ -122,8 +107,6 @@ public class GameState implements Serializable {
     /**
      * Spawns players randomly distributed over the possible spawn-location, specified by the map.
      */
-
-
 
     //ToDo migrate to Simulation
     /**
@@ -167,14 +150,14 @@ public class GameState implements Serializable {
      * @return Horizontale Größe des Spielfeldes in #Boxen
      */
     public int getBoardSizeX() {
-        return MapLoader.getInstance().width;
+        return map.length;
     }
 
     /**
      * @return Vertikale Größe des Spielfeldes in #Boxen
      */
     public int getBoardSizeY() {
-        return MapLoader.getInstance().height;
+        return map[0].length;
     }
 
     public Timer getTurnTimer() {

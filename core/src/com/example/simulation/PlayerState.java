@@ -1,45 +1,74 @@
 package com.example.simulation;
 
-import org.hamcrest.core.IsInstanceOf;
-
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class PlayerState implements Serializable {
 
     private final GameState gameState;
     private Tile[][] board;
+
     private int health;
     private int money;
+    private int enemyIndex;
+    private int index;
+
 
     public int getHealth() {
         return health;
     }
 
-    public PlayerState copy(GameState newGameState){
+    PlayerState copy(GameState newGameState){
         return new PlayerState(this, newGameState);
     }
 
+    /**
+     * Creates a Deep-Copy of the player state
+     */
     private PlayerState(PlayerState original, GameState gameState){
         this.gameState = gameState;
-        board = new Tile[original.board.length][original.board[0].length];
-        for (int i = 0; i < original.board.length; i++) {
-            for (int j = 0; j < original.board[0].length; j++) {
-                board[i][j] = original.board[i][j].copy();
+        int boardX = gameState.getBoardSizeX();
+        int boardY = gameState.getBoardSizeY();
+
+        board = new Tile[boardX][boardY];
+        for (int i = 0; i < boardX; i++) {
+            for (int j = 0; j < boardY; j++) {
+                if(original.board[i][j] != null){
+                    board[i][j] = original.board[i][j].copy();
+                }
             }
         }
-        for (int i = 0; i < original.board.length; i++) {
-            for (int j = 0; j < original.board.length; j++) {
-                if (board[i][j] instanceof PathTile){
-                    //TODO Search for last PathTile -> Copy Backwards
+
+        for (int i = 0; i < boardX; i++) {
+            for (int j = 0; j < boardX; j++) {
+                if (board[i][j] instanceof PathTile actual){
+                    PathTile originalPT = (PathTile) original.board[i][j];
+                    PathTile next = null;
+                    if (originalPT.next != null){
+                        IntVector2 nextPos = originalPT.next.getPosition();
+                        next = (PathTile) board[nextPos.x][nextPos.y];
+                    }
+                    actual.setNext(next);
+
                 }
             }
         }
         health = original.health;
         money = original.money;
-
     }
+
+
+    private Tile[][] getMap(){
+        return board;
+    }
+
+    private Tile[][] getEnemyMap(){
+        return gameState.playerStates[enemyIndex].getMap();
+    }
+
+
     public PlayerState(GameState gameState, int health, int money){
+        this.index = index;
+        this.enemyIndex = index == 0 ? 1 : 0;
         this.gameState = gameState;
         int width = gameState.getBoardSizeX();
         int height = gameState.getBoardSizeY();
