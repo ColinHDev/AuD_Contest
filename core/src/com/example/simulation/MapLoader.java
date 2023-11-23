@@ -5,17 +5,10 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class MapLoader {
     static MapLoader mapLoader = null;
 
-
-    int width = 0;
-    int height = 0;
 
     static MapLoader getInstance() {
         if (mapLoader == null) {
@@ -50,8 +43,8 @@ public class MapLoader {
             }
         }
 
-        width = json.get("width").asInt();
-        height = json.get("height").asInt();
+        int width = json.get("width").asInt();
+        int height = json.get("height").asInt();
         map = new GameState.MapTileType[width][height];
 
         JsonValue tileData = json.get("layers").get(0).get("data");

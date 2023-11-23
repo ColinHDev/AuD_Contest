@@ -1,6 +1,5 @@
 package com.example.simulation;
 
-import com.badlogic.gdx.math.Vector2;
 import com.example.simulation.action.Action;
 import com.example.simulation.action.ActionLog;
 
