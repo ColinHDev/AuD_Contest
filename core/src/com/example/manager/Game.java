@@ -4,7 +4,7 @@ import com.example.manager.player.Bot;
 import com.example.manager.player.HumanPlayer;
 import com.example.manager.player.Player;
 import com.example.simulation.GameCharacterController;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
@@ -45,7 +45,7 @@ public class Game extends Executable {
 
     private GameResults gameResults;
     private Simulation simulation;
-    private StaticGameState state;
+    private GameState state;
     private Player[] players;
 
     private float[] scores;
@@ -61,7 +61,7 @@ public class Game extends Executable {
 
     protected Game(GameConfig config) {
         super(config);
-        if (config.gameMode == StaticGameState.GameMode.Campaign) {
+        if (config.gameMode == GameState.GameMode.Campaign) {
             if (config.players.size() != 1) {
                 System.err.println("Campaign only accepts exactly 1 player");
                 setStatus(Status.ABORTED);
@@ -158,7 +158,7 @@ public class Game extends Executable {
     /**
      * @return The state of the underlying simulation
      */
-    public StaticGameState getState() {
+    public GameState getState() {
         return state;
     }
 
@@ -189,7 +189,7 @@ public class Game extends Executable {
             int currentPlayerIndex = gcController.getTeam();
 
             Player currentPlayer = players[currentPlayerIndex];
-            StaticGameState stateCopy = state.copy();
+            GameState stateCopy = state.copy();
             Controller controller = new Controller(this, gcController, stateCopy, currentPlayer.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES);
 
             executor.waitForCompletion();

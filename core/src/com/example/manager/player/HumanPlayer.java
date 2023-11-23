@@ -2,7 +2,7 @@ package com.example.manager.player;
 
 import com.badlogic.gdx.Input;
 import com.example.manager.Controller;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 //ToDo migrate to UI
 public class HumanPlayer extends Player {
@@ -35,12 +35,12 @@ public class HumanPlayer extends Player {
 
     //amount of time in seconds, the turn of the human player will take
     //if the time limit is reached, the execute turn will wait for turnOverhead seconds
-    // to make sure everything is calculated and no StaticGameState inconsistency is created
+    // to make sure everything is calculated and no GameState inconsistency is created
     private int turnDuration = 60;
     private int turnStartWaitTime = 2;
 
     private boolean turnInProgress;
-    private StaticGameState state;
+    private GameState state;
     private Controller controller;
 
     @Override
@@ -49,7 +49,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void init(StaticGameState state) {
+    public void init(GameState state) {
 
     }
 
@@ -58,12 +58,12 @@ public class HumanPlayer extends Player {
      * Der Zug dauert {@link HumanPlayer#turnDuration} Sekunden, danach wird für
      * {@link HumanPlayer#turnStartWaitTime} gewartet und dann die Methode beendet.
      *
-     * @param state      Der {@link StaticGameState Spielzustand} während des Zuges
+     * @param state      Der {@link GameState Spielzustand} während des Zuges
      * @param controller Der {@link Controller Controller}, der zum Charakter gehört
      */
 
     @Override
-    public void executeTurn(StaticGameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         this.state = state;
         this.controller = controller;
         for (int i = 0; i < lastTick.length; i++) lastTick[i] = NO_TICK;

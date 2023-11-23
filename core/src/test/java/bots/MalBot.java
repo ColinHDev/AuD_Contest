@@ -3,7 +3,7 @@ package bots;
 import com.example.manager.player.Bot;
 import com.example.manager.Controller;
 import com.example.manager.Manager;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,19 +43,19 @@ public class MalBot extends Bot {
     }
 
     @Override
-    public void init(StaticGameState state) {
+    public void init(GameState state) {
         runExperiment(false, state);
     }
 
     @Override
-    public void executeTurn(StaticGameState state, Controller controller) {
+    public void executeTurn(GameState state, Controller controller) {
         if (first) {
             first = false;
             runExperiment(true, state);
         }
     }
 
-    private void runExperiment(boolean inTurn, StaticGameState state) {
+    private void runExperiment(boolean inTurn, GameState state) {
         boolean caught = false;
 
         try {
@@ -114,7 +114,7 @@ public class MalBot extends Bot {
 
     }
 
-    private String failureMessage(int id, boolean inTurn, StaticGameState state) {
+    private String failureMessage(int id, boolean inTurn, GameState state) {
         return "Failure{" +
                 "id=" + id +
                 "inTurn=" + inTurn +

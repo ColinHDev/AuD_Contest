@@ -1,7 +1,7 @@
 package com.example.manager;
 
 import com.example.manager.player.Player;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ public abstract class Run {
 
     protected final Manager manager;
 
-    protected StaticGameState.GameMode gameMode;
+    protected GameState.GameMode gameMode;
     private final ArrayList<Executable> games = new ArrayList<>();
 
     private boolean disposed = false;
@@ -66,7 +66,7 @@ public abstract class Run {
         }
     }
 
-    public StaticGameState.GameMode getGameMode() {
+    public GameState.GameMode getGameMode() {
         return gameMode;
     }
 

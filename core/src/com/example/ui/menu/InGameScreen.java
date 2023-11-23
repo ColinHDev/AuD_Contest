@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.viewport.*;
 import com.example.animation.Animator;
 import com.example.animation.AnimatorCamera;
 import com.example.manager.*;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.action.Action;
 import com.example.simulation.action.ActionLog;
 import com.example.ui.ConfigScreen;
@@ -83,7 +83,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     }
 
     @Override
-    public void init(StaticGameState state, String[] playerNames, String[][] skins) {
+    public void init(GameState state, String[] playerNames, String[][] skins) {
         //ToDo the game is starting remove waiting screen etc.
 
         hud.setPlayerNames(playerNames);

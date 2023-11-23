@@ -2,7 +2,7 @@ package com.example.animation.entity;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 import com.example.simulation.IntVector2;
 import com.example.ui.assets.AssetContainer;
 
@@ -15,7 +15,7 @@ public class TileMap extends Entity{
 
     private int tileSize = 12;
 
-    public TileMap(StaticGameState state) {
+    public TileMap(GameState state) {
         sizeX = state.getBoardSizeX();
         sizeY = state.getBoardSizeY();
         if(AssetContainer.IngameAssets.tileTextures.length > 0) tileSize = AssetContainer.IngameAssets.tileTextures[0].getRegionWidth();

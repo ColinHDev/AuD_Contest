@@ -10,9 +10,6 @@ public class MapLoader {
     static MapLoader mapLoader = null;
 
 
-    int width = 0;
-    int height = 0;
-
     static MapLoader getInstance() {
         if (mapLoader == null) {
             mapLoader = new MapLoader();
@@ -27,10 +24,10 @@ public class MapLoader {
      *
      * @param mapName Name of the map without type as String
      */
-    StaticGameState.MapTileType[][] loadMap(String mapName) {
+    GameState.MapTileType[][] loadMap(String mapName) {
         JsonReader reader = new JsonReader();
         JsonValue json;
-        StaticGameState.MapTileType[][] map;
+        GameState.MapTileType[][] map;
         try {
             //attempt to load map from jar
             json = reader.parse(getClass().getClassLoader().getResourceAsStream("maps/" + mapName + ".json"));
@@ -46,16 +43,16 @@ public class MapLoader {
             }
         }
 
-        width = json.get("width").asInt();
-        height = json.get("height").asInt();
-        map = new StaticGameState.MapTileType[width][height];
+        int width = json.get("width").asInt();
+        int height = json.get("height").asInt();
+        map = new GameState.MapTileType[width][height];
 
         JsonValue tileData = json.get("layers").get(0).get("data");
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int type = tileData.get(i + (height - j - 1) * width).asInt();
-                    map[i][j] = StaticGameState.MapTileType.values()[type-2];
+                    map[i][j] = GameState.MapTileType.values()[type-2];
             }
         }
 

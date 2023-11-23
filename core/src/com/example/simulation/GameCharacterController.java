@@ -11,7 +11,7 @@ import com.example.simulation.action.ActionLog;
 public class GameCharacterController {
 
     private int team;
-    private final StaticGameState state;
+    private final GameState state;
     boolean active = true;
 
     /**
@@ -34,7 +34,7 @@ public class GameCharacterController {
      * @param team          the team this Controller will grant access to
      * @param state         the current state of the game
      */
-    protected GameCharacterController(int team, StaticGameState state) {
+    protected GameCharacterController(int team, GameState state) {
         this.team = team;
         this.state = state;
     }

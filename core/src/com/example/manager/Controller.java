@@ -2,7 +2,7 @@ package com.example.manager;
 
 import com.example.manager.command.*;
 import com.example.simulation.GameCharacterController;
-import com.example.simulation.StaticGameState;
+import com.example.simulation.GameState;
 
 /**
  * Provides an access-controlled interface to send commands to players
@@ -17,7 +17,7 @@ public class Controller {
     private GameCharacterController gcController;
     private int team;
 
-    protected Controller(Game game, GameCharacterController gcController, StaticGameState stateCopy, int uses) {
+    protected Controller(Game game, GameCharacterController gcController, GameState stateCopy, int uses) {
 //        System.out.println("Created new Controller: " + this);
         this.game = game;
         this.gcController = gcController;
