@@ -12,6 +12,7 @@ import com.example.animation.action.Action;
 import com.example.animation.action.uiActions.*;
 import com.example.animation.entity.*;
 import com.example.simulation.GameState;
+import com.example.simulation.Tile;
 import com.example.simulation.action.*;
 import com.example.manager.AnimationLogProcessor;
 import com.example.ui.assets.AssetContainer.IngameAssets;
@@ -43,7 +44,8 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private final Entity root;
 
-    private TileMap map;
+    private TileMap mapPlayer0;
+    private TileMap mapPlayer1;
 
     private static GameTower[][][] towers;
 
@@ -152,6 +154,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                 //towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
             }, () -> {
                 Entity tower = new GameTower(1, placeAction.getType());
+                animator.root.add(tower);
 
                 return tower;
             });
@@ -255,9 +258,11 @@ public class Animator implements Screen, AnimationLogProcessor {
     public void init(GameState state, String[] playerNames, String[][] skins) {
         synchronized (root) {
             this.state = state;
-            map = new TileMap(state);
+            mapPlayer0 = new TileMap(state, 0);
+            mapPlayer1 = new TileMap(state, 1);
             root.clear();
-            root.add(map);
+            root.add(mapPlayer0);
+            root.add(mapPlayer1);
 
             //ToDo: initialize based on gamestate data
         }

@@ -42,4 +42,14 @@ public class PathTile extends Tile {
         }
         return newEnemyList;
     }
+
+    // ToDo: getter for prev
+    public PathTile getPrev() {
+        return prev;
+    }
+
+    // ToDo: getter for next
+    public PathTile getNext() {
+        return next;
+    }
 }
