@@ -12,12 +12,12 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Ermöglicht die Kontrolle eines bestimmten Charakters.
  * Ist nur für einen einzelnen Zug gültig und deaktiviert sich nach Ende des aktuellen Zuges.
  */
-public class Controller {
+public final class Controller {
 
     private final Queue<Command> commands = new ArrayBlockingQueue<>(256);
     private int uses;
 
-    protected Controller(int uses) {
+    Controller(int uses) {
         this.uses = uses;
     }
 
@@ -48,7 +48,7 @@ public class Controller {
      * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, sodass keine weiteren
      * {@link Command}s mehr ausgeführt werden können.
      */
-    protected void endTurn() {
+    void endTurn() {
         commands.add(new EndTurnCommand());
         deactivate();
     }
@@ -57,7 +57,7 @@ public class Controller {
      * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
      * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
      */
-    protected void missNextTurn() {
+    void missNextTurn() {
         commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.MISS_TURN));
         deactivate();
     }
@@ -67,7 +67,7 @@ public class Controller {
      * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber disqualifiziert, sodass das Spiel abgebrochen
      * werden kann.
      */
-    protected void disqualify() {
+    void disqualify() {
         commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.DISQUALIFY));
         deactivate();
     }
