@@ -13,12 +13,12 @@ public final class LocalPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public void create(GameState gameState, boolean isDebug) {
+    public void init(GameState gameState, boolean isDebug) {
         playerThread = new PlayerThread(playerClass, isDebug);
     }
 
     @Override
-    public void update(GameState gameState) {
+    public void executeTurn(GameState gameState) {
 
     }
 

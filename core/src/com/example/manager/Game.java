@@ -85,7 +85,7 @@ public class Game extends Executable {
                 handler = new LocalPlayerHandler(playerClass);
             }
             playerHandlers[i] = handler;
-            handler.create(state, isDebug);
+            handler.init(state, isDebug);
         }
         gameResults.setPlayerNames(getPlayerNames());
         config = null;

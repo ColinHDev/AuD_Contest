@@ -34,7 +34,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public void create(GameState gameState, boolean isDebug) {
+    public void init(GameState gameState, boolean isDebug) {
         ProcessBuilder builder = new ProcessBuilder();
         builder.inheritIO();
 
@@ -77,7 +77,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public void update(GameState gameState) {
+    public void executeTurn(GameState gameState) {
         try {
             communicator.queueInformation(new TurnInformation(gameState));
         } catch (RemoteException e) {
