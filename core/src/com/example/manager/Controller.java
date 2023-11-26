@@ -1,6 +1,7 @@
 package com.example.manager;
 
 import com.example.manager.command.Command;
+import com.example.manager.command.EndTurnCommand;
 
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -44,9 +45,37 @@ public class Controller {
     }
 
     /**
-     * Deaktiviert diesen Controller (Wenn der Zug vorbei ist). Wird von internen Komponenten genutzt, um den Zugfolge der Charaktere zu steuern.
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, sodass keine weiteren
+     * {@link Command}s mehr ausgeführt werden können.
      */
-    protected void deactivate() {
+    protected void endTurn() {
+        commands.add(new EndTurnCommand());
+        deactivate();
+    }
+
+    /**
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
+     */
+    protected void missNextTurn() {
+        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.MISS_TURN));
+        deactivate();
+    }
+
+    /**
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber disqualifiziert, sodass das Spiel abgebrochen
+     * werden kann.
+     */
+    protected void disqualify() {
+        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.DISQUALIFY));
+        deactivate();
+    }
+
+    /**
+     * Deaktiviert diesen Controller, sodass keine weiteren {@link Command}s mehr ausgeführt werden können.
+     */
+    private void deactivate() {
         uses = -1;
     }
 }
