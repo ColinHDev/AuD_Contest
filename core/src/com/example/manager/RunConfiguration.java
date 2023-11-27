@@ -9,6 +9,11 @@ import java.util.ArrayList;
 public class RunConfiguration {
 
     public RunConfiguration(){}
+
+    /**
+     * Privater Konstruktor, der eine tiefe Kopie einer vorhandenen RunConfiguration erstellt.
+     * @param original Die ursprüngliche RunConfiguration, von der eine Kopie erstellt wird.
+     */
     private RunConfiguration(RunConfiguration original) {
         gameMode = original.gameMode;
         gui = original.gui;
@@ -94,6 +99,10 @@ public class RunConfiguration {
        }
     }
 
+    /**
+     * Erstellt und gibt eine Kopie des aktuellen RunConfiguration-Objekts zurück.
+     * @return Eine Kopie des aktuellen RunConfiguration-Objekts.
+     */
     public RunConfiguration copy(){
         return new RunConfiguration(this);
     }
