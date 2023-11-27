@@ -16,10 +16,10 @@ public abstract class Player {
     public abstract String getName();
 
     /**
-     * Wird vor Beginn des Spiels aufgerufen. Besitzt eine sehr hohe maximale Berechnungszeit von TBA ms.
-     * Diese Funktion kann daher verwendet werden, um Variablen zu initialisieren und
-     * einmalig, sehr rechenaufwändige Operationen durchzuführen.
-     * @param state Der {@link GameState Spielzustand} zu Beginn des Spiels
+     * Wird vor Beginn des Spiels aufgerufen. Besitzt eine sehr hohe maximale Berechnungszeit von TODO ms.
+     * Diese Methode kann daher verwendet werden, um Variablen zu initialisieren und einmalig, sehr rechenaufwändige
+     * Operationen durchzuführen.
+     * @param state Der {@link GameState Spielzustand des Spielers} zu Beginn des Spiels
      */
     public abstract void init(GameState state);
 

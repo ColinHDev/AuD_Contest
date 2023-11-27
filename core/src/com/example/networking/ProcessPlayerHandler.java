@@ -1,5 +1,9 @@
 package com.example.networking;
 
+import com.example.manager.command.Command;
+import com.example.manager.command.CommandHandler;
+import com.example.manager.player.Bot;
+import com.example.manager.player.HumanPlayer;
 import com.example.manager.player.Player;
 import com.example.manager.player.PlayerHandler;
 import com.example.networking.data.GameInformation;
@@ -16,6 +20,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public final class ProcessPlayerHandler implements PlayerHandler {
 
@@ -34,7 +40,17 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public void init(GameState gameState, boolean isDebug) {
+    public boolean isHumanPlayer() {
+        return playerClass.isInstance(HumanPlayer.class);
+    }
+
+    @Override
+    public boolean isBotPlayer() {
+        return playerClass.isInstance(Bot.class);
+    }
+
+    @Override
+    public Future<?> init(GameState gameState, boolean isDebug) {
         ProcessBuilder builder = new ProcessBuilder();
         builder.inheritIO();
 
@@ -74,15 +90,39 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+        return new FutureTask<>(
+                () -> {
+                    try {
+                        communicator.dequeueCommand();
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                null
+        );
     }
 
     @Override
-    public void executeTurn(GameState gameState) {
+    public Future<?> executeTurn(GameState gameState, CommandHandler commandHandler) {
         try {
             communicator.queueInformation(new TurnInformation(gameState));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+        return new FutureTask<>(
+                () -> {
+                    Command command;
+                    do {
+                        try {
+                            command = communicator.dequeueCommand();
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                        commandHandler.handleCommand(command);
+                    } while (!command.endsTurn());
+                },
+                null
+        );
     }
 
     @Override

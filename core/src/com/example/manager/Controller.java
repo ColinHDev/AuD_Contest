@@ -3,8 +3,8 @@ package com.example.manager;
 import com.example.manager.command.Command;
 import com.example.manager.command.EndTurnCommand;
 
-import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Provides an access-controlled interface to send commands to players
@@ -14,7 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public final class Controller {
 
-    private final Queue<Command> commands = new ArrayBlockingQueue<>(256);
+    final BlockingQueue<Command> commands = new ArrayBlockingQueue<>(256);
     private int uses;
 
     Controller(int uses) {

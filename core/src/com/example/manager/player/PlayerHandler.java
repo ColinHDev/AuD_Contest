@@ -1,12 +1,19 @@
 package com.example.manager.player;
 
+import com.example.manager.command.CommandHandler;
 import com.example.simulation.GameState;
+
+import java.util.concurrent.Future;
 
 public interface PlayerHandler {
 
-    void init(GameState gameState, boolean isDebug);
+    boolean isHumanPlayer();
 
-    void executeTurn(GameState gameState);
+    boolean isBotPlayer();
+
+    Future<?> init(GameState gameState, boolean isDebug);
+
+    Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);
 
     void dispose();
 }
