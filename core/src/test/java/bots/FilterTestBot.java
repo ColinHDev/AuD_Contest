@@ -1,8 +1,8 @@
 package bots;
 
-import com.example.manager.player.Bot;
-import com.example.manager.Controller;
-import com.example.simulation.GameState;
+import com.gatdsen.manager.player.Bot;
+import com.gatdsen.manager.Controller;
+import com.gatdsen.simulation.GameState;
 
 import java.util.concurrent.*;
 
