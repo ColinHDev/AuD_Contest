@@ -1,13 +1,14 @@
-package bots;
+package com.example.simulation.campaign;
 
+import com.example.simulation.GameState;
 import com.example.manager.player.Bot;
 import com.example.manager.Controller;
-import com.example.simulation.GameState;
 
-public class CampaignTestBot extends Bot {
+public class CampaignBot extends Bot {
+
     @Override
     public String getStudentName() {
-        return "Cornelius Zenker";
+        return "";
     }
 
     @Override
@@ -20,6 +21,8 @@ public class CampaignTestBot extends Bot {
         return "Training Bot";
     }
 
+    protected int turnCount = -1;
+
     @Override
     public void init(GameState state) {
 
@@ -27,6 +30,11 @@ public class CampaignTestBot extends Bot {
 
     @Override
     public void executeTurn(GameState state, Controller controller) {
-        controller.foo(1);
+        turnCount++;
+    }
+
+    @Override
+    public String getSkin(int characterIndex) {
+        return "coolCatSkin";
     }
 }
