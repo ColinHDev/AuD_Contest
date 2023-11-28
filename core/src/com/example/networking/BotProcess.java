@@ -100,5 +100,6 @@ public class BotProcess {
         if (playerThread != null) {
             playerThread.dispose();
         }
+        System.out.println("BotProcess of player \"" + playerClass.getName() + "\" on process with pid " + ProcessHandle.current().pid() + " is shutting down");
     }
 }
