@@ -169,4 +169,8 @@ public final class PlayerThread {
                 player.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
         );
     }
+
+    public void dispose() {
+        executor.interrupt();
+    }
 }
