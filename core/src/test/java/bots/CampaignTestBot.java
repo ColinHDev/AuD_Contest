@@ -27,6 +27,6 @@ public class CampaignTestBot extends Bot {
 
     @Override
     public void executeTurn(GameState state, Controller controller) {
-        controller.foo(1);
+        controller.getRemainingUses();
     }
 }
