@@ -1,7 +1,9 @@
 package com.example.manager;
 
 import com.example.manager.command.Command;
-import com.example.manager.player.*;
+import com.example.manager.player.Bot;
+import com.example.manager.player.Player;
+import com.example.manager.player.PlayerHandler;
 import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
@@ -9,6 +11,8 @@ import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
@@ -69,7 +73,7 @@ public class Game extends Executable {
             }
             GameCharacterController gcController = simulation.getController();
             playerHandlers[i] = handler;
-            handler.init(
+            Future<?> future = handler.init(
                     state,
                     isDebug,
                     seed,
@@ -79,6 +83,11 @@ public class Game extends Executable {
                         // TODO
                     }
             );
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
         gameResults.setPlayerNames(getPlayerNames());
         config = null;
@@ -141,7 +150,7 @@ public class Game extends Executable {
 
             // TODO: executor.waitForCompletion();
             PlayerHandler playerHandler = playerHandlers[currentPlayerIndex];
-            playerHandler.executeTurn(
+            Future<?> future = playerHandler.executeTurn(
                     state,
                     (Command command) -> {
                         // Contains action produced by the commands execution
@@ -171,6 +180,11 @@ public class Game extends Executable {
                         }
                     }
             );
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
             // TODO: futureExecutor.start();
             ActionLog log = simulation.clearAndReturnActionLog();
