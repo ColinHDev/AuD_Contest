@@ -1,6 +1,5 @@
 package com.example.networking;
 
-import com.example.manager.CompletionHandler;
 import com.example.manager.PlayerThread;
 import com.example.manager.command.Command;
 import com.example.manager.player.Player;
@@ -20,8 +19,6 @@ import java.util.concurrent.BlockingQueue;
  */
 public class BotProcess {
 
-    private CompletionHandler<BotProcess> completionListener;
-
     private final Class<? extends Player> playerClass;
     private final String host;
     private final int port;
@@ -30,8 +27,7 @@ public class BotProcess {
     private ProcessCommunicator communicator;
     private PlayerThread playerThread = null;
 
-    public BotProcess(CompletionHandler<BotProcess> completionListener, Class<? extends Player> playerClass, String host, int port, String remoteReferenceName) {
-        this.completionListener = completionListener;
+    public BotProcess(Class<? extends Player> playerClass, String host, int port, String remoteReferenceName) {
         this.playerClass = playerClass;
         this.host = host;
         this.port = port;
@@ -100,13 +96,7 @@ public class BotProcess {
         }
     }
 
-    protected void complete() {
-        completionListener.onComplete(this);
-        completionListener = null;
-    }
-
     public void dispose() {
-        completionListener = null;
         if (playerThread != null) {
             playerThread.dispose();
         }

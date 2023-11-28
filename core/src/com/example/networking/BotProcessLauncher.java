@@ -86,24 +86,8 @@ public class BotProcessLauncher {
         }
         String remoteReferenceName = params.getOptionValue("reference").trim();;
 
-        BotProcess botProcess;
-        Object lock = new Object();
-        synchronized (lock) {
-            botProcess = new BotProcess(
-                    (process) -> {
-                        synchronized (lock) {
-                            lock.notify();
-                        }
-                    },
-                    playerClass, host, port, remoteReferenceName
-            );
-            botProcess.run();
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        BotProcess botProcess = new BotProcess(playerClass, host, port, remoteReferenceName);
+        botProcess.run();
     }
 
     private static void printHelp() {
