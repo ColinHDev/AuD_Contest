@@ -2,6 +2,7 @@ package com.example.networking;
 
 import com.example.manager.command.Command;
 import com.example.manager.command.CommandHandler;
+import com.example.manager.concurrent.ThreadExecutor;
 import com.example.manager.player.Bot;
 import com.example.manager.player.HumanPlayer;
 import com.example.manager.player.Player;
@@ -21,12 +22,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 public final class ProcessPlayerHandler implements PlayerHandler {
 
     public static final int registryPort = 1099;
     public static final String stubNamePrefix = "ProcessCommunicator_";
+
+    private final ThreadExecutor executor = new ThreadExecutor();
 
     private final Class<? extends Player> playerClass;
     private final String remoteReferenceName;
@@ -34,7 +36,6 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     private Registry registry;
     private ProcessCommunicator communicator;
     private Process process;
-
 
     public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerId) {
         this.playerClass = playerClass;
@@ -98,20 +99,17 @@ public final class ProcessPlayerHandler implements PlayerHandler {
             throw new RuntimeException(e);
         }
 
-        return new FutureTask<>(
-                () -> {
-                    Command command;
-                    do {
-                        try {
-                            command = communicator.dequeueCommand();
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
-                        commandHandler.handleCommand(command);
-                    } while (!command.endsTurn());
-                },
-                null
-        );
+        return executor.execute(() -> {
+            Command command;
+            do {
+                try {
+                    command = communicator.dequeueCommand();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                commandHandler.handleCommand(command);
+            } while (!command.endsTurn());
+        });
     }
 
     @Override
@@ -121,24 +119,22 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-        return new FutureTask<>(
-                () -> {
-                    Command command;
-                    do {
-                        try {
-                            command = communicator.dequeueCommand();
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
-                        commandHandler.handleCommand(command);
-                    } while (!command.endsTurn());
-                },
-                null
-        );
+        return executor.execute(() -> {
+            Command command;
+            do {
+                try {
+                    command = communicator.dequeueCommand();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                commandHandler.handleCommand(command);
+            } while (!command.endsTurn());
+        });
     }
 
     @Override
     public void dispose() {
+        executor.interrupt();
         try {
             registry.unbind(remoteReferenceName);
         } catch (RemoteException | NotBoundException e) {
