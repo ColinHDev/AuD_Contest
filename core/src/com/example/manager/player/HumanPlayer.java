@@ -41,7 +41,7 @@ public class HumanPlayer extends Player {
     private int turnStartWaitTime = 2;
 
     private boolean turnInProgress;
-    private GameState state;
+    private StaticGameState state;
     private Controller controller;
 
     @Override
