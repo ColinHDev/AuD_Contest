@@ -144,5 +144,6 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         } catch (RemoteException | NotBoundException e) {
             throw new RuntimeException(e);
         }
+        process.destroy();
     }
 }
