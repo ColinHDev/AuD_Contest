@@ -3,8 +3,8 @@ import com.example.simulation.IntVector2;
 
 public class EnemySpawnAction extends EnemyAction {
 
-    public EnemySpawnAction(float delay, IntVector2 pos, int level) {
-        super(delay, pos, level);
+    public EnemySpawnAction(float delay, IntVector2 pos, int level, int team) {
+        super(delay, pos, level, team);
     }
 
     @Override

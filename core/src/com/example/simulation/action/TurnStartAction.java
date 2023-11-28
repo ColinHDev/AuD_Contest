@@ -5,29 +5,17 @@ package com.example.simulation.action;
  */
 public class TurnStartAction extends Action {
 
-    private final int team;
-
-
     /**
      * Stores the event of a new turn beginning. Declares which Character may execute commands during the new turn.
      *
      * @param delay     non-negative time-based offset to its parent in seconds
-     * @param team      team index of the Character
      */
-    public TurnStartAction(long delay, int team) {
+    public TurnStartAction(long delay) {
         super(delay);
-        this.team = team;
-    }
-
-
-    public int getTeam() {
-        return team;
     }
 
     @Override
     public String toString() {
-        return "TurnStart: " + getTeam();
+        return "TurnStart";
     }
-
-
 }
