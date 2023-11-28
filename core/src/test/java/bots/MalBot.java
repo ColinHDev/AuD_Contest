@@ -1,10 +1,9 @@
 package bots;
 
-import com.example.manager.StaticGameState;
-import com.example.manager.player.Bot;
 import com.example.manager.Controller;
 import com.example.manager.Manager;
-import com.example.simulation.GameState;
+import com.example.manager.StaticGameState;
+import com.example.manager.player.Bot;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class MalBot extends Bot {
         }
     }
 
-    private void runExperiment(boolean inTurn, GameState state) {
+    private void runExperiment(boolean inTurn, StaticGameState state) {
         boolean caught = false;
 
         try {
@@ -115,7 +114,7 @@ public class MalBot extends Bot {
 
     }
 
-    private String failureMessage(int id, boolean inTurn, GameState state) {
+    private String failureMessage(int id, boolean inTurn, StaticGameState state) {
         return "Failure{" +
                 "id=" + id +
                 "inTurn=" + inTurn +
