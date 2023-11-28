@@ -296,6 +296,7 @@ public class Manager {
     }
 
     private Manager() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
         executionManager = new Thread(this::executionManager);
         executionManager.start();
     }
