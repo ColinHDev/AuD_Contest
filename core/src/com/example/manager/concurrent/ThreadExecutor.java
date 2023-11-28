@@ -64,7 +64,7 @@ public class ThreadExecutor {
     }
 
     @SuppressWarnings("removal")
-    public void shutdown() {
+    public void interrupt() {
         synchronized (lock) {
             if (target != null) target.cancel(true);
             target = null;
