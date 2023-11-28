@@ -57,7 +57,7 @@ public class BotProcess {
             }
             if (information instanceof GameInformation) {
                 playerThread = new PlayerThread(playerClass, ((GameInformation) information).isDebug());
-                BlockingQueue<Command> commands = playerThread.init(((GameInformation) information).state());
+                BlockingQueue<Command> commands = playerThread.init(((GameInformation) information).state(), ((GameInformation) information).seed());
                 Command command;
                 do {
                     try {

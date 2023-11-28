@@ -32,11 +32,11 @@ public final class LocalPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public Future<?> init(GameState gameState, boolean isDebug, CommandHandler commandHandler) {
+    public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
         playerThread = new PlayerThread(playerClass, isDebug);
         return new FutureTask<>(
                 () -> {
-                    BlockingQueue<Command> commands = playerThread.init(gameState);
+                    BlockingQueue<Command> commands = playerThread.init(gameState, seed);
                     Command command;
                     do {
                         try {

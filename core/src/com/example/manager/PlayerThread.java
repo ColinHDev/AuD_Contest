@@ -44,7 +44,7 @@ public final class PlayerThread {
         inputGenerator = null;
     }
 
-    public BlockingQueue<Command> init(GameState state) {
+    public BlockingQueue<Command> init(GameState state, long seed) {
         Controller controller = createController();
         // TODO: In Player und Bot Klasse auslagern
         PlayerInformation playerInformation = switch (player.getType()) {
@@ -61,7 +61,7 @@ public final class PlayerThread {
             Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
             if (player instanceof Bot) {
                 // TODO: Manager.getSeed() nicht über Prozesse hinweg
-                ((Bot) player).setRnd(Manager.getSeed());
+                ((Bot) player).setRnd(seed);
             }
             player.init(new StaticGameState(state));
         });

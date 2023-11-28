@@ -72,8 +72,8 @@ public class Game extends Executable {
         if (saveReplay)
             gameResults.setInitialState(state);
 
+        long seed = Manager.getSeed();
         playerHandlers = new PlayerHandler[config.teamCount];
-
         for (int i = 0; i < config.teamCount; i++) {
             PlayerHandler handler;
             Class<? extends Player> playerClass = config.players.get(i);
@@ -90,6 +90,7 @@ public class Game extends Executable {
             handler.init(
                     state,
                     isDebug,
+                    seed,
                     (Command command) -> {
                         // Contains action produced by the commands execution
                         command.run(gcController);

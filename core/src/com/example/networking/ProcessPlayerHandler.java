@@ -50,7 +50,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public Future<?> init(GameState gameState, boolean isDebug, CommandHandler commandHandler) {
+    public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
         ProcessBuilder builder = new ProcessBuilder();
         builder.inheritIO();
 
@@ -86,7 +86,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
             // Exportieren des Objekts, damit es von anderen Prozessen verwendet werden kann
             communicator = (ProcessCommunicator) UnicastRemoteObject.exportObject(localCommunicator, 0);
             registry.rebind(stubNamePrefix + process.pid(), communicator);
-            communicator.queueInformation(new GameInformation(gameState, isDebug));
+            communicator.queueInformation(new GameInformation(gameState, isDebug, seed));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
