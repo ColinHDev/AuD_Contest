@@ -301,7 +301,7 @@ public class Manager {
         executionManager.start();
     }
 
-    public void dispose() {
+    private void dispose() {
         //Shutdown all running threads
         pendingShutdown = true;
         executionManager.interrupt();
