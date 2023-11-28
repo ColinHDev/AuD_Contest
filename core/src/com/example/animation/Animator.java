@@ -3,20 +3,25 @@ package com.example.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.example.animation.action.*;
 import com.example.animation.action.Action;
-import com.example.animation.action.uiActions.*;
-import com.example.animation.entity.*;
+import com.example.animation.action.DestroyAction;
+import com.example.animation.action.IdleAction;
+import com.example.animation.action.SummonAction;
+import com.example.animation.action.uiActions.MessageUiGameEndedAction;
+import com.example.animation.action.uiActions.MessageUiScoreAction;
+import com.example.animation.entity.Entity;
+import com.example.animation.entity.SpriteEntity;
+import com.example.animation.entity.TileMap;
+import com.example.manager.AnimationLogProcessor;
 import com.example.simulation.GameState;
 import com.example.simulation.action.*;
-import com.example.manager.AnimationLogProcessor;
 import com.example.ui.assets.AssetContainer.IngameAssets;
 import com.example.ui.hud.UiMessenger;
-
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -45,7 +50,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private TileMap map;
 
-    private static GameTower[][][] towers;
+    private static GameEnemy[][][] enemies;
 
     private final BlockingQueue<ActionLog> pendingLogs = new LinkedBlockingQueue<>();
 
@@ -110,6 +115,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+                        put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                     }
                 };
@@ -143,6 +149,34 @@ public class Animator implements Screen, AnimationLogProcessor {
             return children;
         }
 
+
+        private static ExpandedAction convertEnemySpawnAction(com.example.simulation.action.Action action, Animator animator) {
+            EnemySpawnAction spawnAction = (EnemySpawnAction) action;
+
+            SummonAction<GameEnemy> spawnEnemy = new SummonAction<>(
+                    spawnAction.getDelay(),
+                    (GameEnemy enemy) -> {
+                        enemies[spawnAction.getTeam()][spawnAction.getPosition().x][spawnAction.getPosition().y] = enemy;
+                    },
+                    () -> new GameEnemy(spawnAction.getLevel())
+            );
+
+            return new ExpandedAction(spawnEnemy);
+        }
+
+
+        private static ExpandedAction convertEnemyDefeatAction(com.example.simulation.action.Action action, Animator animator) {
+            EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
+
+            DestroyAction<GameEnemy> killEnemy = new DestroyAction<>(
+                    defeatAction.getDelay(),
+                    enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y],
+                    null,
+                    (GameEnemy enemy) -> enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null
+            );
+
+            return new ExpandedAction(killEnemy);
+        }
 
         private static ExpandedAction convertTowerPlaceAction(com.example.simulation.action.Action action, Animator animator) {
             TowerPlaceAction placeAction = (TowerPlaceAction) action;
