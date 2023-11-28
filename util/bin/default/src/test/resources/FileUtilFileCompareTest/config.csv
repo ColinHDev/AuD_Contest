@@ -1,0 +1,13 @@
+noFile,noFile,false
+empty.txt,noFile,false
+empty.txt,empty.txt,true
+empty.txt,empty2.txt,false
+text,noFile,false
+text.txt,text.txt,true
+a/empty.txt,b/empty.txt,true
+a/text.txt,b/text.txt,true
+a/text.txt,b/text2.txt,false
+a/text.txt,a/text.txt,true
+a/text.txt,text.txt,true
+a,b,false
+empty,empty.txt,false

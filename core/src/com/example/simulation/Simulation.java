@@ -1,13 +1,11 @@
 package com.example.simulation;
 
 import com.example.manager.Timer;
+import com.example.simulation.GameState.GameMode;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.action.GameOverAction;
 import com.example.simulation.action.InitAction;
 import com.example.simulation.action.TurnStartAction;
-import com.example.simulation.GameState.GameMode;
-
-import java.util.*;
 
 /**
  * Enthält die Logik, welche die Spielmechaniken bestimmt.
@@ -15,16 +13,17 @@ import java.util.*;
  */
 public class Simulation {
 
-    public static final float SCORE_KILL = 50;
-    public static final float SCORE_ELIMINATION = 50;
+    //public static final float SCORE_KILL = 50;
+    //public static final float SCORE_ELIMINATION = 50;
     protected static final float[] SCORE_WIN = new float[]{200, 100, 50};
 
     public static final float SCORE_ERROR_PENALTY = -50;
 
-    public static float getWinScore(int placement){
-        if (placement>=SCORE_WIN.length) return 0;
+    public static float getWinScore(int placement) {
+        if (placement >= SCORE_WIN.length) return 0;
         return SCORE_WIN[placement];
     }
+
     public static final float SCORE_ASSIST = 25;
     private final GameState gameState;
     private ActionLog actionLog;
@@ -41,9 +40,9 @@ public class Simulation {
      */
     public Simulation(GameMode gameMode, String mapName, int teamAm) {
         gameState = new GameState(gameMode, mapName, teamAm, this);
-        Integer team = gameState.getTurn().peek();
-        assert team != null;
-        actionLog = new ActionLog(new TurnStartAction(0, team));
+        //Integer team = gameState.getTurn().peek();
+        //assert team != null;
+        actionLog = new ActionLog(new TurnStartAction(0));
         remainingTeams = teamAm;
     }
 
@@ -78,28 +77,25 @@ public class Simulation {
     }
 
     public GameCharacterController getController() {
-        Integer team = gameState.getTurn().peek();
-        assert team != null;
-        return new GameCharacterController(team, gameState);
+        //Integer team = gameState.getTurn().peek();
+        //assert team != null;
+        //return new GameCharacterController(team, gameState);
+        return null;
     }
-
-
-
-
 
     public ActionLog endTurn() {
         turnsWithoutAction++;
 
-        int activeTeam = getActiveTeam();
+        //   int activeTeam = getActiveTeam();
 
-        ArrayDeque<Integer> turn = gameState.getTurn();
-        int teamCount = gameState.getTeamCount();
+        //  ArrayDeque<Integer> turn = gameState.getTurn();
+        int teamCount = gameState.getPlayerCount();
         int[] remainingCharacters = new int[teamCount];
         boolean[] lostChar = new boolean[teamCount];
 
-        turn.add(turn.pop());
+        //    turn.add(turn.pop());
 
-       //ToDo: calculate scores and end conditions
+        //ToDo: calculate scores and end conditions
 
 
         if (remainingTeams <= 1) {
@@ -108,12 +104,12 @@ public class Simulation {
                 //Reward score to surviving winner
                 for (int i = 0; i < teamCount; i++) {
                     if (remainingCharacters[i] > 0) {
-                        gameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
+                        //gameState.addScore(actionLog.getRootAction(), i, SCORE_WIN[0]);
                         actionLog.getRootAction().addChild(new GameOverAction(i));
                         break;
                     }
                 }
-            }else{
+            } else {
                 actionLog.getRootAction().addChild(new GameOverAction(-1));
             }
             //End game
@@ -121,10 +117,10 @@ public class Simulation {
             return this.actionLog;
         }
 
-        Integer team = gameState.getTurn().peek();
+        // Integer team = gameState.getTurn().peek();
         ActionLog lastTurn = this.actionLog;
-        assert team != null;
-        this.actionLog = new ActionLog(new TurnStartAction(0, team));
+        //     assert team != null;
+        this.actionLog = new ActionLog(new TurnStartAction(0));
         return lastTurn;
 
     }
@@ -135,12 +131,12 @@ public class Simulation {
         return tmp;
     }
 
-    public int getActiveTeam() {
-        return Objects.requireNonNull(gameState.getTurn().peek());
-    }
+    // public int getActiveTeam() {
+    //     return Objects.requireNonNull(gameState.getTurn().peek());
+    // }
 
 
-    public void penalizeCurrentPlayer(){
-        gameState.addScore(actionLog.getRootAction(), getActiveTeam(), SCORE_ERROR_PENALTY);
+    public void penalizeCurrentPlayer() {
+        //gameState.addScore(actionLog.getRootAction(), getActiveTeam(), SCORE_ERROR_PENALTY);
     }
 }

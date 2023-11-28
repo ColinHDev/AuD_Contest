@@ -111,6 +111,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
+                        put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                     }
                 };
 
@@ -170,6 +171,20 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(killEnemy);
         }
 
+        private static ExpandedAction convertTowerPlaceAction(com.example.simulation.action.Action action, Animator animator) {
+            TowerPlaceAction placeAction = (TowerPlaceAction) action;
+
+            SummonAction summonTower = new SummonAction(action.getDelay(), target -> {
+                // ToDo: change sim TowerPlaceAction to include a team
+                //towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
+            }, () -> {
+                Entity tower = new GameTower(1, placeAction.getType());
+
+                return tower;
+            });
+
+            return new ExpandedAction(summonTower);
+        }
 
         private static ExpandedAction convertTurnStartAction(com.example.simulation.action.Action action, Animator animator) {
             TurnStartAction startAction = (TurnStartAction) action;

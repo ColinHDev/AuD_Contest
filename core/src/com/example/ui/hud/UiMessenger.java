@@ -2,7 +2,7 @@ package com.example.ui.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.example.simulation.GameState;
-import com.example.ui.Hud;
+import com.example.ui.menu.Hud;
 
 
 /**
