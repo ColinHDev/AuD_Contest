@@ -104,8 +104,6 @@ public class BotProcessLauncher {
                 throw new RuntimeException(e);
             }
         }
-
-        botProcess.dispose();
     }
 
     private static void printHelp() {

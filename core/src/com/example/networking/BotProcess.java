@@ -35,6 +35,7 @@ public class BotProcess {
         this.host = host;
         this.port = port;
         this.remoteReferenceName = remoteReferenceName;
+        Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
     }
 
     public void start() {
