@@ -18,7 +18,7 @@ public class GameState implements Serializable {
         Tournament_Phase_2,
         Replay
         }
-    protected enum MapTileType {
+    public enum MapTileType {
         LAND,
         OBSTACLE,
         PATH_RIGHT,
@@ -75,6 +75,16 @@ public class GameState implements Serializable {
 
     private void nextTurn(){
         ++turn;
+    }
+
+    // ToDo: getter for boards
+    public Tile[][] getPlayerBoard(int player) {
+        return playerStates[player].getMap();
+    }
+
+    //ToDo: getter for map
+    public MapTileType[][] getMap() {
+        return map;
     }
 
     public int getTurn() {
