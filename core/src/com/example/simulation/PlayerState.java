@@ -57,7 +57,7 @@ public class PlayerState implements Serializable {
     }
 
 
-    private Tile[][] getMap(){
+    public Tile[][] getMap(){
         return board;
     }
 
