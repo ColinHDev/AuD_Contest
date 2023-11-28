@@ -2,6 +2,7 @@ package com.example.manager;
 
 import com.example.manager.command.Command;
 import com.example.manager.command.EndTurnCommand;
+import com.example.simulation.Tower;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +32,13 @@ public final class Controller {
         return uses;
     }
 
+    public void placeTower(int x, int y, Tower.TowerType type) {
+        //queue(new Command.PlaceTower(x, y));
+    }
+
+    public void upgradeTower(int x, int y) {
+        //queue(new Command.PlaceTower(x, y, type, id));
+    }
 
     /**
      * Internal utility method.

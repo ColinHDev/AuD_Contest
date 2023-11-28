@@ -8,6 +8,7 @@ import com.example.manager.player.Player;
 import com.example.manager.player.PlayerHandler;
 import com.example.simulation.GameState;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
@@ -31,10 +32,21 @@ public final class LocalPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public Future<?> init(GameState gameState, boolean isDebug) {
+    public Future<?> init(GameState gameState, boolean isDebug, CommandHandler commandHandler) {
         playerThread = new PlayerThread(playerClass, isDebug);
         return new FutureTask<>(
-                () -> playerThread.init(gameState),
+                () -> {
+                    BlockingQueue<Command> commands = playerThread.init(gameState);
+                    Command command;
+                    do {
+                        try {
+                            command = commands.take();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        commandHandler.handleCommand(command);
+                    } while (!command.endsTurn());
+                },
                 null
         );
     }
@@ -43,11 +55,11 @@ public final class LocalPlayerHandler implements PlayerHandler {
     public Future<?> executeTurn(GameState gameState, CommandHandler commandHandler) {
         return new FutureTask<>(
                 () -> {
-                    Controller controller = playerThread.executeTurn(gameState);
+                    BlockingQueue<Command> commands = playerThread.executeTurn(gameState);
                     Command command;
                     do {
                         try {
-                            command = controller.commands.take();
+                            command = commands.take();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }

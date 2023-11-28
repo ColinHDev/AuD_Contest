@@ -2,7 +2,9 @@ package com.example.manager;
 
 import com.example.manager.command.Command;
 import com.example.manager.concurrent.ThreadExecutor;
-import com.example.manager.player.*;
+import com.example.manager.player.Bot;
+import com.example.manager.player.Player;
+import com.example.manager.player.PlayerHandler;
 import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
@@ -10,8 +12,8 @@ import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
 
-import java.util.Arrays;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
@@ -83,8 +85,17 @@ public class Game extends Executable {
                 }
                 handler = new LocalPlayerHandler(playerClass);
             }
+            GameCharacterController gcController = simulation.getController();
             playerHandlers[i] = handler;
-            handler.init(state, isDebug);
+            handler.init(
+                    state,
+                    isDebug,
+                    (Command command) -> {
+                        // Contains action produced by the commands execution
+                        command.run(gcController);
+                        // TODO
+                    }
+            );
         }
         gameResults.setPlayerNames(getPlayerNames());
         config = null;
@@ -212,19 +223,16 @@ public class Game extends Executable {
         gameResults = null;
     }
 
-    protected void queueCommand(Command cmd) {
-        commandQueue.add(cmd);
-    }
-
     protected String[] getPlayerNames() {
-        String[] names = new String[players.length];
+        // TODO
+        /*String[] names = new String[players.length];
         int i = 0;
         for (Player p : players) {
             names[i] = p.getName();
             i++;
         }
-        return names;
-
+        return names;*/
+        return new String[]{"Player 1", "Player 2"};
     }
 
     public float[] getScores() {
@@ -250,7 +258,7 @@ public class Game extends Executable {
                 ", gameResults=" + gameResults +
                 ", simulation=" + simulation +
                 ", state=" + state +
-                ", players=" + Arrays.toString(players) +
+                /*", players=" + Arrays.toString(players) +*/
                 ", executor=" + executor +
                 ", commandQueue=" + commandQueue +
                 ", simulationThread=" + simulationThread +

@@ -11,7 +11,7 @@ public interface PlayerHandler {
 
     boolean isBotPlayer();
 
-    Future<?> init(GameState gameState, boolean isDebug);
+    Future<?> init(GameState gameState, boolean isDebug, CommandHandler commandHandler);
 
     Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);
 

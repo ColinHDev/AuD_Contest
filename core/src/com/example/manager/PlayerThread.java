@@ -1,9 +1,13 @@
 package com.example.manager;
 
+import com.example.manager.command.Command;
+import com.example.manager.command.PlayerInformationCommand;
 import com.example.manager.concurrent.ThreadExecutor;
 import com.example.manager.player.Bot;
 import com.example.manager.player.HumanPlayer;
 import com.example.manager.player.Player;
+import com.example.manager.player.data.BotInformation;
+import com.example.manager.player.data.PlayerInformation;
 import com.example.simulation.GameState;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +44,19 @@ public final class PlayerThread {
         inputGenerator = null;
     }
 
-    public void init(GameState state) {
+    public BlockingQueue<Command> init(GameState state) {
+        Controller controller = createController();
+        // TODO: In Player und Bot Klasse auslagern
+        PlayerInformation playerInformation = switch (player.getType()) {
+            case Human -> new PlayerInformation(player.getType(), player.getName());
+            case AI -> new BotInformation(
+                    player.getType(),
+                    player.getName(),
+                    ((Bot) player).getStudentName(),
+                    ((Bot) player).getMatrikel()
+            );
+        };
+        controller.commands.add(new PlayerInformationCommand(playerInformation));
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
             if (player instanceof Bot) {
@@ -62,17 +78,18 @@ public final class PlayerThread {
             System.out.println("bot was interrupted");
         } catch (ExecutionException e) {
             System.out.println("bot failed initialization with exception: " + e.getCause());
+            controller.missNextTurn();
         } catch (TimeoutException e) {
             future.cancel(true);
             executor.forceStop();
             System.out.println(player.getName() + " initialization surpassed timeout");
+            controller.missNextTurn();
         }
+        return controller.commands;
     }
 
-    public Controller executeTurn(GameState state) {
-        Controller controller = new Controller(
-                player.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
-        );
+    public BlockingQueue<Command> executeTurn(GameState state) {
+        Controller controller = createController();
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Run_Thread_Player_" + player.getName());
             player.executeTurn(state, controller);
@@ -144,6 +161,12 @@ public final class PlayerThread {
             });
         };
         futureExecutor.start();
-        return controller;
+        return controller.commands;
+    }
+
+    private Controller createController() {
+        return new Controller(
+                player.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
+        );
     }
 }

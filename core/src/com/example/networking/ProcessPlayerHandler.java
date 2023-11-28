@@ -50,7 +50,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     }
 
     @Override
-    public Future<?> init(GameState gameState, boolean isDebug) {
+    public Future<?> init(GameState gameState, boolean isDebug, CommandHandler commandHandler) {
         ProcessBuilder builder = new ProcessBuilder();
         builder.inheritIO();
 
@@ -92,11 +92,15 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         }
         return new FutureTask<>(
                 () -> {
-                    try {
-                        communicator.dequeueCommand();
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Command command;
+                    do {
+                        try {
+                            command = communicator.dequeueCommand();
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                        commandHandler.handleCommand(command);
+                    } while (!command.endsTurn());
                 },
                 null
         );
