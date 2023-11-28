@@ -72,6 +72,6 @@ public final class LocalPlayerHandler implements PlayerHandler {
 
     @Override
     public void dispose() {
-
+        playerThread.dispose();
     }
 }
