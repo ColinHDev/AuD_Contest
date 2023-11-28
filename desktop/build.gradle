@@ -2,7 +2,7 @@
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "com.example.DesktopLauncher"
+project.ext.mainClassName = "com.gatdsen.DesktopLauncher"
 
 import org.gradle.internal.os.OperatingSystem
 

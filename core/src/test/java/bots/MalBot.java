@@ -1,9 +1,9 @@
 package bots;
 
-import com.example.manager.Controller;
-import com.example.manager.Manager;
-import com.example.manager.StaticGameState;
-import com.example.manager.player.Bot;
+import com.gatdsen.manager.Controller;
+import com.gatdsen.manager.Manager;
+import com.gatdsen.manager.StaticGameState;
+import com.gatdsen.manager.player.Bot;
 
 import java.io.File;
 import java.io.IOException;
