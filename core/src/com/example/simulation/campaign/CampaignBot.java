@@ -32,9 +32,4 @@ public class CampaignBot extends Bot {
     public void executeTurn(StaticGameState state, Controller controller) {
         turnCount++;
     }
-
-    @Override
-    public String getSkin(int characterIndex) {
-        return "coolCatSkin";
-    }
 }
