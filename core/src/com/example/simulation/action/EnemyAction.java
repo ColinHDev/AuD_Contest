@@ -1,12 +1,12 @@
 package com.example.simulation.action;
 import com.example.simulation.IntVector2;
 
-public class EnemyAction extends Action{
+public class EnemyAction extends TeamAction{
     private final IntVector2 pos;
     private final int level;
 
-    public EnemyAction(float delay, IntVector2 pos, int level) {
-        super(delay);
+    public EnemyAction(float delay, IntVector2 pos, int level, int team) {
+        super(delay, team);
         this.pos = pos;
         this.level = level;
     }
