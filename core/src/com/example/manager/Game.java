@@ -12,8 +12,6 @@ import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
@@ -47,7 +45,6 @@ public class Game extends Executable {
 
     private ThreadExecutor executor;
 
-    private final BlockingQueue<Command> commandQueue = new ArrayBlockingQueue<>(256);
     private Thread simulationThread;
 
 
@@ -261,7 +258,6 @@ public class Game extends Executable {
                 ", state=" + state +
                 /*", players=" + Arrays.toString(players) +*/
                 ", executor=" + executor +
-                ", commandQueue=" + commandQueue +
                 ", simulationThread=" + simulationThread +
                 ", uiMessenger=" + uiMessenger +
                 ", pendingShutdown=" + pendingShutdown +
