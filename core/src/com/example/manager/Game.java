@@ -17,15 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Game extends Executable {
 
     protected final Object schedulingLock = new Object();
-    private static final int AI_EXECUTION_TIMEOUT = 500;
-    private static final int AI_EXECUTION_GRACE_PERIODE = 100;
-    private static final int AI_INIT_TIMEOUT = 1000;
-    private static final int AI_CONTROLLER_USES = 200;
-
-    private static final int HUMAN_EXECUTION_TIMEOUT = 30000;
-    private static final int HUMAN_EXECUTION_GRACE_PERIODE = 5000;
-    private static final int HUMAN_INIT_TIMEOUT = 30000;
-    private static final int HUMAN_CONTROLLER_USES = 100000;
 
     private static final boolean isDebug;
 
