@@ -296,11 +296,12 @@ public class Manager {
     }
 
     private Manager() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
         executionManager = new Thread(this::executionManager);
         executionManager.start();
     }
 
-    public void dispose() {
+    private void dispose() {
         //Shutdown all running threads
         pendingShutdown = true;
         executionManager.interrupt();

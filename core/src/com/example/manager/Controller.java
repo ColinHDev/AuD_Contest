@@ -1,8 +1,11 @@
 package com.example.manager;
 
-import com.example.manager.command.*;
-import com.example.simulation.GameCharacterController;
-import com.example.simulation.GameState;
+import com.example.manager.command.Command;
+import com.example.manager.command.EndTurnCommand;
+import com.example.simulation.Tower;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Provides an access-controlled interface to send commands to players
@@ -10,39 +13,13 @@ import com.example.simulation.GameState;
  * Ermöglicht die Kontrolle eines bestimmten Charakters.
  * Ist nur für einen einzelnen Zug gültig und deaktiviert sich nach Ende des aktuellen Zuges.
  */
-public class Controller {
+public final class Controller {
 
+    final BlockingQueue<Command> commands = new ArrayBlockingQueue<>(256);
     private int uses;
-    private Game game;
-    private GameCharacterController gcController;
-    private int team;
 
-    protected Controller(Game game, GameCharacterController gcController, GameState stateCopy, int uses) {
-//        System.out.println("Created new Controller: " + this);
-        this.game = game;
-        this.gcController = gcController;
-        this.team = gcController.getTeam();
+    Controller(int uses) {
         this.uses = uses;
-    }
-
-    /**
-     * @return Das Team, zu welchem dieser Controller gehört.
-     */
-    public int getTeam() {
-        return team;
-    }
-
-
-    //ToDo: write all required Functions similar to the template below, this will become the external API, that is exposed to the Bots
-    //ToDo: every Function in the gcController should have one Command as well as a designated call here
-    /**
-     * This is an exposed function of the API
-     * <p>
-     * The documentation of this has to be in german
-     */
-    public void foo(int i) {
-        queue(new FooCommand(gcController, i));
-
     }
 
     /**
@@ -55,23 +32,58 @@ public class Controller {
         return uses;
     }
 
+    public void placeTower(int x, int y, Tower.TowerType type) {
+        //queue(new Command.PlaceTower(x, y));
+    }
+
+    public void upgradeTower(int x, int y) {
+        //queue(new Command.PlaceTower(x, y, type, id));
+    }
 
     /**
      * Internal utility method.
      * Controls the remaining uses and submits cmd to the game.
      *
-     * @param cmd the command to be queued
+     * @param command the command to be queued
      */
-    private void queue(Command cmd) {
-        if (uses-- > 0) game.queueCommand(cmd);
+    private void queue(Command command) {
+        if (uses-- > 0) {
+            commands.add(command);
+        }
     }
 
     /**
-     * Deaktiviert diesen Controller (Wenn der Zug vorbei ist). Wird von internen Komponenten genutzt, um den Zugfolge der Charaktere zu steuern.
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, sodass keine weiteren
+     * {@link Command}s mehr ausgeführt werden können.
      */
-    protected void deactivate() {
-        uses = -1;
-        gcController.deactivate();
+    void endTurn() {
+        commands.add(new EndTurnCommand());
+        deactivate();
     }
 
+    /**
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
+     */
+    void missNextTurn() {
+        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.MISS_TURN));
+        deactivate();
+    }
+
+    /**
+     * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber disqualifiziert, sodass das Spiel abgebrochen
+     * werden kann.
+     */
+    void disqualify() {
+        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.DISQUALIFY));
+        deactivate();
+    }
+
+    /**
+     * Deaktiviert diesen Controller, sodass keine weiteren {@link Command}s mehr ausgeführt werden können.
+     */
+    private void deactivate() {
+        uses = -1;
+    }
 }

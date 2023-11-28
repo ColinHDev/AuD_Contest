@@ -2,6 +2,7 @@ package com.example.manager.player;
 
 import com.badlogic.gdx.Input;
 import com.example.manager.Controller;
+import com.example.manager.StaticGameState;
 import com.example.simulation.GameState;
 
 //ToDo migrate to UI
@@ -40,7 +41,7 @@ public class HumanPlayer extends Player {
     private int turnStartWaitTime = 2;
 
     private boolean turnInProgress;
-    private GameState state;
+    private StaticGameState state;
     private Controller controller;
 
     @Override
@@ -49,7 +50,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void init(GameState state) {
+    public void init(StaticGameState state) {
 
     }
 
@@ -63,7 +64,7 @@ public class HumanPlayer extends Player {
      */
 
     @Override
-    public void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(StaticGameState state, Controller controller) {
         this.state = state;
         this.controller = controller;
         for (int i = 0; i < lastTick.length; i++) lastTick[i] = NO_TICK;
@@ -117,7 +118,7 @@ public class HumanPlayer extends Player {
             case KEY_CHARACTER_EXAMPLE:
                 foo += 1;
                 foo = foo % 360;
-                controller.foo(foo);
+                //controller.foo(foo);
                 break;
             case KEY_CHARACTER_END_TURN:
                 this.endCurrentTurn();

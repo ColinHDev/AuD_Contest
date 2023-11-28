@@ -4,20 +4,46 @@ import com.example.simulation.GameCharacterController;
 import com.example.simulation.action.ActionLog;
 
 /**
- * Command used for administrative purposes.
- * <p>
- * Marks the end of a turn and breaks command execution for the current player in the current turn.
- * Should NOT be available via the {@link com.example.manager.Controller}.
+ * Dieser Befehl markiert das Ende eines Zuges und bricht die Befehlsausführung für den aktuellen Spieler im aktuellen
+ * Zug ab.
+ * Sollte NICHT direkt über den {@link com.example.manager.Controller} verfügbar sein.
  */
-public class EndTurnCommand extends Command{
-    public EndTurnCommand(GameCharacterController controller) {
-        super(controller);
-        isEndTurn = true;
+public class EndTurnCommand extends Command {
+
+    public enum EndTurnPunishment {
+        // Der Spieler erhält keine Strafe
+        NONE,
+        // Der Spieler muss den nächsten Zug aussetzen
+        MISS_TURN,
+        // Der Spieler wird disqualifiziert und das Spiel beendet
+        DISQUALIFY
+    }
+
+    private final EndTurnPunishment punishment;
+
+    /**
+     * Erstellt einen neuen Befehl, der das Ende des aktuellen Zuges markiert.
+     * Der Spieler erhält keine Strafe.
+     */
+    public EndTurnCommand() {
+        this(EndTurnPunishment.NONE);
+    }
+
+    /**
+     * Erstellt einen neuen Befehl, der das Ende des aktuellen Zuges markiert.
+     * @param punishment Die Strafe, die der Spieler auf Basis des Zuges erhält
+     */
+    public EndTurnCommand(EndTurnPunishment punishment) {
+        this.punishment = punishment;
     }
 
     @Override
-    public ActionLog onExecute() {
+    public ActionLog onExecute(GameCharacterController controller) {
         return null;
     }
 
+    @Override
+    public boolean endsTurn() {
+        return true;
+    }
 }

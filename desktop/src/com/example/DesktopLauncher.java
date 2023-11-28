@@ -155,7 +155,6 @@ public class DesktopLauncher {
 
             printResults(run, params.getOptionValue("k", ""));
         }
-        Manager.getManager().dispose();
     }
 
     private static void printResults(Run run, String key) {

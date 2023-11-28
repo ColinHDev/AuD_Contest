@@ -1,6 +1,6 @@
 package com.example.simulation.campaign;
 
-import com.example.simulation.GameState;
+import com.example.manager.StaticGameState;
 import com.example.manager.player.Bot;
 import com.example.manager.Controller;
 
@@ -24,17 +24,12 @@ public class CampaignBot extends Bot {
     protected int turnCount = -1;
 
     @Override
-    public void init(GameState state) {
+    public void init(StaticGameState state) {
 
     }
 
     @Override
-    public void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(StaticGameState state, Controller controller) {
         turnCount++;
-    }
-
-    @Override
-    public String getSkin(int characterIndex) {
-        return "coolCatSkin";
     }
 }

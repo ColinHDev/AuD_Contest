@@ -1,63 +1,41 @@
 package com.example.manager;
 
+import com.example.manager.command.Command;
 import com.example.manager.player.Bot;
-import com.example.manager.player.HumanPlayer;
 import com.example.manager.player.Player;
+import com.example.manager.player.PlayerHandler;
+import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
 import com.example.simulation.Simulation;
 import com.example.simulation.action.ActionLog;
 import com.example.simulation.campaign.CampaignResources;
-import com.example.manager.command.Command;
-import com.example.manager.command.EndTurnCommand;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
 
-
-    protected static final ThreadGroup PLAYER_THREAD_GROUP = new ThreadGroup("players");
-
-
     protected final Object schedulingLock = new Object();
-    private static final int AI_EXECUTION_TIMEOUT = 500;
-    private static final int AI_EXECUTION_GRACE_PERIODE = 100;
-    private static final int AI_INIT_TIMEOUT = 1000;
-    private static final int AI_CONTROLLER_USES = 200;
-
-    private static final int HUMAN_EXECUTION_TIMEOUT = 30000;
-    private static final int HUMAN_EXECUTION_GRACE_PERIODE = 5000;
-    private static final int HUMAN_INIT_TIMEOUT = 30000;
-    private static final int HUMAN_CONTROLLER_USES = 100000;
 
     private static final boolean isDebug;
 
     static {
         isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
         if (isDebug) System.err.println("Warning: Debugger engaged; Disabling Bot-Timeout!");
-
     }
 
     private GameResults gameResults;
     private Simulation simulation;
     private GameState state;
-    private Player[] players;
+    private PlayerHandler[] playerHandlers;
 
     private float[] scores;
 
     private static final AtomicInteger gameNumber = new AtomicInteger(0);
 
-    private BotThread executor;
-    private final List<HumanPlayer> humanList = new ArrayList<>();
-
-    private final BlockingQueue<Command> commandQueue = new ArrayBlockingQueue<>(256);
     private Thread simulationThread;
-
 
     protected Game(GameConfig config) {
         super(config);
@@ -80,47 +58,38 @@ public class Game extends Executable {
         if (saveReplay)
             gameResults.setInitialState(state);
 
-        players = new Player[config.teamCount];
-
+        long seed = Manager.getSeed();
+        playerHandlers = new PlayerHandler[config.teamCount];
         for (int i = 0; i < config.teamCount; i++) {
-            final Player curPlayer;
-            executor.waitForCompletion();
-            try {
-                players[i] = (Player) config.players.get(i).getDeclaredConstructors()[0].newInstance();
-                curPlayer = players[i];
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+            PlayerHandler handler;
+            Class<? extends Player> playerClass = config.players.get(i);
+            if (Bot.class.isAssignableFrom(playerClass)) {
+                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), i);
+            } else {
+                if (!gui) {
+                    throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
+                }
+                handler = new LocalPlayerHandler(playerClass);
             }
-            switch (curPlayer.getType()) {
-                case Human:
-                    if (!gui) throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
-                    humanList.add((HumanPlayer) curPlayer);
-                    break;
-                case AI:
-                    Future<?> future = executor.execute(() -> {
-                        Thread.currentThread().setName("Init_Thread_Player_" + curPlayer.getName());
-                        ((Bot) curPlayer).setRnd(Manager.getSeed());
-                        curPlayer.init(state);
-                    });
-                    try {
-                        if (isDebug) future.get();
-                        else
-                            future.get(AI_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    } catch (InterruptedException e) {
-                        System.out.println("bot was interrupted");
-                    } catch (ExecutionException e) {
-                        System.out.println("bot failed initialization with exception: " + e.getCause());
-                    } catch (TimeoutException e) {
-                        future.cancel(true);
-                        executor.forceStop();
-
-                        System.out.println("bot" + i + "(" + curPlayer.getName() + ") initialization surpassed timeout");
+            GameCharacterController gcController = simulation.getController();
+            playerHandlers[i] = handler;
+            Future<?> future = handler.init(
+                    state,
+                    isDebug,
+                    seed,
+                    (Command command) -> {
+                        // Contains action produced by the commands execution
+                        command.run(gcController);
+                        // TODO
                     }
-                    break;
+            );
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
             }
         }
         gameResults.setPlayerNames(getPlayerNames());
-        gameResults.setSkins(getSkins(players));
         config = null;
     }
 
@@ -128,25 +97,16 @@ public class Game extends Executable {
         synchronized (schedulingLock) {
             if (getStatus() == Status.ABORTED) return;
             setStatus(Status.ACTIVE);
-            executor = new BotThread();
+            gameNumber.getAndIncrement();
             create();
             //Init the Log Processor
-            if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), getSkins(players));
+            if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), new String[][]{});
             //Run the Game
             simulationThread = new Thread(this::run);
             simulationThread.setName("Game_Simulation_Thread");
             simulationThread.setUncaughtExceptionHandler(this::crashHandler);
             simulationThread.start();
         }
-    }
-
-    private String[][] getSkins(Player[] players) {
-        int skinsetCount = 0; //ToDo make global constant
-        String[][] skins = new String[players.length][skinsetCount];
-        for (int i = 0; i < players.length; i++)
-            for (int j = 0; j < skinsetCount; j++)
-                skins[i][j] = players[i].getSkin(j);
-        return skins;
     }
 
     @Override
@@ -166,7 +126,7 @@ public class Game extends Executable {
      * Controls Player Execution
      */
     private void run() {
-        Thread.currentThread().setName("Game_Thread_" + gameNumber.getAndIncrement());
+        Thread.currentThread().setName("Game_Thread_" + gameNumber.get());
         while (!pendingShutdown && state.isActive()) {
             synchronized (schedulingLock) {
                 if (getStatus() == Status.PAUSED)
@@ -188,146 +148,52 @@ public class Game extends Executable {
             GameCharacterController gcController = simulation.getController();
             int currentPlayerIndex = gcController.getTeam();
 
-            Player currentPlayer = players[currentPlayerIndex];
-            GameState stateCopy = state.copy();
-            Controller controller = new Controller(this, gcController, stateCopy, currentPlayer.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES);
-
-            executor.waitForCompletion();
-            Thread futureExecutor;
-            Future<?> future;
-            switch (currentPlayer.getType()) {
-                case Human:
-                    future = executor.execute(() -> {
-                        Thread.currentThread().setName("Run_Thread_Player_Human");
-                        simulation.setTurnTimer(new Timer(1000 * HUMAN_EXECUTION_TIMEOUT));
-                        currentPlayer.executeTurn(stateCopy, controller);
-                    });
-                    futureExecutor = new Thread(() -> {
-                        inputGenerator.activateTurn((HumanPlayer) currentPlayer);
-                        try {
-                            Thread.currentThread().setName("Future_Executor_Player_Human");
-                            if (isDebug) future.get();
-                            else
-                                future.get(HUMAN_EXECUTION_TIMEOUT + HUMAN_EXECUTION_GRACE_PERIODE, TimeUnit.MILLISECONDS);
-                        } catch (InterruptedException e) {
-                            future.cancel(true);//Executor was interrupted: Interrupt Player
-                            System.out.println("bot was interrupted");
-                            e.printStackTrace(System.err);
-                        } catch (ExecutionException e) {
-                            System.err.println("human player failed with exception: " + e.getCause());
-                            e.printStackTrace();
-                        } catch (TimeoutException e) {
-                            future.cancel(true);
-                            executor.forceStop();
-                            System.err.println("player" + currentPlayerIndex + "(" + currentPlayer.getName() + ") computation surpassed timeout");
+            // TODO: executor.waitForCompletion();
+            PlayerHandler playerHandler = playerHandlers[currentPlayerIndex];
+            Future<?> future = playerHandler.executeTurn(
+                    state,
+                    (Command command) -> {
+                        // Contains action produced by the commands execution
+                        ActionLog log = command.run(gcController);
+                        if (log == null) {
+                            return;
                         }
-                        inputGenerator.endTurn();
-                        //Add Empty command to break command Execution
-                        try {
-                            commandQueue.put(new EndTurnCommand(gcController));
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        if (saveReplay) {
+                            gameResults.addActionLog(log);
                         }
-                    });
-                    break;
-                case AI:
-                    future = executor.execute(() -> {
-                        Thread.currentThread().setName("Run_Thread_Player_" + currentPlayer.getName());
-                        simulation.setTurnTimer(new Timer(1000 * AI_EXECUTION_TIMEOUT));
-                        currentPlayer.executeTurn(stateCopy, controller);
-                    });
-                    futureExecutor = new Thread(() -> {
-                        Thread.currentThread().setName("Future_Executor_Player_" + currentPlayer.getName());
-                        try {
-                            if (isDebug) future.get();
-                            else
-                                future.get(AI_EXECUTION_TIMEOUT + AI_EXECUTION_GRACE_PERIODE, TimeUnit.MILLISECONDS);
-                        } catch (InterruptedException e) {
-                            future.cancel(true);//Executor was interrupted: Interrupt Bot
-                            System.out.println("bot was interrupted");
-                            e.printStackTrace(System.err);
-                        } catch (ExecutionException e) {
-                            System.out.println("bot failed with exception: " + e.getCause());
-                            e.printStackTrace();
-                            System.err.println("The failed player has been penalized!");
-                            simulation.penalizeCurrentPlayer();
-                        } catch (TimeoutException e) {
-                            future.cancel(true);
-                            executor.forceStop();
-
-                            System.out.println("player" + currentPlayerIndex + "(" + currentPlayer.getName() + ") computation surpassed timeout");
-                            System.err.println("The failed player has been penalized!");
-                            simulation.penalizeCurrentPlayer();
+                        if (gui) {
+                            animationLogProcessor.animate(log);
+                            // ToDo: discuss synchronisation for human players
+                            // animationLogProcessor.awaitNotification();
                         }
-                        //Add Empty command to break command Execution
-                        try {
-                            commandQueue.put(new EndTurnCommand(gcController));
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        if (!command.endsTurn()) {
+                            return;
                         }
-                    });
-                    break;
-                default:
-                    throw new IllegalStateException("Player of type: " + currentPlayer.getType() + " can not be executed by the Manager");
+                        //Contains actions produced by ending the turn (after last command is executed)
+                        ActionLog finalLog = simulation.endTurn();
+                        if (saveReplay) {
+                            gameResults.addActionLog(finalLog);
+                        }
+                        if (gui) {
+                            animationLogProcessor.animate(finalLog);
+                            animationLogProcessor.awaitNotification();
+                        }
+                    }
+            );
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
             }
 
-            futureExecutor.start();
+            // TODO: futureExecutor.start();
             ActionLog log = simulation.clearAndReturnActionLog();
-            if (saveReplay)
+            if (saveReplay) {
                 gameResults.addActionLog(log);
-            if (gui && currentPlayer.getType() == Player.PlayerType.Human) {
+            }
+            if (gui && playerHandler.isHumanPlayer()) {
                 //Contains Action produced by entering new turn
                 animationLogProcessor.animate(log);
-            }
-            try {
-                while (true) {
-
-                    Command nextCmd = commandQueue.take();
-                    if (nextCmd.isEndTurn()) break;
-                    //Contains action produced by the commands execution
-                    log = nextCmd.run();
-                    if (log == null) continue;
-                    if (saveReplay)
-                        gameResults.addActionLog(log);
-                    if (gui) {
-                        animationLogProcessor.animate(log);
-                        //animationLogProcessor.awaitNotification(); ToDo: discuss synchronisation for human players
-                    }
-                }
-            } catch (InterruptedException e) {
-                System.err.println("Interrupted while processing cmds");
-                e.printStackTrace(System.err);
-                if (pendingShutdown) {
-                    futureExecutor.interrupt();
-                    break;
-                }
-                throw new RuntimeException(e);
-            }
-            controller.deactivate();
-
-            //Contains actions produced by ending the turn (after last command is executed)
-            ActionLog finalLog = simulation.endTurn();
-            if (saveReplay)
-                gameResults.addActionLog(finalLog);
-            if (gui) {
-                animationLogProcessor.animate(finalLog);
-                animationLogProcessor.awaitNotification();
-            }
-            if (pendingShutdown) {
-                executor.shutdown();
-                futureExecutor.interrupt();
-                break;
-            }
-            try {
-                futureExecutor.join(); //Wait for the executor to shutdown to prevent spamming the executor service
-            } catch (InterruptedException e) {
-                System.out.print("Interrupted while shutting down future executor\n");
-                e.printStackTrace(System.err);
-                if (pendingShutdown) {
-                    futureExecutor.interrupt();
-                    break;
-                }
-                throw new RuntimeException(e);
             }
         }
         scores = state.getScores();
@@ -344,33 +210,23 @@ public class Game extends Executable {
         if (simulationThread != null) {
             simulationThread.interrupt();
         }
-        if (executor!= null)
-            executor.shutdown();
         if (state!=null) scores = state.getScores();
         simulation = null;
         state = null;
-        executor = null;
         simulationThread = null;
         gameResults = null;
     }
 
-    public List<HumanPlayer> getHumanList() {
-        return humanList;
-    }
-
-    protected void queueCommand(Command cmd) {
-        commandQueue.add(cmd);
-    }
-
     protected String[] getPlayerNames() {
-        String[] names = new String[players.length];
+        // TODO
+        /*String[] names = new String[players.length];
         int i = 0;
         for (Player p : players) {
             names[i] = p.getName();
             i++;
         }
-        return names;
-
+        return names;*/
+        return new String[]{"Player 1", "Player 2"};
     }
 
     public float[] getScores() {
@@ -396,10 +252,7 @@ public class Game extends Executable {
                 ", gameResults=" + gameResults +
                 ", simulation=" + simulation +
                 ", state=" + state +
-                ", players=" + Arrays.toString(players) +
-                ", executor=" + executor +
-                ", humanList=" + humanList +
-                ", commandQueue=" + commandQueue +
+                /*", players=" + Arrays.toString(players) +*/
                 ", simulationThread=" + simulationThread +
                 ", uiMessenger=" + uiMessenger +
                 ", pendingShutdown=" + pendingShutdown +

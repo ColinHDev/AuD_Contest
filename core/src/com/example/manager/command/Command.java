@@ -3,27 +3,24 @@ package com.example.manager.command;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.action.ActionLog;
 
+import java.io.Serializable;
+
 /**
- * Base Class
- * Every Command has to inherit from this
+ * Die Basisklasse für alle Commands.
+ * Ein Command repräsentiert eine Aktion, die von einem Spieler ausgeführt wird.
  */
-public abstract class Command {
+public abstract class Command implements Serializable {
 
-    protected boolean isEndTurn = false;
-    protected GameCharacterController controller;
+    public abstract ActionLog onExecute(GameCharacterController controller);
 
-    public Command(GameCharacterController controller) {
-        this.controller = controller;
-    }
-
-    public abstract ActionLog onExecute();
-
-    public ActionLog run(){
-        if (controller.isActive()) return onExecute();
+    public final ActionLog run(GameCharacterController controller) {
+        if (controller.isActive()) {
+            return onExecute(controller);
+        }
         return null;
     }
 
-    public boolean isEndTurn() {
-        return controller.isActive() && isEndTurn;
+    public boolean endsTurn() {
+        return false;
     }
 }

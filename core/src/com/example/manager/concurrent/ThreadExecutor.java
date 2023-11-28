@@ -1,13 +1,9 @@
-package com.example.manager;
+package com.example.manager.concurrent;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class BotThread {
-
-    private static final String namePrefix = "BotThread";
-    private static final AtomicInteger threadNumber = new AtomicInteger(0);
+public class ThreadExecutor {
 
     private final Object lock = new Object();
 
@@ -17,8 +13,8 @@ public class BotThread {
 
     private FutureTask<?> target = null;
 
-    public BotThread() {
-        worker = new Thread(Game.PLAYER_THREAD_GROUP, this::waitAndExecute);
+    public ThreadExecutor() {
+        worker = new Thread(this::waitAndExecute);
         worker.start();
     }
 
@@ -63,12 +59,12 @@ public class BotThread {
             }
         }
         worker.stop();
-        worker = new Thread(Game.PLAYER_THREAD_GROUP, this::waitAndExecute);
+        worker = new Thread(this::waitAndExecute);
         worker.start();
     }
 
     @SuppressWarnings("removal")
-    public void shutdown() {
+    public void interrupt() {
         synchronized (lock) {
             if (target != null) target.cancel(true);
             target = null;
