@@ -1,7 +1,6 @@
 package com.example.manager;
 
 import com.example.manager.command.Command;
-import com.example.manager.concurrent.ThreadExecutor;
 import com.example.manager.player.Bot;
 import com.example.manager.player.Player;
 import com.example.manager.player.PlayerHandler;
@@ -34,10 +33,7 @@ public class Game extends Executable {
 
     private static final AtomicInteger gameNumber = new AtomicInteger(0);
 
-    private ThreadExecutor executor;
-
     private Thread simulationThread;
-
 
     protected Game(GameConfig config) {
         super(config);
@@ -94,7 +90,6 @@ public class Game extends Executable {
         synchronized (schedulingLock) {
             if (getStatus() == Status.ABORTED) return;
             setStatus(Status.ACTIVE);
-            executor = new ThreadExecutor();
             create();
             //Init the Log Processor
             if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), new String[][]{});
@@ -202,12 +197,9 @@ public class Game extends Executable {
         if (simulationThread != null) {
             simulationThread.interrupt();
         }
-        if (executor!= null)
-            executor.shutdown();
         if (state!=null) scores = state.getScores();
         simulation = null;
         state = null;
-        executor = null;
         simulationThread = null;
         gameResults = null;
     }
@@ -248,7 +240,6 @@ public class Game extends Executable {
                 ", simulation=" + simulation +
                 ", state=" + state +
                 /*", players=" + Arrays.toString(players) +*/
-                ", executor=" + executor +
                 ", simulationThread=" + simulationThread +
                 ", uiMessenger=" + uiMessenger +
                 ", pendingShutdown=" + pendingShutdown +
