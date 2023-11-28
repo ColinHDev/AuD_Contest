@@ -74,8 +74,10 @@ public final class PlayerThread {
                         TimeUnit.MILLISECONDS
                 );
             }
+            controller.endTurn();
         } catch (InterruptedException e) {
             System.out.println("bot was interrupted");
+            controller.endTurn();
         } catch (ExecutionException e) {
             System.out.println("bot failed initialization with exception: " + e.getCause());
             controller.missNextTurn();
