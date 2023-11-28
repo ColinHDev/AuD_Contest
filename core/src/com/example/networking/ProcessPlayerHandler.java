@@ -87,7 +87,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         }
         builder.command(
                 "java", "-cp", currentJar.getPath(), BotProcessLauncher.class.getName(), // Starten der JVM in der main() vom BotProcessLauncher
-                "-p", playerClass.getName(), // Angabe des Klasse des Spielers
+                "-p", playerClass.getSimpleName(), // Angabe des Klasse des Spielers
                 "-port", String.valueOf(registryPort), // Angabe des Ports der Remote Object Registry
                 "-reference", remoteReferenceName // Angabe des Namens, unter dem die Remote Reference im Remote Object Registry gebunden ist
         );
