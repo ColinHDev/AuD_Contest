@@ -28,6 +28,7 @@ public class BotProcess {
     private final String remoteReferenceName;
 
     private ProcessCommunicator communicator;
+    private PlayerThread playerThread = null;
 
     public BotProcess(CompletionHandler<BotProcess> completionListener, Class<? extends Player> playerClass, String host, int port, String remoteReferenceName) {
         this.completionListener = completionListener;
@@ -62,7 +63,6 @@ public class BotProcess {
             );
         }
 
-        PlayerThread playerThread = null;
         while (true) {
             CommunicatedInformation information;
             try {
