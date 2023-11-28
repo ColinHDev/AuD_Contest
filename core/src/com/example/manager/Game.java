@@ -62,7 +62,7 @@ public class Game extends Executable {
             PlayerHandler handler;
             Class<? extends Player> playerClass = config.players.get(i);
             if (playerClass.isInstance(Bot.class)) {
-                handler = new ProcessPlayerHandler(playerClass);
+                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), i);
             } else {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
@@ -90,6 +90,7 @@ public class Game extends Executable {
         synchronized (schedulingLock) {
             if (getStatus() == Status.ABORTED) return;
             setStatus(Status.ACTIVE);
+            gameNumber.getAndIncrement();
             create();
             //Init the Log Processor
             if (gui) animationLogProcessor.init(state.copy(), getPlayerNames(), new String[][]{});
@@ -118,7 +119,7 @@ public class Game extends Executable {
      * Controls Player Execution
      */
     private void run() {
-        Thread.currentThread().setName("Game_Thread_" + gameNumber.getAndIncrement());
+        Thread.currentThread().setName("Game_Thread_" + gameNumber.get());
         while (!pendingShutdown && state.isActive()) {
             synchronized (schedulingLock) {
                 if (getStatus() == Status.PAUSED)

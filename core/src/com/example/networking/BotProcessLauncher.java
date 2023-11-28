@@ -22,6 +22,21 @@ public class BotProcessLauncher {
                 .longOpt("player")
                 .hasArg()
                 .desc("Name of the bot class file without extension in format \"MyBot\" \n Attention: Case-sensitive!").build());
+
+        cliOptions.addOption(Option
+                .builder("host")
+                .hasArg()
+                .desc("Host of the Java RMI Remote Registry").build());
+
+        cliOptions.addOption(Option
+                .builder("port")
+                .hasArg()
+                .desc("Port of the Java RMI Remote Registry").build());
+
+        cliOptions.addOption(Option
+                .builder("reference")
+                .hasArg()
+                .desc("Name to associate with the Remote Reference in the Java RMI Remote Registry").build());
     }
 
     public static void main(String[] args) {
@@ -50,6 +65,27 @@ public class BotProcessLauncher {
         }
         Class<? extends Player> playerClass = Manager.getPlayer(params.getOptionValue("p").trim(), false);
 
+        String host = null;
+        int port = ProcessPlayerHandler.registryPort;
+        if (params.hasOption("host")) {
+            host = params.getOptionValue("host").trim();
+        }
+        if (params.hasOption("port")) {
+            try {
+                port = Integer.parseInt(params.getOptionValue("port").trim());
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid port number: " + params.getOptionValue("port").trim());
+                printHelp();
+                return;
+            }
+        }
+        if (!params.hasOption("reference")) {
+            System.err.println("Missing required option: -reference");
+            printHelp();
+            return;
+        }
+        String remoteReferenceName = params.getOptionValue("reference").trim();;
+
         BotProcess botProcess;
         Object lock = new Object();
         synchronized (lock) {
@@ -59,7 +95,7 @@ public class BotProcessLauncher {
                             lock.notify();
                         }
                     },
-                    playerClass
+                    playerClass, host, port, remoteReferenceName
             );
             botProcess.start();
             try {

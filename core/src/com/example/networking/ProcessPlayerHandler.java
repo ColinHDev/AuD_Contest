@@ -29,14 +29,16 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     public static final String stubNamePrefix = "ProcessCommunicator_";
 
     private final Class<? extends Player> playerClass;
-    private Process process;
+    private final String remoteReferenceName;
 
     private Registry registry;
     private ProcessCommunicator communicator;
+    private Process process;
 
 
-    public ProcessPlayerHandler(Class<? extends Player> playerClass) {
+    public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerId) {
         this.playerClass = playerClass;
+        remoteReferenceName = stubNamePrefix + gameId + "_" + playerId;
     }
 
     @Override
@@ -51,23 +53,6 @@ public final class ProcessPlayerHandler implements PlayerHandler {
 
     @Override
     public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.inheritIO();
-
-        File currentJar;
-        try {
-            currentJar = new File(ProcessPlayerHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        builder.command("java", "-cp", currentJar.getPath(), BotProcessLauncher.class.getName());
-
-        try {
-            process = builder.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         try {
             // createRegistry() wirft eine RemoteException, wenn an dem Port bereits ein Registry-Objekt existiert
             registry = LocateRegistry.createRegistry(registryPort);
@@ -85,11 +70,34 @@ public final class ProcessPlayerHandler implements PlayerHandler {
         try {
             // Exportieren des Objekts, damit es von anderen Prozessen verwendet werden kann
             communicator = (ProcessCommunicator) UnicastRemoteObject.exportObject(localCommunicator, 0);
-            registry.rebind(stubNamePrefix + process.pid(), communicator);
+            registry.rebind(remoteReferenceName, communicator);
             communicator.queueInformation(new GameInformation(gameState, isDebug, seed));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.inheritIO();
+
+        File currentJar;
+        try {
+            currentJar = new File(ProcessPlayerHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        builder.command(
+                "java", "-cp", currentJar.getPath(), BotProcessLauncher.class.getName(), // Starten der JVM in der main() vom BotProcessLauncher
+                "-p", playerClass.getName(), // Angabe des Klasse des Spielers
+                "-port", String.valueOf(registryPort), // Angabe des Ports der Remote Object Registry
+                "-reference", remoteReferenceName // Angabe des Namens, unter dem die Remote Reference im Remote Object Registry gebunden ist
+        );
+
+        try {
+            process = builder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return new FutureTask<>(
                 () -> {
                     Command command;
@@ -132,7 +140,7 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     @Override
     public void dispose() {
         try {
-            registry.unbind(stubNamePrefix + process.pid());
+            registry.unbind(remoteReferenceName);
         } catch (RemoteException | NotBoundException e) {
             throw new RuntimeException(e);
         }

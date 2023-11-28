@@ -21,30 +21,44 @@ import java.util.concurrent.BlockingQueue;
 public class BotProcess {
 
     private CompletionHandler<BotProcess> completionListener;
-    private Class<? extends Player> playerClass;
+
+    private final Class<? extends Player> playerClass;
+    private final String host;
+    private final int port;
+    private final String remoteReferenceName;
 
     private ProcessCommunicator communicator;
 
-    public BotProcess(CompletionHandler<BotProcess> completionListener, Class<? extends Player> playerClass) {
+    public BotProcess(CompletionHandler<BotProcess> completionListener, Class<? extends Player> playerClass, String host, int port, String remoteReferenceName) {
         this.completionListener = completionListener;
         this.playerClass = playerClass;
+        this.host = host;
+        this.port = port;
+        this.remoteReferenceName = remoteReferenceName;
     }
 
     public void start() {
-        Registry registry = null;
-        for (int attempts = 0; registry == null && attempts < 5; attempts++) {
-            try {
-                registry = LocateRegistry.getRegistry(ProcessPlayerHandler.registryPort);
-                communicator = (ProcessCommunicator) registry.lookup(ProcessPlayerHandler.stubNamePrefix + ProcessHandle.current().pid());
-            } catch (RemoteException | NotBoundException e) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ignored) {
-                }
-            }
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(host, port);
+        } catch (RemoteException e) {
+            throw new RuntimeException(
+                    "There was no Remote Object Registry to get at the given host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".",
+                    e
+            );
         }
-        if (registry == null) {
-            throw new RuntimeException("Could not connect to Parent Process of the main game through.");
+        try {
+            communicator = (ProcessCommunicator) registry.lookup(remoteReferenceName);
+        } catch (NotBoundException e) {
+            throw new RuntimeException(
+                    "There was no Remote Reference bound under the name \"" + remoteReferenceName + "\" at the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".",
+                    e
+            );
+        } catch (RemoteException e) {
+            throw new RuntimeException(
+                    "The connection with the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\" failed.",
+                    e
+            );
         }
 
         PlayerThread playerThread = null;
