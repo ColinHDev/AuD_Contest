@@ -107,5 +107,8 @@ public class BotProcess {
 
     public void dispose() {
         completionListener = null;
+        if (playerThread != null) {
+            playerThread.dispose();
+        }
     }
 }
