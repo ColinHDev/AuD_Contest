@@ -1,12 +1,12 @@
 package com.example.simulation.campaign;
 
-import com.example.simulation.GameState;
+import com.example.manager.StaticGameState;
 import com.example.manager.Controller;
 
 public class Level1Bot extends CampaignBot {
 
     @Override
-    public void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(StaticGameState state, Controller controller) {
         super.executeTurn(state, controller);
         switch (turnCount){
             case 0:

@@ -63,7 +63,7 @@ public final class PlayerThread {
                 // TODO: Manager.getSeed() nicht über Prozesse hinweg
                 ((Bot) player).setRnd(Manager.getSeed());
             }
-            player.init(state);
+            player.init(new StaticGameState(state));
         });
         try {
             if (isDebug) {
@@ -92,7 +92,7 @@ public final class PlayerThread {
         Controller controller = createController();
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Run_Thread_Player_" + player.getName());
-            player.executeTurn(state, controller);
+            player.executeTurn(new StaticGameState(state), controller);
         });
         Thread futureExecutor = switch (player.getType()) {
             case Human -> new Thread(() -> {
