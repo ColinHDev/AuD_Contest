@@ -1,13 +1,13 @@
-# G.A.T.S
+# Gadsen: Tower Defense
 
 
 ### Installation
 
 #### Schritt 1: [Kommandozeile]
 ```bash
-git clone https://github.com/AdmiralLuke/G.A.T.S
+git clone https://github.com/ColinHDev/AuD_Contest
 ```
-- erstellt Ordner namens ``G.A.T.S`` mit allen Unterordnern siehe Git
+- erstellt Ordner namens ``AuD_Contest`` mit allen Unterordnern siehe Git
 
 #### Schritt 2:
 To import in Eclipse: File -> Import -> Gradle -> Existing Gradle Project
@@ -16,7 +16,7 @@ To import to Intellij IDEA: File -> Open -> build.gradle
 
 To import to NetBeans: File -> Open Project...
 
-Die Main zum Ausführen befindet sich in ``G.A.T.S\desktop\src\com.gatdsen\DesktopLauncher.java``
+Die Main zum Ausführen befindet sich in ``AuD_Contest\desktop\src\com.gatdsen\DesktopLauncher.java``
 
 ### Aktualisierung: [Kommandozeile]
 Vor jeder Bearbeitungsphase:
