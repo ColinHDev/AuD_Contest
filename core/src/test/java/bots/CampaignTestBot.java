@@ -1,8 +1,8 @@
 package bots;
 
-import com.example.manager.StaticGameState;
-import com.example.manager.player.Bot;
-import com.example.manager.Controller;
+import com.gatdsen.manager.StaticGameState;
+import com.gatdsen.manager.player.Bot;
+import com.gatdsen.manager.Controller;
 
 public class CampaignTestBot extends Bot {
     @Override

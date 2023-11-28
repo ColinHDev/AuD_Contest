@@ -16,7 +16,7 @@ To import to Intellij IDEA: File -> Open -> build.gradle
 
 To import to NetBeans: File -> Open Project...
 
-Die Main zum Ausführen befindet sich in ``G.A.T.S\desktop\src\com.gats\DesktopLauncher.java``
+Die Main zum Ausführen befindet sich in ``G.A.T.S\desktop\src\com.gatdsen\DesktopLauncher.java``
 
 ### Aktualisierung: [Kommandozeile]
 Vor jeder Bearbeitungsphase:
