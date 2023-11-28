@@ -38,7 +38,7 @@ public class BotProcess {
         Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
     }
 
-    public void start() {
+    public void run() {
         Registry registry;
         try {
             registry = LocateRegistry.getRegistry(host, port);

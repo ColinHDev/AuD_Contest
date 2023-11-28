@@ -97,7 +97,7 @@ public class BotProcessLauncher {
                     },
                     playerClass, host, port, remoteReferenceName
             );
-            botProcess.start();
+            botProcess.run();
             try {
                 lock.wait();
             } catch (InterruptedException e) {
