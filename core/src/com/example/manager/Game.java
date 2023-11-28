@@ -1,9 +1,7 @@
 package com.example.manager;
 
 import com.example.manager.command.Command;
-import com.example.manager.player.Bot;
-import com.example.manager.player.Player;
-import com.example.manager.player.PlayerHandler;
+import com.example.manager.player.*;
 import com.example.networking.ProcessPlayerHandler;
 import com.example.simulation.GameCharacterController;
 import com.example.simulation.GameState;
@@ -61,7 +59,7 @@ public class Game extends Executable {
         for (int i = 0; i < config.teamCount; i++) {
             PlayerHandler handler;
             Class<? extends Player> playerClass = config.players.get(i);
-            if (playerClass.isInstance(Bot.class)) {
+            if (Bot.class.isAssignableFrom(playerClass)) {
                 handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), i);
             } else {
                 if (!gui) {

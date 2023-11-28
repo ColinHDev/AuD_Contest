@@ -43,12 +43,12 @@ public final class ProcessPlayerHandler implements PlayerHandler {
 
     @Override
     public boolean isHumanPlayer() {
-        return playerClass.isInstance(HumanPlayer.class);
+        return HumanPlayer.class.isAssignableFrom(playerClass);
     }
 
     @Override
     public boolean isBotPlayer() {
-        return playerClass.isInstance(Bot.class);
+        return Bot.class.isAssignableFrom(playerClass);
     }
 
     @Override
