@@ -10,8 +10,9 @@ import com.gatdsen.simulation.action.ActionLog;
  */
 public class PlayerController {
 
-    private int team;
+    private final int playerIndex;
     private final GameState state;
+    private final PlayerState playerState;
     boolean active = true;
 
     /**
@@ -31,28 +32,53 @@ public class PlayerController {
 
     /**
      *
-     * @param team          the team this Controller will grant access to
+     * @param playerIndex          the team this Controller will grant access to
      * @param state         the current state of the game
      */
-    protected PlayerController(int team, GameState state) {
-        this.team = team;
+    protected PlayerController(int playerIndex, GameState state) {
+        this.playerIndex = playerIndex;
         this.state = state;
+        this.playerState = state.getPlayerStates()[playerIndex];
     }
 
-    public int getTeam() {
-        return team;
+    public int getPlayerIndex() {
+        return playerIndex;
     }
 
     //ToDo: add more calls to complete your API
     //ToDo: all added calls should have respective Counterparts in manager.Controller and manager.command.[...]
+
     /**
-     * Example command, replace with correct logic and add more commands
-     *
-     * @param i   example parameter
-     * @return the ActionLog produced when executing this command
+     * Platziert einen Turm auf dem Spielfeld
+     * @param x x-Koordinate
+     * @param y y-Koordinate
+     * @param type Turm-Typ als Enum
+     * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
      */
-    public ActionLog foo(int i) {
-        //ToDo execute command
+    public ActionLog placeTower(int x, int y, Tower.TowerType type) {
+        playerState.placeTower(x, y, type, getRoot());
+        return endCommand();
+    }
+
+    /**
+     * Upgraded einen Turm auf dem Spielfeld
+     * @param x x-Koordinate
+     * @param y y-Koordinate
+     * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
+     */
+    public ActionLog upgradeTower(int x, int y) {
+        playerState.upgradeTower(x, y, getRoot());
+        return endCommand();
+    }
+
+    /**
+     * Verkauft einen Turm auf dem Spielfeld
+     * @param x x-Koordinate
+     * @param y y-Koordinate
+     * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
+     */
+    private ActionLog sellTower(int x, int y) {
+        // ToDo: implement sellTower after christmas task and make it public
         return endCommand();
     }
 

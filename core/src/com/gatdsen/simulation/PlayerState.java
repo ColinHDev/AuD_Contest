@@ -1,5 +1,8 @@
 package com.gatdsen.simulation;
 
+import com.gatdsen.simulation.action.Action;
+import com.gatdsen.simulation.action.TowerPlaceAction;
+
 import java.io.Serializable;
 
 public class PlayerState implements Serializable {
@@ -136,5 +139,57 @@ public class PlayerState implements Serializable {
             }
         }
 
+    }
+
+    /**
+     * Platziert einen Tower auf dem Spielfeld
+     * @param x x-Koordinate des Towers
+     * @param y y-Koordinate des Towers
+     * @param type Typ des Towers
+     * @param head Kopf der Action-Liste
+     * @return Kopf der Action-Liste
+     */
+    Action placeTower(int x, int y, Tower.TowerType type, Action head) {
+        if (board[x][y] != null) {
+            // ToDo: append error action
+            return head;
+        }
+
+        if (money < Tower.getPrice(type)) {
+            // ToDo: append error action
+            return head;
+        }
+
+        money -= Tower.getPrice(type);
+
+        board[x][y] = new Tower(type, x, y);
+        IntVector2 pos = new IntVector2(x, y);
+        Action action = new TowerPlaceAction(0, pos, type.ordinal(), index);
+        head.addChild(action);
+        return head;
+    }
+
+    /**
+     * Upgraded einen Tower auf dem Spielfeld
+     * @param x x-Koordinate des Towers
+     * @param y y-Koordinate des Towers
+     * @param head Kopf der Action-Liste
+     * @return Kopf der Action-Liste
+     */
+    Action upgradeTower(int x, int y, Action head) {
+        if (board[x][y] == null) {
+            // ToDo: append error action
+            return head;
+        }
+        if (board[x][y] instanceof Tower tower && tower.getLevel() < Tower.getMaxLevel() && money > tower.getUpgradePrice()) {
+            money -= tower.getUpgradePrice();
+            tower.upgrade();
+            head.addChild(new TowerPlaceAction(0, tower.getPosition(), tower.getType().ordinal(), index));
+        } else {
+            // ToDo: append error action
+            return head;
+        }
+
+        return head;
     }
 }

@@ -146,7 +146,7 @@ public class Game extends Executable {
             }
 
             PlayerController gcController = simulation.getController();
-            int currentPlayerIndex = gcController.getTeam();
+            int currentPlayerIndex = gcController.getPlayerIndex();
 
             // TODO: executor.waitForCompletion();
             PlayerHandler playerHandler = playerHandlers[currentPlayerIndex];
