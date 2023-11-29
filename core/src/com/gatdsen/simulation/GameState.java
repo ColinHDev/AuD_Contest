@@ -55,6 +55,7 @@ public class GameState implements Serializable {
         this.playerCount = playerCount;
         this.active = true;
         this.sim = sim;
+        Arrays.setAll(playerStates, p -> new PlayerState(this, 300, 100));
     }
 
     private GameState(GameState original) {
