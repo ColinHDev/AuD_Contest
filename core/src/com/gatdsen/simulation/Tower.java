@@ -3,6 +3,7 @@ package com.gatdsen.simulation;
 
 
 import com.gatdsen.simulation.action.Action;
+import com.gatdsen.simulation.action.ProjectileAction;
 import com.gatdsen.simulation.action.TowerAttackAction;
 
 import java.util.ArrayList;
@@ -185,18 +186,20 @@ public class Tower extends Tile {
                 break;
             }
         }
-
         assert target != null;
-        target.updateHealth(getDamage());
-        cooldown = getRechargeTime();
 
         // TODO: define Team instead of 0!!!
         head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), 0));
+        Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(),1);
+        head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE,path));
+
+        target.updateHealth(getDamage(), head);
+        cooldown = getRechargeTime();
         return head;
     }
 
-    void tick() {
-
+    Action tick(Action head) {
+        head.addChild(attack(board, head));
+        return head;
     }
-
 }

@@ -1,6 +1,7 @@
 package com.gatdsen.simulation;
 
 import com.gatdsen.simulation.action.Action;
+import com.gatdsen.simulation.action.EnemySpawnAction;
 import com.gatdsen.simulation.action.TowerPlaceAction;
 
 import java.io.Serializable;
@@ -14,6 +15,12 @@ public class PlayerState implements Serializable {
     private int money;
     private int enemyIndex;
     private int index;
+    private PathTile spawnTile;
+    private PathTile endTile;
+    private final int enemyTypeCount = 1;
+
+    private final Enemy[][] enemiesToBeSpawned = new Enemy[100][enemyTypeCount];
+
 
     PlayerState copy(GameState newGameState){
         return new PlayerState(this, newGameState);
@@ -46,7 +53,6 @@ public class PlayerState implements Serializable {
                         next = (PathTile) board[nextPos.x][nextPos.y];
                     }
                     actual.setNext(next);
-
                 }
             }
         }
@@ -63,6 +69,7 @@ public class PlayerState implements Serializable {
         board = new Tile[width][height];
         this.health = health;
         this.money = money;
+        initEnemiesToBeSpawned();
 
         for (int i = 0; i <width; i++) {
             for (int j = 0; j < height; j++) {
@@ -72,7 +79,6 @@ public class PlayerState implements Serializable {
             }
         }
 
-        IntVector2 end = null;
         IntRectangle mapOutline = new IntRectangle(0,0,width, height);
         for (int i = 0; i <width; i++) {
             for (int j = 0; j < height; j++) {
@@ -87,18 +93,18 @@ public class PlayerState implements Serializable {
                     if (mapOutline.contains(destination.toFloat())){
                         ((PathTile) board[i][j]).setNext((PathTile) board[destination.x][destination.y]);
                         if (((PathTile) board[i][j]).getNext() == null){
-                            end = new IntVector2(i, j);
+                            endTile = (PathTile) board[i][j];
                         }
                     }
                 }
             }
         }
 
-        if (end == null || !(board[end.x][end.y] instanceof PathTile)) {
+        if (endTile == null) {
             throw new RuntimeException("There is no path");
         }
-
-        ((PathTile) board[end.x][end.y]).indexPathTiles();
+        spawnTile = endTile.getFirstPathTile();
+        spawnTile.indexPathTiles();
     }
 
 
@@ -203,15 +209,46 @@ public class PlayerState implements Serializable {
         return head;
     }
 
+    void initEnemiesToBeSpawned(){
+        for (int i = 0; i < enemiesToBeSpawned.length; i++) {
+            for (int j = 0; j < enemyTypeCount; j++) {
+                enemiesToBeSpawned[i][j] = new Enemy(100 * ((i/20) + 1), (i/20) + 1, spawnTile);
+            }
+        }
+    }
+
+    Action spawnEnemies(Action head, int wave){
+        for (int i = 0; i < enemyTypeCount; i++) {
+            Enemy actual = enemiesToBeSpawned[wave][i];
+            spawnTile.getEnemies().add(actual);
+            head.addChild(new EnemySpawnAction(0, spawnTile.getPosition(),actual.getLevel(), index));
+        }
+        return head;
+    }
+
+
+
+    Action moveEnemies(Action head){
+        PathTile actual = endTile;
+        while (actual.getPrev()!= null){
+            for (Enemy enemy : endTile.getEnemies()) {
+                enemy.move(head);
+            }
+            actual = actual.getPrev();
+        }
+        return head;
+    }
+
 
     // ToDo: --------------
-    void tickTowers(Action head) {
+    Action tickTowers(Action head) {
         for (Tile[] tiles : board) {
             for (Tile tile : tiles) {
                 if (tile instanceof Tower tower) {
-                    tower.tick();
+                    tower.tick(head);
                 }
             }
         }
+        return head;
     }
 }

@@ -82,7 +82,7 @@ public class GameState implements Serializable {
         return playerStates;
     }
 
-    private void nextTurn(){
+    void nextTurn(){
         ++turn;
     }
 

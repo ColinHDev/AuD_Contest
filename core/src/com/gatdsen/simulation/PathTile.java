@@ -55,7 +55,7 @@ public class PathTile extends Tile {
     }
 
     void indexPathTiles(){
-        PathTile current = getFirstPathTile();
+        PathTile current = this;
         int index = 0;
         while (current != null){
             current.index = index;

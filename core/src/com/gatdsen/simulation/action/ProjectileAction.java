@@ -11,7 +11,7 @@ public class ProjectileAction extends Action{
      * The possible types of Projectiles-appearances
      */
     public enum ProjectileType {
-        EXAMPLE_PROJECTILE
+        STANDARD_TYPE
     }
 
     private final ProjectileType type;

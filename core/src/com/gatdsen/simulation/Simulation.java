@@ -2,10 +2,7 @@ package com.gatdsen.simulation;
 
 import com.gatdsen.manager.Timer;
 import com.gatdsen.simulation.GameState.GameMode;
-import com.gatdsen.simulation.action.ActionLog;
-import com.gatdsen.simulation.action.GameOverAction;
-import com.gatdsen.simulation.action.InitAction;
-import com.gatdsen.simulation.action.TurnStartAction;
+import com.gatdsen.simulation.action.*;
 
 /**
  * Enthält die Logik, welche die Spielmechaniken bestimmt.
@@ -51,17 +48,32 @@ public class Simulation {
 
     public ActionLog[] endTurn() {
         ActionLog[] actionLogs = new ActionLog[playerStates.length];
-        for (int i = 0; i < playerStates.length; i++) {
+        Action[] rootActions = new Action[playerStates.length];
 
+        for (int i = 0; i < playerStates.length; i++) {
+            rootActions[i] = actionLog.getRootAction();
+            rootActions[i].addChild(playerStates[i].tickTowers(rootActions[i]));
+            rootActions[i].addChild(playerStates[i].moveEnemies(rootActions[i]));
+            ActionLog[] lastTurn = actionLogs;
         }
 
-        // Integer team = gameState.getTurn().peek();
-        ActionLog lastTurn = this.actionLog;
-        //     assert team != null;
+        int winner = -1;
+        int livingPlayers = playerStates.length;
+        for (int i = 0; i < playerStates.length; i++) {
+           if (playerStates[i].getHealth() <= 0){
+               --livingPlayers;
+           } else winner = i;
+        }
+        if (livingPlayers <= 1){
+            for (int i = 0; i < playerStates.length; i++) {
+                rootActions[i].addChild(new GameOverAction(winner));
+            }
+        }
+
+        gameState.nextTurn();
         this.actionLog = new ActionLog(new TurnStartAction(0));
-
-
-        return null;
+        //When to spawn enemies?
+        return actionLogs;
     }
 
     public ActionLog clearAndReturnActionLog() {
