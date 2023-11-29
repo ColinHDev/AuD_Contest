@@ -1,5 +1,8 @@
 package com.gatdsen.simulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Tile {
 
     protected IntVector2 pos;
@@ -21,15 +24,15 @@ public abstract class Tile {
      * @param board Map auf der nachgeschaut wird
      * @return
      */
-    Tile[][] getNeighbours(int range, Tile[][] board) {
+    List<Tile> getNeighbours(int range, Tile[][] board) {
         int diameter = (range * 2) + 1;
-        Tile[][] neighbours = new Tile[diameter][diameter];
+        List<Tile> neighbours = new ArrayList<>(diameter * diameter - 1);
         for (int i = 0; i < diameter; i++) {
             for (int j = 0; j < diameter; j++) {
                 if (pos.x + range >=board.length || pos.x - range < 0 || pos.y -range < 0 || pos.y + range >= board[0].length ){
                     continue;
                 }
-                neighbours[i][j] = board[pos.x -range + i][pos.y -range + j];
+                neighbours.add(board[pos.x -range + i][pos.y -range + j]);
             }
         }
         return neighbours;

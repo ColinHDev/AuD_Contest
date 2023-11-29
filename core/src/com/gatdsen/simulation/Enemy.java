@@ -18,17 +18,20 @@ public class Enemy {
         return new Enemy(this.health, this.level, posTile);
     }
 
-    private void updateHealth(int damage){
+    void updateHealth(int damage){
         if (health-damage <= 0){
+            health = 0;
+            posTile.getEnemies().remove(this);
+            //TODO Player gets money
         } else health -= damage;
     }
 
-    private void move(Action head){
-        if (posTile.next != null) {
-            posTile.enemies.remove(this);
-            posTile = posTile.next;
-            posTile.enemies.add(this);
-            head.addChild(new EnemyMoveAction(0, posTile.prev.getPosition(), posTile.getPosition(), level));
+    void move(Action head){
+        if (posTile.getNext() != null) {
+            posTile.getEnemies().remove(this);
+            posTile = posTile.getNext();
+            posTile.getEnemies().add(this);
+            head.addChild(new EnemyMoveAction(0, posTile.getPrev().getPosition(), posTile.getPosition(), level));
 
         }
         else{

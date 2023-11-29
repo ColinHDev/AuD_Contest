@@ -41,8 +41,8 @@ public class PlayerState implements Serializable {
                 if (board[i][j] instanceof PathTile actual){
                     PathTile originalPT = (PathTile) original.board[i][j];
                     PathTile next = null;
-                    if (originalPT.next != null){
-                        IntVector2 nextPos = originalPT.next.getPosition();
+                    if (originalPT.getNext() != null){
+                        IntVector2 nextPos = originalPT.getNext().getPosition();
                         next = (PathTile) board[nextPos.x][nextPos.y];
                     }
                     actual.setNext(next);
@@ -53,6 +53,54 @@ public class PlayerState implements Serializable {
         health = original.health;
         money = original.money;
     }
+
+    public PlayerState(GameState gameState, int health, int money){
+        this.index = index;
+        this.enemyIndex = index == 0 ? 1 : 0;
+        this.gameState = gameState;
+        int width = gameState.getBoardSizeX();
+        int height = gameState.getBoardSizeY();
+        board = new Tile[width][height];
+        this.health = health;
+        this.money = money;
+
+        for (int i = 0; i <width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                    board[i][j] = new PathTile(i, j);
+                }
+            }
+        }
+
+        IntVector2 end = null;
+        IntRectangle mapOutline = new IntRectangle(0,0,width, height);
+        for (int i = 0; i <width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                    IntVector2 destination = new IntVector2(i, j);
+                    switch (gameState.map[i][j]){
+                        case PATH_RIGHT -> destination.add(1,0);
+                        case PATH_DOWN -> destination.add(0,-1);
+                        case PATH_LEFT -> destination.add(-1,0);
+                        case PATH_UP -> destination.add(0,1);
+                    }
+                    if (mapOutline.contains(destination.toFloat())){
+                        ((PathTile) board[i][j]).setNext((PathTile) board[destination.x][destination.y]);
+                        if (((PathTile) board[i][j]).getNext() == null){
+                            end = new IntVector2(i, j);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (end == null || !(board[end.x][end.y] instanceof PathTile)) {
+            throw new RuntimeException("There is no path");
+        }
+
+        ((PathTile) board[end.x][end.y]).indexPathTiles();
+    }
+
 
     /**
      * Gibt die aktuelle Lebenspunkte des Spielers zurück
@@ -103,44 +151,6 @@ public class PlayerState implements Serializable {
     }
 
 
-    public PlayerState(GameState gameState, int health, int money){
-        this.index = index;
-        this.enemyIndex = index == 0 ? 1 : 0;
-        this.gameState = gameState;
-        int width = gameState.getBoardSizeX();
-        int height = gameState.getBoardSizeY();
-        board = new Tile[width][height];
-        this.health = health;
-        this.money = money;
-
-        for (int i = 0; i <width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
-                    board[i][j] = new PathTile(i, j);
-                }
-            }
-        }
-
-        IntRectangle mapOutline = new IntRectangle(0,0,width, height);
-        for (int i = 0; i <width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
-                   IntVector2 destination = new IntVector2(i, j);
-                   switch (gameState.map[i][j]){
-                       case PATH_RIGHT -> destination.add(1,0);
-                       case PATH_DOWN -> destination.add(0,-1);
-                       case PATH_LEFT -> destination.add(-1,0);
-                       case PATH_UP -> destination.add(0,1);
-                   }
-                   if (mapOutline.contains(destination.toFloat())){
-                       ((PathTile) board[i][j]).setNext((PathTile) board[destination.x][destination.y]);
-                   }
-                }
-            }
-        }
-
-    }
-
     /**
      * Platziert einen Tower auf dem Spielfeld
      * @param x x-Koordinate des Towers
@@ -162,7 +172,7 @@ public class PlayerState implements Serializable {
 
         money -= Tower.getPrice(type);
 
-        board[x][y] = new Tower(type, x, y);
+        board[x][y] = new Tower(type, x, y, board);
         IntVector2 pos = new IntVector2(x, y);
         Action action = new TowerPlaceAction(0, pos, type.ordinal(), index);
         head.addChild(action);
@@ -191,5 +201,17 @@ public class PlayerState implements Serializable {
         }
 
         return head;
+    }
+
+
+    // ToDo: --------------
+    void tickTowers(Action head) {
+        for (Tile[] tiles : board) {
+            for (Tile tile : tiles) {
+                if (tile instanceof Tower tower) {
+                    tower.tick();
+                }
+            }
+        }
     }
 }

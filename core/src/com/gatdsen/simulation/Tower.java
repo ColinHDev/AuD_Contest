@@ -2,10 +2,14 @@
 package com.gatdsen.simulation;
 
 
+import com.gatdsen.simulation.action.Action;
+import com.gatdsen.simulation.action.TowerAttackAction;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Tower extends Tile{
+public class Tower extends Tile {
 
     // ToDo: lookup table for upgraded values
 
@@ -20,6 +24,7 @@ public class Tower extends Tile{
     static final int[] RANGE_VALUES = new int[TowerType.values().length];
     static final int[] RECHARGE_TIME_VALUES = new int[TowerType.values().length];
     static final int[] PRICE_VALUES = new int[TowerType.values().length];
+
     static {
         DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 1;
         DAMAGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 2;
@@ -40,21 +45,44 @@ public class Tower extends Tile{
 
     TowerType type;
     int level;
+    int cooldown;
+    List<Tile> inRange;
+    Tile[][] board;
 
-    public Tower(TowerType type, int x, int y) {
+    public Tower(TowerType type, int x, int y, Tile[][] board) {
         super(x, y);
         this.type = type;
         this.level = 1;
+        this.cooldown = getRechargeTime();
+        this.board = board;
+        this.inRange = getNeighbours(getRange(), board);
     }
 
     public Tower(Tower original) {
-        this(original.type, original.pos.x, original.pos.y);
+        this(original.type, original.pos.x, original.pos.y, null);
         this.level = original.level;
+        this.cooldown = original.cooldown;
+        this.inRange = original.inRange;
     }
 
     @Override
     protected Tile copy() {
         return new Tower(this);
+    }
+
+    private final List<PathTile> pathInRange = new ArrayList<>();
+
+    private void setPathList(Tile[][] board) {
+        for (Tile tile : inRange) {
+            if (tile instanceof PathTile pathTile) {
+                pathInRange.add(pathTile);
+            }
+        }
+        pathInRange.sort(Comparator.comparingInt(PathTile::getIndex));
+    }
+
+    private List<PathTile> getPathInRange() {
+        return pathInRange;
     }
 
     public static int getUpgradePrice(TowerType type, int level) {
@@ -63,6 +91,7 @@ public class Tower extends Tile{
 
     /**
      * Gibt den Damage-Wert des Towers zurück
+     *
      * @param type Typ des Towers
      * @return Damage-Wert des Towers
      */
@@ -72,6 +101,7 @@ public class Tower extends Tile{
 
     /**
      * Gibt den Range-Wert des Towers zurück
+     *
      * @param type Typ des Towers
      * @return Range-Wert des Towers
      */
@@ -81,6 +111,7 @@ public class Tower extends Tile{
 
     /**
      * Gibt den RechargeTime-Wert des Towers zurück
+     *
      * @param type Typ des Towers
      * @return RechargeTime-Wert des Towers
      */
@@ -90,6 +121,7 @@ public class Tower extends Tile{
 
     /**
      * Gibt den Preis des Towers zurück
+     *
      * @param type Typ des Towers
      * @return Preis des Towers
      */
@@ -130,22 +162,41 @@ public class Tower extends Tile{
     }
 
     void upgrade() {
+        this.inRange = getNeighbours(getRange(), board);
         ++level;
     }
 
-    private final List<Enemy> enemiesInRange = new ArrayList<>();
-    private void setEnemyList(Tile[][] board){
-        Tile[][] inRange = this.getNeighbours(getRange(), board);
-        for (Tile[] tiles : inRange) {
-            for (Tile tile : tiles) {
-                if (tile instanceof PathTile && !((PathTile) tile).enemies.isEmpty()) {
-                    enemiesInRange.addAll(((PathTile) tile).enemies);
-                }
+    public Action attack(Tile[][] board, Action head) {
+        if (getRechargeTime() > 0) {
+            --cooldown;
+            return head;
+        }
+        setPathList(board);
+        if (pathInRange.isEmpty()) {
+            return head;
+        }
+
+        int lastIndex = pathInRange.size() - 1;
+
+        Enemy target = null;
+        for (int i = lastIndex; i >= 0; i--) {
+            if (!pathInRange.get(i).getEnemies().isEmpty()) {
+                target = pathInRange.get(i).getEnemies().get(0);
+                break;
             }
         }
+
+        assert target != null;
+        target.updateHealth(getDamage());
+        cooldown = getRechargeTime();
+
+        // TODO: define Team instead of 0!!!
+        head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), 0));
+        return head;
     }
 
-    private List<Enemy> getEnemiesInRange() {
-        return enemiesInRange;
+    void tick() {
+
     }
+
 }
