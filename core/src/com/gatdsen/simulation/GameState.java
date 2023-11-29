@@ -38,7 +38,6 @@ public class GameState implements Serializable {
     private transient Timer turnTimer;
 
 
-
     /**
      * Creates a new GameState for the specified attributes.
      *
@@ -71,6 +70,14 @@ public class GameState implements Serializable {
         playerCount = original.playerCount;
         active = original.active;
         sim = null;
+    }
+
+    /**
+     * Gibt die PlayerStates beider Spieler zurück
+     * @return PlayerStates
+     */
+    public PlayerState[] getPlayerStates() {
+        return playerStates;
     }
 
     private void nextTurn(){

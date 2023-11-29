@@ -12,11 +12,6 @@ public class PlayerState implements Serializable {
     private int enemyIndex;
     private int index;
 
-
-    public int getHealth() {
-        return health;
-    }
-
     PlayerState copy(GameState newGameState){
         return new PlayerState(this, newGameState);
     }
@@ -56,12 +51,51 @@ public class PlayerState implements Serializable {
         money = original.money;
     }
 
+    /**
+     * Gibt die aktuelle Lebenspunkte des Spielers zurück
+     * @return Lebenspunkte
+     */
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     * Gibt das aktuelle Geld des Spielers zurück
+     * @return Geld
+     */
+    public int getMoney() {
+        return money;
+    }
+
+    /**
+     * Gibt den Index des Gegners zurück
+     * @return Gegnerindex
+     */
+    public int getEnemyIndex() {
+        return enemyIndex;
+    }
+
+    /**
+     * Gibt den Index des Spielers zurück
+     * @return Spielerindex
+     */
+    public int getMyIndex() {
+        return index;
+    }
+
+    /**
+     * Gibt das Spielfeld des Spielers zurück
+     * @return Spielfeld
+     */
+    public Tile[][] getBoard() {
+        return board;
+    }
 
     public Tile[][] getMap(){
         return board;
     }
 
-    private Tile[][] getEnemyMap(){
+    public Tile[][] getEnemyMap(){
         return gameState.playerStates[enemyIndex].getMap();
     }
 
@@ -103,8 +137,4 @@ public class PlayerState implements Serializable {
         }
 
     }
-
-
-
-
 }
