@@ -1,1 +1,0 @@
-This is an example for a directory that will simply be copied to the output
