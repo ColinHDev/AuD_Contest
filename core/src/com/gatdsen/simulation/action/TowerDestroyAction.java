@@ -1,19 +1,18 @@
 package com.gatdsen.simulation.action;
-
-import com.badlogic.gdx.math.Vector2;
+import com.gatdsen.simulation.IntVector2;
 
 public class TowerDestroyAction extends TeamAction{
 
-    private final Vector2 pos;
+    private final IntVector2 pos;
     private final int type;
 
-    public TowerDestroyAction(float delay, Vector2 pos, int type, int team){
+    public TowerDestroyAction(float delay, IntVector2 pos, int type, int team){
         super(delay, team);
         this.pos = pos;
         this.type = type;
     }
 
-    public Vector2 getPos() {
+    public IntVector2 getPos() {
         return pos;
     }
 
