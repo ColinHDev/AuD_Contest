@@ -76,7 +76,7 @@ public class Simulation {
         gameState.setTurnTimer(timer);
     }
 
-    public GameCharacterController getController() {
+    public PlayerController getController() {
         //Integer team = gameState.getTurn().peek();
         //assert team != null;
         //return new GameCharacterController(team, gameState);

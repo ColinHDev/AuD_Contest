@@ -5,7 +5,7 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.networking.ProcessPlayerHandler;
-import com.gatdsen.simulation.GameCharacterController;
+import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
 import com.gatdsen.simulation.action.ActionLog;
@@ -71,7 +71,7 @@ public class Game extends Executable {
                 }
                 handler = new LocalPlayerHandler(playerClass);
             }
-            GameCharacterController gcController = simulation.getController();
+            PlayerController gcController = simulation.getController();
             playerHandlers[i] = handler;
             Future<?> future = handler.init(
                     state,
@@ -145,7 +145,7 @@ public class Game extends Executable {
                 animationLogProcessor.animate(firstLog);
             }
 
-            GameCharacterController gcController = simulation.getController();
+            PlayerController gcController = simulation.getController();
             int currentPlayerIndex = gcController.getTeam();
 
             // TODO: executor.waitForCompletion();

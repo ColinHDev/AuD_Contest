@@ -8,7 +8,7 @@ import com.gatdsen.simulation.action.ActionLog;
  * Allows Control over the corresponding Character
  * Is only active for a single turn and will be permanently deactivated afterward.
  */
-public class GameCharacterController {
+public class PlayerController {
 
     private int team;
     private final GameState state;
@@ -34,7 +34,7 @@ public class GameCharacterController {
      * @param team          the team this Controller will grant access to
      * @param state         the current state of the game
      */
-    protected GameCharacterController(int team, GameState state) {
+    protected PlayerController(int team, GameState state) {
         this.team = team;
         this.state = state;
     }

@@ -1,6 +1,6 @@
 package com.gatdsen.manager.command;
 
-import com.gatdsen.simulation.GameCharacterController;
+import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.action.ActionLog;
 
 import java.io.Serializable;
@@ -11,9 +11,9 @@ import java.io.Serializable;
  */
 public abstract class Command implements Serializable {
 
-    public abstract ActionLog onExecute(GameCharacterController controller);
+    public abstract ActionLog onExecute(PlayerController controller);
 
-    public final ActionLog run(GameCharacterController controller) {
+    public final ActionLog run(PlayerController controller) {
         if (controller.isActive()) {
             return onExecute(controller);
         }
