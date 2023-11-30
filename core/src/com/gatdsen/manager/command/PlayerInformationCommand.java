@@ -1,7 +1,7 @@
 package com.gatdsen.manager.command;
 
 import com.gatdsen.manager.player.data.PlayerInformation;
-import com.gatdsen.simulation.GameCharacterController;
+import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.action.ActionLog;
 
 public final class PlayerInformationCommand extends Command {
@@ -13,7 +13,7 @@ public final class PlayerInformationCommand extends Command {
     }
 
     @Override
-    public ActionLog onExecute(GameCharacterController controller) {
+    public ActionLog onExecute(PlayerController controller) {
         return null;
     }
 }

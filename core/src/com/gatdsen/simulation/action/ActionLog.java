@@ -1,33 +1,54 @@
 package com.gatdsen.simulation.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Represents a collection of all UI-relevant {@link Action Actions},
- * that accumulated during a certain part of the simulation. Usually this is the execution of a single command.
+ * Representiert eine Sammlung aller UI-relevanten {@link Action Actions},
+ * die während eines bestimmten Teils der Simulation angesammelt wurden.
+ * Normalerweise ist dies die Ausführung eines einzelnen Befehls.
  */
 public class ActionLog implements Serializable {
-
-    private final Action rootAction;
+    private final List<Action> rootActions = new ArrayList<>();
 
     /**
-     * Creates a new ActionLog. Due to the structure of {@link Action Actions}
-     * this will result in a tree structure with the rootAction at its root.
-     * When replaying the log the tree will be traversed in a fashion, where on
-     * every node, each branch will be executed in parallel, able to further spilt at following nodes.
-     * Additionally, even parallel branches may have different execution times.
-     * @param rootAction the first Action of the log
+     * Erstellt ein neues ActionLog. Aufgrund der Struktur von {@link Action Actions}.
+     * Dies führt zu einer Baumstruktur mit der rootAction an ihrer Wurzel.
+     * Beim Wiedergeben des Protokolls wird der Baum in einer Weise durchlaufen, bei der auf
+     * jedem Knoten jeder Zweig parallel ausgeführt wird und sich bei folgenden Knoten weiter aufteilen kann.
+     * Darüber hinaus können selbst parallele Zweige unterschiedliche Ausführungszeiten haben.
+     *
+     * @param rootAction die erste Aktion des Protokolls
      */
     public ActionLog(Action rootAction) {
-        this.rootAction = rootAction;
+        this.rootActions.add(rootAction);
     }
 
     /**
-     * Will return the root of this tree-like structured log.
-     * @return The rootAction
+     * Gibt die Wurzel dieses baumartig strukturierten Protokolls zurück.
+     *
+     * @return Die rootAction
      */
     public Action getRootAction() {
-        return rootAction;
+        return rootActions.get(rootActions.size() - 1);
     }
 
+    /**
+     * Gibt die Liste der rootActions zurück.
+     *
+     * @return Die Liste der rootActions
+     */
+    public List<Action> getRootActions() {
+        return rootActions;
+    }
+
+    /**
+     * Fügt eine neue rootAction hinzu.
+     *
+     * @param rootAction Die neue rootAction
+     */
+    public void addRootAction(Action rootAction) {
+        rootActions.add(rootAction);
+    }
 }

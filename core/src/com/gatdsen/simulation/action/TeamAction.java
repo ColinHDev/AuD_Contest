@@ -1,16 +1,26 @@
 package com.gatdsen.simulation.action;
 
-public class TeamAction extends Action{
+/**
+ * Spezialisierte Klasse von {@link Action} die als Oberklasse für alle Aktionen dient,
+ * welche ein Team benötigen.
+ */
+public class TeamAction extends Action {
+    final int team;
+
     /**
-     * Constructs a new Action: every Action carries a time-based offset relative to its parent
+     * Speichert das Ereignis, dass ein Team eine Aktion ausführt
      *
-     * @param delay non-negative time-based offset to its parent in seconds
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param team  index des Teams
      */
-    int team;
     public TeamAction(float delay, int team) {
         super(delay);
         this.team = team;
     }
+
+    /**
+     * @return index des Teams
+     */
     public int getTeam() {
         return team;
     }
@@ -19,6 +29,6 @@ public class TeamAction extends Action{
     public String toString() {
         return "TeamAction{" +
                 "team=" + team +
-                '}';
+                '}' + super.toString();
     }
 }

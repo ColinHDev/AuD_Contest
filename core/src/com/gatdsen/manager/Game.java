@@ -5,7 +5,7 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.networking.ProcessPlayerHandler;
-import com.gatdsen.simulation.GameCharacterController;
+import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
 import com.gatdsen.simulation.action.ActionLog;
@@ -60,19 +60,20 @@ public class Game extends Executable {
 
         long seed = Manager.getSeed();
         playerHandlers = new PlayerHandler[config.teamCount];
-        for (int i = 0; i < config.teamCount; i++) {
+        for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler handler;
-            Class<? extends Player> playerClass = config.players.get(i);
+            Class<? extends Player> playerClass = config.players.get(playerIndex);
             if (Bot.class.isAssignableFrom(playerClass)) {
-                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), i);
+                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
             } else {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
                 handler = new LocalPlayerHandler(playerClass);
             }
-            GameCharacterController gcController = simulation.getController();
-            playerHandlers[i] = handler;
+
+            PlayerController gcController = simulation.getController(playerIndex);
+            playerHandlers[playerIndex] = handler;
             Future<?> future = handler.init(
                     state,
                     isDebug,
@@ -138,65 +139,63 @@ public class Game extends Executable {
                     }
             }
 
-            ActionLog firstLog = simulation.clearAndReturnActionLog();
-            if (saveReplay)
-                gameResults.addActionLog(firstLog);
-            if (gui) {
-                animationLogProcessor.animate(firstLog);
-            }
+            for (int playerIndex = 0; playerIndex < playerHandlers.length; playerIndex++) {
+                ActionLog firstLog = simulation.clearAndReturnActionLog();
+                if (saveReplay)
+                    gameResults.addActionLog(firstLog);
+                if (gui) {
+                    animationLogProcessor.animate(firstLog);
+                }
 
-            GameCharacterController gcController = simulation.getController();
-            int currentPlayerIndex = gcController.getTeam();
+                PlayerController gcController = simulation.getController(playerIndex);
+                PlayerHandler playerHandler = playerHandlers[playerIndex];
+                Future<?> future = playerHandler.executeTurn(
+                        state,
+                        (Command command) -> {
+                            // Contains action produced by the commands execution
+                            ActionLog log = command.run(gcController);
+                            if (log == null) {
+                                return;
+                            }
+                            if (saveReplay) {
+                                gameResults.addActionLog(log);
+                            }
+                            if (gui) {
+                                animationLogProcessor.animate(log);
+                                // ToDo: discuss synchronisation for human players
+                                // animationLogProcessor.awaitNotification();
+                            }
+                            if (!command.endsTurn()) {
+                                return;
+                            }
+                            //Contains actions produced by ending the turn (after last command is executed)
+                            ActionLog finalLog = simulation.endTurn();
+                            if (saveReplay) {
+                                gameResults.addActionLog(finalLog);
+                            }
+                            if (gui) {
+                                animationLogProcessor.animate(finalLog);
+                                animationLogProcessor.awaitNotification();
+                            }
+                        }
+                );
+                try {
+                    future.get();
+                } catch (InterruptedException|ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
 
-            // TODO: executor.waitForCompletion();
-            PlayerHandler playerHandler = playerHandlers[currentPlayerIndex];
-            Future<?> future = playerHandler.executeTurn(
-                    state,
-                    (Command command) -> {
-                        // Contains action produced by the commands execution
-                        ActionLog log = command.run(gcController);
-                        if (log == null) {
-                            return;
-                        }
-                        if (saveReplay) {
-                            gameResults.addActionLog(log);
-                        }
-                        if (gui) {
-                            animationLogProcessor.animate(log);
-                            // ToDo: discuss synchronisation for human players
-                            // animationLogProcessor.awaitNotification();
-                        }
-                        if (!command.endsTurn()) {
-                            return;
-                        }
-                        //Contains actions produced by ending the turn (after last command is executed)
-                        ActionLog finalLog = simulation.endTurn();
-                        if (saveReplay) {
-                            gameResults.addActionLog(finalLog);
-                        }
-                        if (gui) {
-                            animationLogProcessor.animate(finalLog);
-                            animationLogProcessor.awaitNotification();
-                        }
-                    }
-            );
-            try {
-                future.get();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-
-            // TODO: futureExecutor.start();
-            ActionLog log = simulation.clearAndReturnActionLog();
-            if (saveReplay) {
-                gameResults.addActionLog(log);
-            }
-            if (gui && playerHandler.isHumanPlayer()) {
-                //Contains Action produced by entering new turn
-                animationLogProcessor.animate(log);
+                ActionLog log = simulation.clearAndReturnActionLog();
+                if (saveReplay) {
+                    gameResults.addActionLog(log);
+                }
+                if (gui && playerHandler.isHumanPlayer()) {
+                    //Contains Action produced by entering new turn
+                    animationLogProcessor.animate(log);
+                }
             }
         }
-        scores = state.getScores();
+        scores = state.getHealth();
         setStatus(Status.COMPLETED);
         for (CompletionHandler<Executable> completionListener : completionListeners) {
             completionListener.onComplete(this);
@@ -210,7 +209,7 @@ public class Game extends Executable {
         if (simulationThread != null) {
             simulationThread.interrupt();
         }
-        if (state!=null) scores = state.getScores();
+        if (state!=null) scores = state.getHealth();
         simulation = null;
         state = null;
         simulationThread = null;

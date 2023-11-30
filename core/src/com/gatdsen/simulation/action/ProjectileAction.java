@@ -3,27 +3,27 @@ package com.gatdsen.simulation.action;
 import com.gatdsen.simulation.Path;
 
 /**
- * Type of {@link Action} that describes a Projectile during its life-time
+ * Spezialisierte Klasse von {@link Action} die ein Projektil während seiner Lebenszeit beschreibt
  */
-public class ProjectileAction extends Action{
+public class ProjectileAction extends Action {
 
     /**
-     * The possible types of Projectiles-appearances
+     * Typen von Projektilen
      */
     public enum ProjectileType {
-        EXAMPLE_PROJECTILE
+        STANDARD_TYPE
     }
 
     private final ProjectileType type;
     private final Path path;
 
-
     /**
-     * Stores the event of a certainProjectile being created, travelling along a certain path and finally being destroyed.
+     * Speichert das Ereignis, dass ein bestimmtes Projektil erstellt wird,
+     * entlang eines bestimmten Pfades reist und schließlich zerstört wird.
      *
-     * @param delay     non-negative time-based offset to its parent in seconds
-     * @param type      type of the projectiles appearance
-     * @param path      A {@link Path} that returns the Projectiles position in world-coordinates for every timestamp between 0 and duration
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param type  Type des Projektils
+     * @param path  Ein {@link Path}, der die Position des Projektils für jeden Zeitstempel zwischen 0 und Dauer zurückgibt
      */
     public ProjectileAction(float delay, ProjectileType type, Path path) {
         super(delay);
@@ -32,21 +32,21 @@ public class ProjectileAction extends Action{
     }
 
     /**
-     * @return A {@link Path} that returns the Projectiles position in world-coordinates for every timestamp between 0 and duration
+     * @return Ein {@link Path}, der die Position des Projektils für jeden Zeitstempel zwischen 0 und Dauer zurückgibt
      */
     public Path getPath() {
         return path;
     }
 
     /**
-     * @return The duration of the event in seconds
+     * @return Die Dauer des Ereignisses in Sekunden
      */
     public float getDuration() {
         return path.getDuration();
     }
 
     /**
-     * @return type of the projectiles appearance
+     * @return Type des Projektils
      */
     public ProjectileType getType() {
         return type;
@@ -55,9 +55,9 @@ public class ProjectileAction extends Action{
     @Override
     public String toString() {
         return "ProjectileAction{" +
-                       "type=" + type +
-                       ", path=" + path +
-                       ", duration=" + getDuration() +
-                       '}';
+                "type=" + type +
+                ", path=" + path +
+                ", duration=" + getDuration() +
+                '}' + super.toString();
     }
 }

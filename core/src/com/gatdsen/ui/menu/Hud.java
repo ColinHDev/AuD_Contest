@@ -123,7 +123,7 @@ public class Hud implements Disposable {
 		//ToDo read player count and assign individual colors
 		ScoreBoard scores = new ScoreBoard(new Color[]{Color.WHITE, Color.WHITE},names, game);
 
-		this.scores = game.getScores();
+		this.scores = game.getHealth();
 
 		scoreView.addScoreboard(scores);
 

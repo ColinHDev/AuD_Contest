@@ -1,25 +1,21 @@
 package com.gatdsen.simulation.action;
 
-
 /**
- * Special type of {@link Action} that indicates no event, but is used as the root of an {@link ActionLog}
+ * Spezialisierte Klasse von {@link Action} die kein Ereignis anzeigt,
+ * sondern als Wurzel eines {@link ActionLog} verwendet wird
  */
-public final class InitAction extends Action{
+public final class InitAction extends Action {
+
     /**
-     * Functions as a skippable Action, for being able to have multiple Actions,
-     * that are directly executed at the root of an {@link ActionLog}
+     * Funktioniert als überspringbare Aktion, um mehrere Aktionen zu haben,
+     * die direkt an der Wurzel eines {@link ActionLog} ausgeführt werden.
      */
     public InitAction() {
         super(0);
     }
 
     @Override
-   public String toString() {
-
-       return "Init";
-
+    public String toString() {
+        return "InitAction{} " + super.toString();
     }
-
-
-
 }

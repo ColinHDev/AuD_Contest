@@ -1,6 +1,6 @@
 package com.gatdsen.manager.command;
 
-import com.gatdsen.simulation.GameCharacterController;
+import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.action.ActionLog;
 
 /**
@@ -38,7 +38,7 @@ public class EndTurnCommand extends Command {
     }
 
     @Override
-    public ActionLog onExecute(GameCharacterController controller) {
+    public ActionLog onExecute(PlayerController controller) {
         return null;
     }
 

@@ -1,16 +1,15 @@
 package com.gatdsen.simulation.action;
 
-
 /**
- * Special type of {@link Action} indicating that the game has ended
+ * Spezialisierte Klasse von {@link Action} die anzeigt, dass das Spiel beendet ist
  */
-public class GameOverAction extends Action{
-
+public class GameOverAction extends Action {
     private final int team;
 
     /**
-     * Stores the event of the game ending
-     * @param team  index of the winning team
+     * Speichert das Ereignis, dass das Spiel beendet ist
+     *
+     * @param team index des gewinnenden Teams
      */
     public GameOverAction(int team) {
         super(0f);
@@ -18,19 +17,16 @@ public class GameOverAction extends Action{
     }
 
     /**
-     * @return index of the winning team
+     * @return index des gewinnenden Teams
      */
     public int getTeam() {
         return team;
     }
-       @Override
 
+    @Override
     public String toString() {
-
-        String output = "GameOver, Team: " + team;
-
-        return output;
-
+        return "GameOverAction{" +
+                "team=" + team +
+                "} " + super.toString();
     }
-
 }
