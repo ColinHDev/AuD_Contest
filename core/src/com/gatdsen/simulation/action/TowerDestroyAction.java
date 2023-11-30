@@ -1,30 +1,26 @@
 package com.gatdsen.simulation.action;
+
 import com.gatdsen.simulation.IntVector2;
 
-public class TowerDestroyAction extends TeamAction{
+/**
+ * Spezialisierte Klasse von {@link TeamAction} die anzeigt, dass ein Turm zerstört wurde
+ */
+public class TowerDestroyAction extends TowerAction {
 
-    private final IntVector2 pos;
-    private final int type;
-
-    public TowerDestroyAction(float delay, IntVector2 pos, int type, int team){
-        super(delay, team);
-        this.pos = pos;
-        this.type = type;
-    }
-
-    public IntVector2 getPos() {
-        return pos;
-    }
-
-    public int getType() {
-        return type;
+    /**
+     * Speichert das Ereignis, dass ein Turm zerstört wurde
+     *
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param pos   Position des Turms
+     * @param type  Typ des Turms
+     * @param team  index des Teams
+     */
+    public TowerDestroyAction(float delay, IntVector2 pos, int type, int team) {
+        super(delay, pos, type, team);
     }
 
     @Override
     public String toString() {
-        return "TowerDestroyAction{" +
-                "pos=" + pos +
-                ", type=" + type +
-                '}';
+        return "TowerDestroyAction{} " + super.toString();
     }
 }

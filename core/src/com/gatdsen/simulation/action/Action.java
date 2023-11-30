@@ -6,16 +6,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Represents a single UI-relevant Event
- * Base-Component of the asynchronous interface between the simulation and ui/animation package
+ * Representiert ein einzelnes UI-relevantes Event
+ * Basiskomponente der asynchronen Schnittstelle zwischen Simulation und UI/Animation
  */
 public abstract class Action implements Iterable<Action>, Serializable {
     private final float delay;
     private final ArrayList<Action> arrayList = new ArrayList<>();
 
     /**
-     * Constructs a new Action: every Action carries a time-based offset relative to its parent
-     * @param delay non-negative time-based offset to its parent in seconds
+     * Konstruiert eine neue Action: jede Action trägt einen zeitbasierten Offset relativ zu ihrem Elternteil
+     *
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
      */
     public Action(float delay) {
         if (delay < 0) throw new InvalidParameterException("An Action's delay to its parent may only be non-negative");
@@ -23,39 +24,44 @@ public abstract class Action implements Iterable<Action>, Serializable {
     }
 
     /**
-     * @return non-negative time-based offset to its parent in seconds
+     * @return nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
      */
     public float getDelay() {
         return this.delay;
     }
 
     /**
-     * Every Action may have an arbitrary number of children, making it their parent.
-     * A child is supposed to be executed, after its parent has completed execution.
-     * The exact offset between these two events is determined by the child's delay.
-     * @return A list of this Action's children
+     * Jede Action kann eine beliebige Anzahl von Kindern haben, die sie als Elternteil hat.
+     * Ein Kind soll ausgeführt werden, nachdem sein Elternteil die Ausführung abgeschlossen hat.
+     * Der genaue Offset zwischen diesen beiden Ereignissen wird durch die Verzögerung des Kindes bestimmt.
+     *
+     * @return Eine Liste der Kinder dieser Aktion
      */
     public ArrayList<Action> getChildren() {
         return this.arrayList;
     }
 
     /**
-     * Adds another Action as a child of this action.
-     * @param a Action to link
+     * Fügt eine weitere Aktion als Kind dieser Aktion hinzu.
+     *
+     * @param a Aktion zum Verknüpfen
      */
     public void addChild(Action a) {
         this.arrayList.add(a);
     }
 
     /**
-     * @return An iterator over the list of children
+     * @return Ein Iterator über die Liste der Kinder
      */
     public Iterator<Action> iterator() {
         return this.arrayList.iterator();
     }
 
-    public String toString(){
+    /**
+     * @return Eine String-Repräsentation dieser Aktion
+     */
+    @Override
+    public String toString() {
         return "Action: ";
     }
-
 }

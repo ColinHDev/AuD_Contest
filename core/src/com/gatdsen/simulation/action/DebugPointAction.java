@@ -1,27 +1,31 @@
 package com.gatdsen.simulation.action;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
+import com.gatdsen.simulation.IntVector2;
 
-public class DebugPointAction extends Action{
-
-    private final Vector2 pos;
+/**
+ * Die DebugPointAction wird verwendet, um einen Punkt auf dem Bildschirm zu rendern.
+ * Wird in Zukunft durch ParticleAction ersetzt.
+ */
+public class DebugPointAction extends Action {
+    private final IntVector2 pos;
     private final float[] color;
     private final float duration;
     private final boolean isCross;
 
     /**
-     * Creates an Action that will place a point on screen for debugging-purposes.
-     * Will be replaced by ParticleAction in the future.
-     * The crossOption can be used to render a small 3px cross instead for better visibility.
+     * Erstellt eine Aktion, die einen Punkt zum Debuggen auf dem Bildschirm platziert.
+     * Wird in Zukunft durch ParticleAction ersetzt.
+     * Zur Verbesserung der Sichtbarkeit, kann die Cross-Option verwendet werden,
+     * um stattdessen ein kleines 3px-Kreuz zu rendern.
      *
-     * @param delay     non-negative time-based offset to its parent in seconds
-     * @param pos       position the point should appear at
-     * @param color     the color of the point
-     * @param duration  how long the point lasts in seconds
-     * @param isCross   true if the indicator should be a small cross instead
+     * @param delay    nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param pos      Postion an der der Punkt erscheinen soll
+     * @param color    Farbe des Punktes
+     * @param duration wie lange der Punkt in Sekunden existiert
+     * @param isCross  true, wenn der Indikator ein kleines Kreuz sein soll
      */
-    public DebugPointAction(float delay, Vector2 pos, Color color, float duration, boolean isCross) {
+    public DebugPointAction(float delay, IntVector2 pos, Color color, float duration, boolean isCross) {
         super(delay);
         this.pos = pos;
         this.color = new float[]{color.r, color.g, color.b, color.a};
@@ -30,29 +34,40 @@ public class DebugPointAction extends Action{
     }
 
     /**
-     * @return position the point should appear at
+     * @return Position, an der der Punkt erscheinen soll
      */
-    public Vector2 getPos() {
+    public IntVector2 getPos() {
         return pos;
     }
+
     /**
-     * @return the color of the point
+     * @return Farbe des Punktes
      */
     public Color getColor() {
         return new Color(color[0], color[1], color[2], color[3]);
     }
 
     /**
-     * @return how long the point lasts in seconds
+     * @return wie lange der Punkt in Sekunden existiert
      */
     public float getDuration() {
         return duration;
     }
 
     /**
-     * @return true if the indicator should be a small cross instead
+     * @return true, wenn der Indikator ein kleines Kreuz sein soll
      */
     public boolean isCross() {
         return isCross;
+    }
+
+    @Override
+    public String toString() {
+        return "DebugPointAction{" +
+                "pos=" + pos +
+                ", color=" + getColor() +
+                ", duration=" + duration +
+                ", isCross=" + isCross +
+                '}' + super.toString();
     }
 }

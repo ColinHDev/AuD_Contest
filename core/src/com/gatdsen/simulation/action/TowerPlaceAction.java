@@ -2,24 +2,25 @@ package com.gatdsen.simulation.action;
 
 import com.gatdsen.simulation.IntVector2;
 
-public class TowerPlaceAction extends TeamAction{
+/**
+ * Spezialisierte Klasse von {@link TowerAction} die anzeigt, dass ein Turm platziert wurde
+ */
+public class TowerPlaceAction extends TowerAction {
 
-    private final IntVector2 pos;
-    private final int type;
-
+    /**
+     * Speichert das Ereignis, dass ein Turm platziert wurde
+     *
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param pos   Position des Turms
+     * @param type  Typ des Turms
+     * @param team  index des Teams
+     */
     public TowerPlaceAction(float delay, IntVector2 pos, int type, int team) {
-        super(delay, team);
-        this.pos = pos;
-        this.type = type;
+        super(delay, pos, type, team);
     }
 
-    public IntVector2 getPos() {return pos;}
-    public int getType(){return type;}
-
-    public String toString(){
-        return "TowerPlaceAction{" +
-                    "type=" + type +
-                    ", position=" + pos.toString() +
-                "}";
+    @Override
+    public String toString() {
+        return "TowerPlaceAction{} " + super.toString();
     }
 }

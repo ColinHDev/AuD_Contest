@@ -2,37 +2,37 @@ package com.gatdsen.simulation.action;
 
 import com.gatdsen.simulation.IntVector2;
 
-public class TowerAttackAction extends TeamAction {
+/**
+ * Spezialisierte Klasse von {@link TowerAction} die anzeigt, dass ein Turm einen Angriff ausführt
+ */
+public class TowerAttackAction extends TowerAction {
+    private final IntVector2 dir;
 
-    private final int type;
-    private final IntVector2 pos;
-    private final IntVector2 direction;
-
-    public TowerAttackAction(float delay, IntVector2 pos, IntVector2 direction, int type, int team) {
-        super(delay, team);
-        this.type = type;
-        this.pos = pos;
-        this.direction = direction;
+    /**
+     * Speichert das Ereignis, dass ein Turm einen Angriff ausführt
+     *
+     * @param delay nicht-negativer zeitbasierter Offset zu seinem Elternteil in Sekunden
+     * @param pos   Position des Turms
+     * @param dir   Richtung des Angriffs
+     * @param type  Typ des Turms
+     * @param team  index des Teams
+     */
+    public TowerAttackAction(float delay, IntVector2 pos, IntVector2 dir, int type, int team) {
+        super(delay, pos, type, team);
+        this.dir = dir;
     }
 
-    public IntVector2 getPos() {
-        return pos;
-    }
-
-    public IntVector2 getDirection() {
-        return direction;
-    }
-
-    public int getType() {
-        return type;
+    /**
+     * @return Richtung des Angriffs
+     */
+    public IntVector2 getDir() {
+        return dir;
     }
 
     @Override
     public String toString() {
         return "TowerAttackAction{" +
-                "type=" + type +
-                ", pos=" + pos +
-                ", direction=" + direction +
-                '}';
+                "dir=" + dir +
+                '}' + super.toString();
     }
 }
