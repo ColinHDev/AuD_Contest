@@ -142,9 +142,9 @@ public class GADSAssetManager {
 
         IngameAssets.lookupOutlineShader = manager.get(lookupOutlineShader, ShaderProgram.class);
 
-        IngameAssets.mioSkin = new AtlasAnimation(1 / 10f, atlas.findRegions("skin/mioSkin"), Animation.PlayMode.LOOP);
+        //IngameAssets.mioSkin = new AtlasAnimation(1 / 10f, atlas.findRegions("skin/mioSkin"), Animation.PlayMode.LOOP);
 
-        IngameAssets.coolCat = new AtlasAnimation(1f, atlas.findRegions("example_group/coolCat"), Animation.PlayMode.LOOP);
+        //IngameAssets.coolCat = new AtlasAnimation(1f, atlas.findRegions("example_group/coolCat"), Animation.PlayMode.LOOP);
 
 
         //IngameAssets.slimeParticle = new ParticleEffectPool(manager.get(slimeParticle, ParticleEffect.class), 1, 10);
