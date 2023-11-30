@@ -136,7 +136,7 @@ public class PlayerState implements Serializable {
      * Gibt den Index des Spielers zurück
      * @return Spielerindex
      */
-    public int getMyIndex() {
+    public int getPlayerIndex() {
         return index;
     }
 
@@ -182,7 +182,7 @@ public class PlayerState implements Serializable {
         IntVector2 pos = new IntVector2(x, y);
         Action action = new TowerPlaceAction(0, pos, type.ordinal(), index);
         head.addChild(action);
-        return head;
+        return action;
     }
 
     /**

@@ -46,12 +46,14 @@ public class Simulation {
         return new PlayerController(playerIndex, gameState);
     }
 
-    public ActionLog[] endTurn() {
+    public ActionLog endTurn() {
+        Action head = actionLog.getRootAction();
+        // ToDo: fix
         ActionLog[] actionLogs = new ActionLog[playerStates.length];
         Action[] rootActions = new Action[playerStates.length];
 
         for (int i = 0; i < playerStates.length; i++) {
-            rootActions[i] = actionLog.getRootAction();
+            // ToDo: fix this -> make it parallel!
             rootActions[i].addChild(playerStates[i].tickTowers(rootActions[i]));
             rootActions[i].addChild(playerStates[i].moveEnemies(rootActions[i]));
             ActionLog[] lastTurn = actionLogs;
@@ -73,7 +75,7 @@ public class Simulation {
         gameState.nextTurn();
         this.actionLog = new ActionLog(new TurnStartAction(0));
         //When to spawn enemies?
-        return actionLogs;
+        return clearAndReturnActionLog();
     }
 
     public ActionLog clearAndReturnActionLog() {

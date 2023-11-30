@@ -41,19 +41,22 @@ public class Enemy {
      */
     void updateHealth(int damage, Action head) {
 
-        //TODO: action returnen
-
         if (health - damage <= 0) {
             health = 0;
             posTile.getEnemies().remove(this);
 
             // TODO: define Team instead of 0!!!
+
+            /*
+            chaining:
+            | -> head -> update health -> enemy defeat -> |
+             */
             Action updateHealthAction = new EnemyUpdateHealthAction(0, posTile.getPosition(), 0, level, 0);
             head.addChild(updateHealthAction);
-            head = updateHealthAction;
-            head.addChild(new EnemyDefeatAction(0, posTile.getPosition(), level, 0));
+            updateHealthAction.addChild(new EnemyDefeatAction(0, posTile.getPosition(), level, 0));
 
             //TODO Player gets money
+            // -> Simulation or link Enemy with GameState
 
         } else {
             health -= damage;
@@ -62,8 +65,6 @@ public class Enemy {
     }
 
     void move(Action head) {
-
-        //TODO: action returnen
 
         if (posTile.getNext() != null) {
             posTile.getEnemies().remove(this);
@@ -76,6 +77,7 @@ public class Enemy {
             // TODO: define Team instead of 0!!!
             //head.addChild(new UpdateHealthAction(0, , 0));
             //TODO Player gets damage
+            // -> Simulation or link Enemy with GameState
         }
     }
 

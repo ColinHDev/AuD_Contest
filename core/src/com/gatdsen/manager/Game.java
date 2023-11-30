@@ -71,6 +71,7 @@ public class Game extends Executable {
                 }
                 handler = new LocalPlayerHandler(playerClass);
             }
+            // ToDo: fix
             PlayerController gcController = simulation.getController();
             playerHandlers[i] = handler;
             Future<?> future = handler.init(
@@ -145,6 +146,7 @@ public class Game extends Executable {
                 animationLogProcessor.animate(firstLog);
             }
 
+            // ToDo: fix
             PlayerController gcController = simulation.getController();
             int currentPlayerIndex = gcController.getPlayerIndex();
 
