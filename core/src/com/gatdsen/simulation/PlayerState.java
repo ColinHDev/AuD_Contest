@@ -159,7 +159,7 @@ public class PlayerState implements Serializable {
 
         money -= Tower.getPrice(type);
 
-        board[x][y] = new Tower(type, x, y, board);
+        board[x][y] = new Tower(this, type, x, y, board);
         IntVector2 pos = new IntVector2(x, y);
         Action action = new TowerPlaceAction(0, pos, type.ordinal(), index);
         head.addChild(action);

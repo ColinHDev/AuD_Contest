@@ -44,14 +44,18 @@ public class Tower extends Tile {
         PRICE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 9999;
     }
 
-    TowerType type;
-    int level;
-    int cooldown;
-    List<Tile> inRange;
-    Tile[][] board;
+    private final PlayerState playerState;
+    private final TowerType type;
+    private int level;
+    private int cooldown;
+    private List<Tile> inRange;
+    private final Tile[][] board;
+    private final List<PathTile> pathInRange = new ArrayList<>();
 
-    public Tower(TowerType type, int x, int y, Tile[][] board) {
+
+    public Tower(PlayerState playerState, TowerType type, int x, int y, Tile[][] board) {
         super(x, y);
+        this.playerState = playerState;
         this.type = type;
         this.level = 1;
         this.cooldown = getRechargeTime();
@@ -60,7 +64,7 @@ public class Tower extends Tile {
     }
 
     public Tower(Tower original) {
-        this(original.type, original.pos.x, original.pos.y, null);
+        this(original.playerState, original.type, original.pos.x, original.pos.y, null);
         this.level = original.level;
         this.cooldown = original.cooldown;
         this.inRange = original.inRange;
@@ -70,8 +74,6 @@ public class Tower extends Tile {
     protected Tile copy() {
         return new Tower(this);
     }
-
-    private final List<PathTile> pathInRange = new ArrayList<>();
 
     private void setPathList(Tile[][] board) {
         for (Tile tile : inRange) {
@@ -163,7 +165,8 @@ public class Tower extends Tile {
     }
 
     void upgrade() {
-        this.inRange = getNeighbours(getRange(), board);
+        // ToDo: implement upgrade after christmas task
+        this.inRange = getNeighbours(getRange() + level, board);
         ++level;
     }
 
@@ -188,10 +191,9 @@ public class Tower extends Tile {
         }
         assert target != null;
 
-        // TODO: define Team instead of 0!!!
-        head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), 0));
-        Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(),1);
-        head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE,path));
+        head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
+        Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
+        head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path));
 
         head = target.updateHealth(getDamage(), head);
         cooldown = getRechargeTime();
