@@ -95,20 +95,4 @@ public class PlayerController {
         // ToDo: "du Hund"
         return endCommand();
     }
-
-    /**
-     * Deaktiviert den Controller, sodass er keine Befehle mehr ausführen kann.
-     */
-    public void deactivate() {
-        active = false;
-    }
-
-    /**
-     * Gibt zurück, ob der Controller noch aktiv ist.
-     *
-     * @return True, wenn der Controller noch aktiv ist.
-     */
-    public boolean isActive() {
-        return active;
-    }
 }

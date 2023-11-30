@@ -14,10 +14,7 @@ public abstract class Command implements Serializable {
     public abstract ActionLog onExecute(PlayerController controller);
 
     public final ActionLog run(PlayerController controller) {
-        if (controller.isActive()) {
-            return onExecute(controller);
-        }
-        return null;
+        return onExecute(controller);
     }
 
     public boolean endsTurn() {
