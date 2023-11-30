@@ -19,13 +19,13 @@ import java.util.concurrent.*;
 public final class PlayerThread {
 
     private static final int AI_EXECUTE_GRACE_PERIODE = 100;
-    private static final int AI_EXECUTE_INIT_TIMEOUT = 1000;
-    private static final int AI_EXECUTE_TURN_TIMEOUT = 500 + AI_EXECUTE_GRACE_PERIODE;
+    public static final int AI_EXECUTE_INIT_TIMEOUT = 1000;
+    public static final int AI_EXECUTE_TURN_TIMEOUT = 500 + AI_EXECUTE_GRACE_PERIODE;
     private static final int AI_CONTROLLER_USES = 200;
 
     private static final int HUMAN_EXECUTE_GRACE_PERIODE = 5000;
-    private static final int HUMAN_EXECUTE_INIT_TIMEOUT = 30000;
-    private static final int HUMAN_EXECUTE_TURN_TIMEOUT = 30000 + HUMAN_EXECUTE_GRACE_PERIODE;
+    public static final int HUMAN_EXECUTE_INIT_TIMEOUT = 30000;
+    public static final int HUMAN_EXECUTE_TURN_TIMEOUT = 30000 + HUMAN_EXECUTE_GRACE_PERIODE;
     private static final int HUMAN_CONTROLLER_USES = 100000;
 
     private final ThreadExecutor executor = new ThreadExecutor();
