@@ -17,8 +17,7 @@ public class GameState implements Serializable {
         Exam_Admission,
         Tournament_Phase_1,
         Tournament_Phase_2,
-        Replay;
-
+        Replay
     }
 
     /**
@@ -30,17 +29,16 @@ public class GameState implements Serializable {
         PATH_RIGHT,
         PATH_DOWN,
         PATH_LEFT,
-        PATH_UP;
-
+        PATH_UP
     }
 
-    PlayerState[] playerStates;
-    MapTileType[][] map;
-    private int turn;
-    private boolean active;
+    private final PlayerState[] playerStates;
+    private final MapTileType[][] map;
     private final GameMode gameMode;
     private final int playerCount;
     private final transient Simulation sim;
+    private int turn;
+    private boolean active;
 
     /**
      * Erstellt ein neues GameState-Objekt mit den angegebenen Attributen.
@@ -60,7 +58,7 @@ public class GameState implements Serializable {
         this.active = true;
         this.sim = sim;
         playerStates = new PlayerState[playerCount];
-        Arrays.setAll(playerStates, p -> new PlayerState(this, 300, 100));
+        Arrays.setAll(playerStates, index -> new PlayerState(this, index, 300, 100));
     }
 
     /**
@@ -69,7 +67,6 @@ public class GameState implements Serializable {
      * @param original Das zu kopierende GameState-Objekt
      */
     private GameState(GameState original) {
-        //ToDo this needs to deep copy all read only attributes
         gameMode = original.gameMode;
         turn = original.turn;
         map = Arrays.copyOf(original.map, original.map.length);
@@ -106,13 +103,22 @@ public class GameState implements Serializable {
     void nextTurn() {
         ++turn;
     }
-    // ToDo: getter for boards
 
+    /**
+     * Gibt die PlayerState des angegebenen Spielers zurück
+     *
+     * @param player Index des Spielers
+     * @return PlayerState des Spielers
+     */
     public Tile[][] getPlayerBoard(int player) {
-        return playerStates[player].getMap();
+        return playerStates[player].getBoard();
     }
-    //ToDo: getter for map
 
+    /**
+     * Gibt die Map zurück
+     *
+     * @return Map
+     */
     public MapTileType[][] getMap() {
         return map;
     }

@@ -1,20 +1,17 @@
 package com.gatdsen.simulation;
 
-import com.gatdsen.simulation.action.Action;
-import com.gatdsen.simulation.action.EnemySpawnAction;
-import com.gatdsen.simulation.action.TowerPlaceAction;
+import com.gatdsen.simulation.action.*;
 
 import java.io.Serializable;
 
 public class PlayerState implements Serializable {
 
     private final GameState gameState;
-    private Tile[][] board;
+    private final Tile[][] board;
 
     private int health;
     private int money;
-    private int enemyIndex;
-    private int index;
+    private final int index;
     private PathTile spawnTile;
     private PathTile endTile;
     private final int enemyTypeCount = 1;
@@ -29,8 +26,9 @@ public class PlayerState implements Serializable {
     /**
      * Creates a Deep-Copy of the player state
      */
-    private PlayerState(PlayerState original, GameState gameState){
+    private PlayerState(PlayerState original, GameState gameState) {
         this.gameState = gameState;
+        this.index = original.index;
         int boardX = gameState.getBoardSizeX();
         int boardY = gameState.getBoardSizeY();
 
@@ -60,10 +58,9 @@ public class PlayerState implements Serializable {
         money = original.money;
     }
 
-    public PlayerState(GameState gameState, int health, int money){
-        this.index = index;
-        this.enemyIndex = index == 0 ? 1 : 0;
+    public PlayerState(GameState gameState, int index, int health, int money){
         this.gameState = gameState;
+        this.index = index;
         int width = gameState.getBoardSizeX();
         int height = gameState.getBoardSizeY();
         board = new Tile[width][height];
@@ -73,7 +70,7 @@ public class PlayerState implements Serializable {
 
         for (int i = 0; i <width; i++) {
             for (int j = 0; j < height; j++) {
-                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
                     board[i][j] = new PathTile(i, j);
                 }
             }
@@ -82,9 +79,9 @@ public class PlayerState implements Serializable {
         IntRectangle mapOutline = new IntRectangle(0,0,width, height);
         for (int i = 0; i <width; i++) {
             for (int j = 0; j < height; j++) {
-                if (gameState.map[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
                     IntVector2 destination = new IntVector2(i, j);
-                    switch (gameState.map[i][j]){
+                    switch (gameState.getMap()[i][j]){
                         case PATH_RIGHT -> destination.add(1,0);
                         case PATH_DOWN -> destination.add(0,-1);
                         case PATH_LEFT -> destination.add(-1,0);
@@ -125,18 +122,10 @@ public class PlayerState implements Serializable {
     }
 
     /**
-     * Gibt den Index des Gegners zurück
-     * @return Gegnerindex
-     */
-    public int getEnemyIndex() {
-        return enemyIndex;
-    }
-
-    /**
      * Gibt den Index des Spielers zurück
      * @return Spielerindex
      */
-    public int getPlayerIndex() {
+    public int getIndex() {
         return index;
     }
 
@@ -148,13 +137,6 @@ public class PlayerState implements Serializable {
         return board;
     }
 
-    public Tile[][] getMap(){
-        return board;
-    }
-
-    public Tile[][] getEnemyMap(){
-        return gameState.playerStates[enemyIndex].getMap();
-    }
 
 
     /**
@@ -163,17 +145,16 @@ public class PlayerState implements Serializable {
      * @param y y-Koordinate des Towers
      * @param type Typ des Towers
      * @param head Kopf der Action-Liste
-     * @return Kopf der Action-Liste
      */
-    Action placeTower(int x, int y, Tower.TowerType type, Action head) {
+    void placeTower(int x, int y, Tower.TowerType type, Action head) {
         if (board[x][y] != null) {
             // ToDo: append error action
-            return head;
+            return;
         }
 
         if (money < Tower.getPrice(type)) {
             // ToDo: append error action
-            return head;
+            return;
         }
 
         money -= Tower.getPrice(type);
@@ -182,7 +163,6 @@ public class PlayerState implements Serializable {
         IntVector2 pos = new IntVector2(x, y);
         Action action = new TowerPlaceAction(0, pos, type.ordinal(), index);
         head.addChild(action);
-        return action;
     }
 
     /**
@@ -190,12 +170,11 @@ public class PlayerState implements Serializable {
      * @param x x-Koordinate des Towers
      * @param y y-Koordinate des Towers
      * @param head Kopf der Action-Liste
-     * @return Kopf der Action-Liste
      */
-    Action upgradeTower(int x, int y, Action head) {
+    void upgradeTower(int x, int y, Action head) {
         if (board[x][y] == null) {
             // ToDo: append error action
-            return head;
+            return;
         }
         if (board[x][y] instanceof Tower tower && tower.getLevel() < Tower.getMaxLevel() && money > tower.getUpgradePrice()) {
             money -= tower.getUpgradePrice();
@@ -203,16 +182,14 @@ public class PlayerState implements Serializable {
             head.addChild(new TowerPlaceAction(0, tower.getPosition(), tower.getType().ordinal(), index));
         } else {
             // ToDo: append error action
-            return head;
+            return;
         }
-
-        return head;
     }
 
     void initEnemiesToBeSpawned(){
         for (int i = 0; i < enemiesToBeSpawned.length; i++) {
             for (int j = 0; j < enemyTypeCount; j++) {
-                enemiesToBeSpawned[i][j] = new Enemy(100 * ((i/20) + 1), (i/20) + 1, spawnTile);
+                enemiesToBeSpawned[i][j] = new Enemy(this, 100 * ((i/20) + 1), (i/20) + 1, spawnTile);
             }
         }
     }
@@ -226,26 +203,50 @@ public class PlayerState implements Serializable {
         return head;
     }
 
-
-
     Action moveEnemies(Action head){
         PathTile actual = endTile;
-        while (actual.getPrev()!= null){
-            for (Enemy enemy : endTile.getEnemies()) {
-                enemy.move(head);
+        while (actual.getPrev() != null){
+            for (Enemy enemy : actual.getEnemies()) {
+                head = enemy.move(head);
             }
             actual = actual.getPrev();
         }
         return head;
     }
 
+    /**
+     * Setzt die Lebenspunkte des Spielers
+     * @param damage Schaden, der dem Spieler zugefügt wird (negativ für Heilung)
+     * @param head Kopf der Action-Liste
+     * @return neuer Kopf der Action-Liste
+     */
+    Action setHealth(int damage, Action head){
+        // do heal action if damage is negative
+        health -= damage;
+        Action updateHealthAction = new UpdateHealthAction(0, health, index);
+        head.addChild(updateHealthAction);
+        head = updateHealthAction;
+        return head;
+    }
 
-    // ToDo: --------------
+    Action updateMoney(int money, Action head){
+        this.money += money;
+        Action updateMoneyAction = new UpdateCurrencyAction(0, this.money, index);
+        head.addChild(updateMoneyAction);
+        head = updateMoneyAction;
+        return head;
+    }
+
+    /**
+     * Führt alle Tower-Aktionen aus
+     * @param head Kopf der Action-Liste
+     * @return neuer Kopf der Action-Liste
+     */
     Action tickTowers(Action head) {
         for (Tile[] tiles : board) {
             for (Tile tile : tiles) {
                 if (tile instanceof Tower tower) {
-                    tower.tick(head);
+                    head = tower.tick(head);
                 }
             }
         }

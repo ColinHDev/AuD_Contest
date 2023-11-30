@@ -1,6 +1,5 @@
 package com.gatdsen.simulation;
 
-import com.gatdsen.manager.Timer;
 import com.gatdsen.simulation.GameState.GameMode;
 import com.gatdsen.simulation.action.*;
 
@@ -9,12 +8,9 @@ import com.gatdsen.simulation.action.*;
  * Während die Simulation läuft werden alle Ereignisse in ActionLogs festgehalten, die anschließend durch das animation package dargestellt werden können.
  */
 public class Simulation {
-
     private final GameState gameState;
     private final PlayerState[] playerStates;
     private ActionLog actionLog;
-
-    int turnsWithoutAction = 0;
 
     /**
      * erstellt eine neue Simulation
@@ -48,43 +44,48 @@ public class Simulation {
 
     public ActionLog endTurn() {
         Action head = actionLog.getRootAction();
-        // ToDo: fix
-        ActionLog[] actionLogs = new ActionLog[playerStates.length];
-        Action[] rootActions = new Action[playerStates.length];
 
-        for (int i = 0; i < playerStates.length; i++) {
-            // ToDo: fix this -> make it parallel!
-            rootActions[i].addChild(playerStates[i].tickTowers(rootActions[i]));
-            rootActions[i].addChild(playerStates[i].moveEnemies(rootActions[i]));
-            ActionLog[] lastTurn = actionLogs;
+        for (PlayerState playerState : playerStates) {
+            head = playerState.tickTowers(head);
+        }
+
+        head = new InitAction();
+        actionLog.addRootAction(head);
+
+        for (PlayerState playerState : playerStates) {
+            head = playerState.moveEnemies(head);
+        }
+
+        head = new InitAction();
+        actionLog.addRootAction(head);
+
+        for (PlayerState playerState : playerStates) {
+            head = playerState.spawnEnemies(head, gameState.getTurn());
         }
 
         int winner = -1;
         int livingPlayers = playerStates.length;
         for (int i = 0; i < playerStates.length; i++) {
-           if (playerStates[i].getHealth() <= 0){
-               --livingPlayers;
-           } else winner = i;
+            if (playerStates[i].getHealth() <= 0) --livingPlayers;
+            else winner = i;
         }
-        if (livingPlayers <= 1){
-            for (int i = 0; i < playerStates.length; i++) {
-                rootActions[i].addChild(new GameOverAction(winner));
-            }
+
+        if (livingPlayers <= 1) {
+            head = new InitAction();
+            actionLog.addRootAction(head);
+            head.addChild(new GameOverAction(winner));
         }
 
         gameState.nextTurn();
-        this.actionLog = new ActionLog(new TurnStartAction(0));
-        //When to spawn enemies?
-        return clearAndReturnActionLog();
+        ActionLog temp = actionLog;
+        actionLog = new ActionLog(new TurnStartAction(gameState.getTurn()));
+
+        return temp;
     }
 
     public ActionLog clearAndReturnActionLog() {
         ActionLog tmp = this.actionLog;
         this.actionLog = new ActionLog(new InitAction());
         return tmp;
-    }
-
-    public void penalizeCurrentPlayer() {
-        //gameState.addScore(actionLog.getRootAction(), getActiveTeam(), SCORE_ERROR_PENALTY);
     }
 }

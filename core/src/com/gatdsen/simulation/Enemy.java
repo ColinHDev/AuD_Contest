@@ -6,8 +6,10 @@ import com.gatdsen.simulation.action.*;
  * Die Klasse Enemy repräsentiert einen Gegner im Spiel.
  */
 public class Enemy {
+    private final PlayerState playerState;
     private int health;
     private int level;
+    private int damage;
     private PathTile posTile;
 
     /**
@@ -17,10 +19,12 @@ public class Enemy {
      * @param level   Die Stufe des Gegners.
      * @param posTile Die Position des Gegners.
      */
-    public Enemy(int health, int level, PathTile posTile) {
+    public Enemy(PlayerState playerState, int health, int level, PathTile posTile) {
         this.health = health;
         this.level = level;
         this.posTile = posTile;
+        this.damage = 10 * level;
+        this.playerState = playerState;
     }
 
     /**
@@ -30,7 +34,7 @@ public class Enemy {
      * @return Die Kopie des Gegners.
      */
     Enemy copy(PathTile posTile) {
-        return new Enemy(this.health, this.level, posTile);
+        return new Enemy(this.playerState, this.health, this.level, posTile);
     }
 
     /**
@@ -39,32 +43,28 @@ public class Enemy {
      * @param damage Der Schaden, der dem Gegner zugefügt wird.
      * @param head   Die vorrausgehende Action.
      */
-    void updateHealth(int damage, Action head) {
+    Action updateHealth(int damage, Action head) {
 
         if (health - damage <= 0) {
             health = 0;
             posTile.getEnemies().remove(this);
 
-            // TODO: define Team instead of 0!!!
-
             /*
             chaining:
             | -> head -> update health -> enemy defeat -> |
              */
-            Action updateHealthAction = new EnemyUpdateHealthAction(0, posTile.getPosition(), 0, level, 0);
+            Action updateHealthAction = new EnemyUpdateHealthAction(0, posTile.getPosition(), 0, level, playerState.getIndex());
             head.addChild(updateHealthAction);
-            updateHealthAction.addChild(new EnemyDefeatAction(0, posTile.getPosition(), level, 0));
-
-            //TODO Player gets money
-            // -> Simulation or link Enemy with GameState
-
+            updateHealthAction.addChild(new EnemyDefeatAction(0, posTile.getPosition(), level, playerState.getIndex()));
+            head = playerState.updateMoney(10 * level, updateHealthAction);
         } else {
             health -= damage;
-            head.addChild(new EnemyUpdateHealthAction(0, posTile.getPosition(), health, level, 0));
+            head.addChild(new EnemyUpdateHealthAction(0, posTile.getPosition(), health, level, playerState.getIndex()));
         }
+        return head;
     }
 
-    void move(Action head) {
+    Action move(Action head) {
 
         if (posTile.getNext() != null) {
             posTile.getEnemies().remove(this);
@@ -72,13 +72,12 @@ public class Enemy {
             posTile.getEnemies().add(this);
             head.addChild(new EnemyMoveAction(0, posTile.getPrev().getPosition(), posTile.getPosition(), level));
         } else {
+            head = playerState.setHealth(damage, head);
 
-
-            // TODO: define Team instead of 0!!!
-            //head.addChild(new UpdateHealthAction(0, , 0));
             //TODO Player gets damage
             // -> Simulation or link Enemy with GameState
         }
+        return head;
     }
 
 

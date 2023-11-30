@@ -4,36 +4,37 @@ import com.gatdsen.simulation.action.Action;
 import com.gatdsen.simulation.action.ActionLog;
 
 /**
- * Provides an access-controlled interface to send commands to players.
- * Allows Control over the corresponding Character
- * Is only active for a single turn and will be permanently deactivated afterward.
+ * Stellt eine Zugriffskontrollierte Schnittstelle bereit, um Befehle an Spieler zu senden.
+ * Ermöglicht die Kontrolle über den entsprechenden Charakter
+ * Ist nur für einen einzigen Zug aktiv und wird danach dauerhaft deaktiviert.
  */
 public class PlayerController {
-
     private final int playerIndex;
     private final GameState state;
     private final PlayerState playerState;
     boolean active = true;
 
     /**
-     * Returns the root of the ActionLog that is currently recording in the simulation instance.
+     * @return die root Action des ActionLogs, welches die Simulation aktuell aufzeichnet
      */
-    private Action getRoot(){
+    private Action getRoot() {
         return state.getSim().getActionLog().getRootAction();
     }
 
     /**
-     * Signals the current command as completed and will reset the ActionLog for the next command
-     * @return The ActionLog produced by the previously executed command
+     * Signalisiere das aktuelle Kommando als abgeschlossen und setze den ActionLog für das nächste Kommando zurück
+     *
+     * @return Der ActionLog, der durch das zuvor ausgeführte Kommando erzeugt wurde
      */
-    private ActionLog endCommand(){
+    private ActionLog endCommand() {
         return state.getSim().clearAndReturnActionLog();
     }
 
     /**
+     * Erstellt einen neuen PlayerController
      *
-     * @param playerIndex          the team this Controller will grant access to
-     * @param state         the current state of the game
+     * @param playerIndex Index des Spielers
+     * @param state       der aktuelle GameState
      */
     protected PlayerController(int playerIndex, GameState state) {
         this.playerIndex = playerIndex;
@@ -41,17 +42,18 @@ public class PlayerController {
         this.playerState = state.getPlayerStates()[playerIndex];
     }
 
+    /**
+     * @return Index des Spielers
+     */
     public int getPlayerIndex() {
         return playerIndex;
     }
 
-    //ToDo: add more calls to complete your API
-    //ToDo: all added calls should have respective Counterparts in manager.Controller and manager.command.[...]
-
     /**
      * Platziert einen Turm auf dem Spielfeld
-     * @param x x-Koordinate
-     * @param y y-Koordinate
+     *
+     * @param x    x-Koordinate
+     * @param y    y-Koordinate
      * @param type Turm-Typ als Enum
      * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
      */
@@ -62,6 +64,7 @@ public class PlayerController {
 
     /**
      * Upgraded einen Turm auf dem Spielfeld
+     *
      * @param x x-Koordinate
      * @param y y-Koordinate
      * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
@@ -73,20 +76,38 @@ public class PlayerController {
 
     /**
      * Verkauft einen Turm auf dem Spielfeld
+     *
      * @param x x-Koordinate
      * @param y y-Koordinate
      * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
      */
-    private ActionLog sellTower(int x, int y) {
-        // ToDo: implement sellTower after christmas task and make it public
+    public ActionLog sellTower(int x, int y) {
+        // ToDo: implement sellTower after christmas task
         return endCommand();
     }
 
+    /**
+     * Beleidigt den Gegner
+     *
+     * @return Der ActionLog der durch das Ausführen des Befehls entstanden ist
+     */
+    public ActionLog insultEnemy() {
+        // ToDo: "du Hund"
+        return endCommand();
+    }
 
+    /**
+     * Deaktiviert den Controller, sodass er keine Befehle mehr ausführen kann.
+     */
     public void deactivate() {
         active = false;
     }
 
+    /**
+     * Gibt zurück, ob der Controller noch aktiv ist.
+     *
+     * @return True, wenn der Controller noch aktiv ist.
+     */
     public boolean isActive() {
         return active;
     }

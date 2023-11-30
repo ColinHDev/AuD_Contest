@@ -193,7 +193,7 @@ public class Tower extends Tile {
         Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(),1);
         head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE,path));
 
-        target.updateHealth(getDamage(), head);
+        head = target.updateHealth(getDamage(), head);
         cooldown = getRechargeTime();
         return head;
     }
