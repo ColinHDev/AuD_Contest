@@ -19,6 +19,7 @@ import com.gatdsen.animation.entity.SpriteEntity;
 import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.AnimationLogProcessor;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.IntVector2;
 import com.gatdsen.simulation.action.*;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
 import com.gatdsen.ui.hud.UiMessenger;
@@ -240,11 +241,11 @@ public class Animator implements Screen, AnimationLogProcessor {
                 if (debugPointAction.isCross()) {
                     entity = new SpriteEntity(IngameAssets.cross_marker);
                     entity.setSize(new Vector2(3, 3));
-                    debugPointAction.getPos().sub(1, 1);
+                    debugPointAction.getPos().sub(new IntVector2(1, 1));
                 } else {
                     entity = new SpriteEntity(IngameAssets.pixel);
                 }
-                entity.setRelPos(debugPointAction.getPos());
+                entity.setRelPos(debugPointAction.getPos().toFloat());
                 entity.setColor(debugPointAction.getColor());
                 animator.root.add(entity);
                 return entity;
