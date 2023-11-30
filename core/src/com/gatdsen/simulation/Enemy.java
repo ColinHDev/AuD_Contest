@@ -2,10 +2,12 @@ package com.gatdsen.simulation;
 
 import com.gatdsen.simulation.action.*;
 
+import java.io.Serializable;
+
 /**
  * Die Klasse Enemy repräsentiert einen Gegner im Spiel.
  */
-public class Enemy {
+public class Enemy implements Serializable {
     private final PlayerState playerState;
     private int health;
     private int level;

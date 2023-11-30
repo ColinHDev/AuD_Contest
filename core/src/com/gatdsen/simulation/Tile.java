@@ -1,9 +1,10 @@
 package com.gatdsen.simulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Tile {
+public abstract class Tile implements Serializable {
 
     protected IntVector2 pos;
 

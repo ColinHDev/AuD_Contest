@@ -8,6 +8,7 @@ import com.gatdsen.manager.player.Bot;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -59,10 +60,10 @@ public class MalBot extends Bot {
         boolean caught = false;
 
         try {
-            Object instance = Manager.class.newInstance();
+            Object instance = Manager.class.getDeclaredConstructors()[0].newInstance();
         } catch (SecurityException | IllegalAccessException e) {
             caught = true;
-        } catch (InstantiationException e) {
+        } catch (InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
         if (!caught) failedExperiments.add(failureMessage(1, inTurn, state));
@@ -106,7 +107,7 @@ public class MalBot extends Bot {
 
         caught = false;
         try {
-            Manager.getManager();
+            Object instance = Manager.getManager();
         } catch (SecurityException e) {
             caught = true;
         }
