@@ -87,11 +87,15 @@ public class PlayerState implements Serializable {
                         case PATH_LEFT -> destination.add(-1, 0);
                         case PATH_UP -> destination.add(0, 1);
                     }
+                    PathTile current = (PathTile) board[i][j];
+                    PathTile next = null;
                     if (mapOutline.contains(destination.toFloat())) {
-                        ((PathTile) board[i][j]).setNext((PathTile) board[destination.x][destination.y]);
-                        if (((PathTile) board[i][j]).getNext() == null) {
-                            endTile = (PathTile) board[i][j];
-                        }
+                        next = (PathTile) board[destination.x][destination.y];
+                    }
+                    if (next == null) {
+                        endTile = current;
+                    } else {
+                        current.setNext(next);
                     }
                 }
             }
