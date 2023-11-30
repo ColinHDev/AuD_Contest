@@ -19,7 +19,7 @@ public class PlayerState implements Serializable {
     private final Enemy[][] enemiesToBeSpawned = new Enemy[100][enemyTypeCount];
 
 
-    PlayerState copy(GameState newGameState){
+    PlayerState copy(GameState newGameState) {
         return new PlayerState(this, newGameState);
     }
 
@@ -35,7 +35,7 @@ public class PlayerState implements Serializable {
         board = new Tile[boardX][boardY];
         for (int i = 0; i < boardX; i++) {
             for (int j = 0; j < boardY; j++) {
-                if(original.board[i][j] != null){
+                if (original.board[i][j] != null) {
                     board[i][j] = original.board[i][j].copy();
                 }
             }
@@ -43,10 +43,10 @@ public class PlayerState implements Serializable {
 
         for (int i = 0; i < boardX; i++) {
             for (int j = 0; j < boardX; j++) {
-                if (board[i][j] instanceof PathTile actual){
+                if (board[i][j] instanceof PathTile actual) {
                     PathTile originalPT = (PathTile) original.board[i][j];
                     PathTile next = null;
-                    if (originalPT.getNext() != null){
+                    if (originalPT.getNext() != null) {
                         IntVector2 nextPos = originalPT.getNext().getPosition();
                         next = (PathTile) board[nextPos.x][nextPos.y];
                     }
@@ -58,7 +58,7 @@ public class PlayerState implements Serializable {
         money = original.money;
     }
 
-    public PlayerState(GameState gameState, int index, int health, int money){
+    PlayerState(GameState gameState, int index, int health, int money) {
         this.gameState = gameState;
         this.index = index;
         int width = gameState.getBoardSizeX();
@@ -68,28 +68,28 @@ public class PlayerState implements Serializable {
         this.money = money;
         initEnemiesToBeSpawned();
 
-        for (int i = 0; i <width; i++) {
+        for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()) {
                     board[i][j] = new PathTile(i, j);
                 }
             }
         }
 
-        IntRectangle mapOutline = new IntRectangle(0,0,width, height);
-        for (int i = 0; i <width; i++) {
+        IntRectangle mapOutline = new IntRectangle(0, 0, width, height);
+        for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()){
+                if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()) {
                     IntVector2 destination = new IntVector2(i, j);
-                    switch (gameState.getMap()[i][j]){
-                        case PATH_RIGHT -> destination.add(1,0);
-                        case PATH_DOWN -> destination.add(0,-1);
-                        case PATH_LEFT -> destination.add(-1,0);
-                        case PATH_UP -> destination.add(0,1);
+                    switch (gameState.getMap()[i][j]) {
+                        case PATH_RIGHT -> destination.add(1, 0);
+                        case PATH_DOWN -> destination.add(0, -1);
+                        case PATH_LEFT -> destination.add(-1, 0);
+                        case PATH_UP -> destination.add(0, 1);
                     }
-                    if (mapOutline.contains(destination.toFloat())){
+                    if (mapOutline.contains(destination.toFloat())) {
                         ((PathTile) board[i][j]).setNext((PathTile) board[destination.x][destination.y]);
-                        if (((PathTile) board[i][j]).getNext() == null){
+                        if (((PathTile) board[i][j]).getNext() == null) {
                             endTile = (PathTile) board[i][j];
                         }
                     }
@@ -107,6 +107,7 @@ public class PlayerState implements Serializable {
 
     /**
      * Gibt die aktuelle Lebenspunkte des Spielers zurück
+     *
      * @return Lebenspunkte
      */
     public int getHealth() {
@@ -115,6 +116,7 @@ public class PlayerState implements Serializable {
 
     /**
      * Gibt das aktuelle Geld des Spielers zurück
+     *
      * @return Geld
      */
     public int getMoney() {
@@ -123,6 +125,7 @@ public class PlayerState implements Serializable {
 
     /**
      * Gibt den Index des Spielers zurück
+     *
      * @return Spielerindex
      */
     public int getIndex() {
@@ -131,6 +134,7 @@ public class PlayerState implements Serializable {
 
     /**
      * Gibt das Spielfeld des Spielers zurück
+     *
      * @return Spielfeld
      */
     public Tile[][] getBoard() {
@@ -138,11 +142,11 @@ public class PlayerState implements Serializable {
     }
 
 
-
     /**
      * Platziert einen Tower auf dem Spielfeld
-     * @param x x-Koordinate des Towers
-     * @param y y-Koordinate des Towers
+     *
+     * @param x    x-Koordinate des Towers
+     * @param y    y-Koordinate des Towers
      * @param type Typ des Towers
      * @param head Kopf der Action-Liste
      */
@@ -167,8 +171,9 @@ public class PlayerState implements Serializable {
 
     /**
      * Upgraded einen Tower auf dem Spielfeld
-     * @param x x-Koordinate des Towers
-     * @param y y-Koordinate des Towers
+     *
+     * @param x    x-Koordinate des Towers
+     * @param y    y-Koordinate des Towers
      * @param head Kopf der Action-Liste
      */
     void upgradeTower(int x, int y, Action head) {
@@ -186,26 +191,26 @@ public class PlayerState implements Serializable {
         }
     }
 
-    void initEnemiesToBeSpawned(){
+    void initEnemiesToBeSpawned() {
         for (int i = 0; i < enemiesToBeSpawned.length; i++) {
             for (int j = 0; j < enemyTypeCount; j++) {
-                enemiesToBeSpawned[i][j] = new Enemy(this, 100 * ((i/20) + 1), (i/20) + 1, spawnTile);
+                enemiesToBeSpawned[i][j] = new Enemy(this, 100 * ((i / 20) + 1), (i / 20) + 1, spawnTile);
             }
         }
     }
 
-    Action spawnEnemies(Action head, int wave){
+    Action spawnEnemies(Action head, int wave) {
         for (int i = 0; i < enemyTypeCount; i++) {
             Enemy actual = enemiesToBeSpawned[wave][i];
             spawnTile.getEnemies().add(actual);
-            head.addChild(new EnemySpawnAction(0, spawnTile.getPosition(),actual.getLevel(), index));
+            head.addChild(new EnemySpawnAction(0, spawnTile.getPosition(), actual.getLevel(), index));
         }
         return head;
     }
 
-    Action moveEnemies(Action head){
+    Action moveEnemies(Action head) {
         PathTile actual = endTile;
-        while (actual.getPrev() != null){
+        while (actual.getPrev() != null) {
             for (Enemy enemy : actual.getEnemies()) {
                 head = enemy.move(head);
             }
@@ -216,11 +221,12 @@ public class PlayerState implements Serializable {
 
     /**
      * Setzt die Lebenspunkte des Spielers
+     *
      * @param damage Schaden, der dem Spieler zugefügt wird (negativ für Heilung)
-     * @param head Kopf der Action-Liste
+     * @param head   Kopf der Action-Liste
      * @return neuer Kopf der Action-Liste
      */
-    Action setHealth(int damage, Action head){
+    Action setHealth(int damage, Action head) {
         // do heal action if damage is negative
         health -= damage;
         Action updateHealthAction = new UpdateHealthAction(0, health, index);
@@ -229,7 +235,7 @@ public class PlayerState implements Serializable {
         return head;
     }
 
-    Action updateMoney(int money, Action head){
+    Action updateMoney(int money, Action head) {
         this.money += money;
         Action updateMoneyAction = new UpdateCurrencyAction(0, this.money, index);
         head.addChild(updateMoneyAction);
@@ -239,6 +245,7 @@ public class PlayerState implements Serializable {
 
     /**
      * Führt alle Tower-Aktionen aus
+     *
      * @param head Kopf der Action-Liste
      * @return neuer Kopf der Action-Liste
      */
