@@ -16,7 +16,7 @@ public class TestPolicy {
     public void TestMalBot() {
         RunConfiguration config = new RunConfiguration();
         config.gameMode = GameState.GameMode.Normal;
-        config.mapName = "MangoMap";
+        config.mapName = "map1";
         config.teamCount = 2;
         config.players = new ArrayList<>();
         config.players.add(MalBot.class);
