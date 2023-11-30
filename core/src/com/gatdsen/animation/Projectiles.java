@@ -18,7 +18,7 @@ public class Projectiles {
         Animation<TextureRegion> animation;
         AnimatedEntity animatedEntity;
         switch (type){
-            case EXAMPLE_PROJECTILE:
+            case STANDARD_TYPE:
                 animation = AssetContainer.IngameAssets.projectiles.get(type);
                 animatedEntity = new AnimatedEntity(animation);
                 animatedEntity.setOrigin(new Vector2(animation.getKeyFrame(0).getRegionWidth()/2f, animation.getKeyFrame(0).getRegionHeight()/2f));
