@@ -2,45 +2,74 @@ package com.gatdsen.manager.player;
 
 import com.badlogic.gdx.Input;
 import com.gatdsen.manager.Controller;
+import com.gatdsen.manager.PlayerThread;
 import com.gatdsen.manager.StaticGameState;
-import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.IntVector2;
+import com.gatdsen.simulation.Tower;
 
-//ToDo migrate to UI
+import java.util.Arrays;
+
 public class HumanPlayer extends Player {
+
+    enum Key {
+        KEY_CHARACTER_TILE_UP,
+        KEY_CHARACTER_TILE_DOWN,
+        KEY_CHARACTER_TILE_LEFT,
+        KEY_CHARACTER_TILE_RIGHT,
+
+        KEY_CHARACTER_TOWER_PLACE,
+        KEY_CHARACTER_TOWER_UPGRADE,
+
+        KEY_CHARACTER_END_TURN;
+
+        private static Key fromKeycode(int keycode) {
+            return switch (keycode) {
+                case HumanPlayer.KEY_CHARACTER_TILE_UP -> Key.KEY_CHARACTER_TILE_UP;
+                case HumanPlayer.KEY_CHARACTER_TILE_DOWN -> Key.KEY_CHARACTER_TILE_DOWN;
+                case HumanPlayer.KEY_CHARACTER_TILE_LEFT -> Key.KEY_CHARACTER_TILE_LEFT;
+                case HumanPlayer.KEY_CHARACTER_TILE_RIGHT -> Key.KEY_CHARACTER_TILE_RIGHT;
+                case HumanPlayer.KEY_CHARACTER_TOWER_PLACE -> Key.KEY_CHARACTER_TOWER_PLACE;
+                case HumanPlayer.KEY_CHARACTER_TOWER_UPGRADE -> Key.KEY_CHARACTER_TOWER_UPGRADE;
+                case HumanPlayer.KEY_CHARACTER_END_TURN -> Key.KEY_CHARACTER_END_TURN;
+                default -> null;
+            };
+        }
+    }
+
+    private static final int KEY_CHARACTER_TILE_UP = Input.Keys.UP;
+    private static final int KEY_CHARACTER_TILE_DOWN = Input.Keys.DOWN;
+    private static final int KEY_CHARACTER_TILE_LEFT = Input.Keys.LEFT;
+    private static final int KEY_CHARACTER_TILE_RIGHT = Input.Keys.RIGHT;
+
+    private static final int KEY_CHARACTER_TOWER_PLACE = Input.Keys.P;
+    private static final int KEY_CHARACTER_TOWER_UPGRADE = Input.Keys.U;
+
+    private static final int KEY_CHARACTER_END_TURN = Input.Keys.X;
 
     private static final float NO_TICK = -10000.0f;
 
-    enum Key {
-        KEY_CHARACTER_EXAMPLE,
+    private final float[] lastTick = new float[Key.values().length];
+    private static final float[] tickSpeed = new float[Key.values().length]; // in Hz
 
-        KEY_CHARACTER_END_TURN
+    static {
+        tickSpeed[Key.KEY_CHARACTER_TILE_UP.ordinal()] = 0.1f;
+        tickSpeed[Key.KEY_CHARACTER_TILE_DOWN.ordinal()] = 0.1f;
+        tickSpeed[Key.KEY_CHARACTER_TILE_LEFT.ordinal()] = 0.1f;
+        tickSpeed[Key.KEY_CHARACTER_TILE_RIGHT.ordinal()] = 0.1f;
+
+        tickSpeed[Key.KEY_CHARACTER_TOWER_PLACE.ordinal()] = 0.1f;
+        tickSpeed[Key.KEY_CHARACTER_TOWER_UPGRADE.ordinal()] = 0.1f;
+
+        tickSpeed[Key.KEY_CHARACTER_END_TURN.ordinal()] = 0.1f;
     }
 
-    private int foo =0;
+    /**
+     * Die Dauer des Zuges, die der {@link HumanPlayer} hat, in Sekunden.
+     */
+    private static final int turnDuration = PlayerThread.HUMAN_EXECUTE_TURN_TIMEOUT / 1000;
 
+    private final IntVector2 selectedTile = new IntVector2(0, 0);
 
-    final int KEY_CHARACTER_EXAMPLE = Input.Keys.Q;
-
-    final int KEY_CHARACTER_END_TURN = Input.Keys.X;
-
-
-    private float[] lastTick = new float[Key.values().length];
-
-    private static final float[] tickspeed = new float[Key.values().length]; // in Hz
-
-    {
-        tickspeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = 0.1f;
-
-        tickspeed[Key.KEY_CHARACTER_END_TURN.ordinal()] = 0.1f;
-    }
-
-    //amount of time in seconds, the turn of the human player will take
-    //if the time limit is reached, the execute turn will wait for turnOverhead seconds
-    // to make sure everything is calculated and no GameState inconsistency is created
-    private int turnDuration = 60;
-    private int turnStartWaitTime = 2;
-
-    private boolean turnInProgress;
     private StaticGameState state;
     private Controller controller;
 
@@ -51,74 +80,85 @@ public class HumanPlayer extends Player {
 
     @Override
     public void init(StaticGameState state) {
-
     }
 
     /**
      * Started den Zug des {@link HumanPlayer} und erlaubt es diesem mithilfe von Tasteneingaben, zu bewegen.
-     * Der Zug dauert {@link HumanPlayer#turnDuration} Sekunden, danach wird für
-     * {@link HumanPlayer#turnStartWaitTime} gewartet und dann die Methode beendet.
+     * Der Zug dauert {@link HumanPlayer#turnDuration} Sekunden.
      *
-     * @param state      Der {@link GameState Spielzustand} während des Zuges
+     * @param state      Der {@link StaticGameState Spielzustand} während des Zuges
      * @param controller Der {@link Controller Controller}, der zum Charakter gehört
      */
-
     @Override
     public void executeTurn(StaticGameState state, Controller controller) {
         this.state = state;
         this.controller = controller;
-        for (int i = 0; i < lastTick.length; i++) lastTick[i] = NO_TICK;
+        Arrays.fill(lastTick, NO_TICK);
 
-//                System.out.println("Turn has been ended preemptively");
-
-
-       synchronized (this) {
+        synchronized (this) {
             try {
-
-
-                this.wait(turnDuration* 1000L);
-
+                this.wait(turnDuration * 1000L);
             } catch (InterruptedException ignored) {
-
             }
         }
-
     }
 
-    //ToDo: make protected after migration to UI
     /**
-     * Ends the current turn of the player preemptively.
-     * Callen when pressing {@link HumanPlayer#KEY_CHARACTER_END_TURN}.
-     * notifies itself, so the wait will end.
+     * Endet den aktuellen Zug des {@link HumanPlayer} vorzeitig.
+     * Wird aufgerufen, wenn {@link HumanPlayer#KEY_CHARACTER_END_TURN} gedrückt wird.
      */
     public void endCurrentTurn() {
+        // Benachrichtigt sich selbst, damit das wait() in executeTurn() beendet wird
         synchronized (this) {
             this.notify();
         }
     }
 
+    /**
+     * Wird aufgerufen, wenn eine Taste gedrückt wird.
+     * @param keycode Der Keycode der Taste, siehe {@link Input.Keys}
+     */
     public void processKeyDown(int keycode) {
-//        System.out.println("Received Key: " + keycode);
-        switch (keycode) {
-            case KEY_CHARACTER_EXAMPLE:
-                lastTick[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = -tickspeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()];
-                execute(Key.KEY_CHARACTER_EXAMPLE);
-                break;
-            case KEY_CHARACTER_END_TURN:
-                //lastTick[Key.KEY_CHARACTER_END_TURN.ordinal()] = true;
-                execute(Key.KEY_CHARACTER_END_TURN);
-                break;
+        Key key = Key.fromKeycode(keycode);
+        if (key == null) {
+            return;
         }
+        lastTick[key.ordinal()] = -tickSpeed[key.ordinal()];
+        execute(key);
+    }
+
+    /**
+     * Wird aufgerufen, wenn eine Taste losgelassen wird, nachdem sie gedrückt wurde.
+     * @param keycode Der Keycode der Taste, siehe {@link Input.Keys}
+     */
+    public void processKeyUp(int keycode) {
+        Key key = Key.fromKeycode(keycode);
+        if (key == null) {
+            return;
+        }
+        lastTick[key.ordinal()] = NO_TICK;
+        execute(key);
     }
 
     private void execute(Key key) {
-//        System.out.println("Commanding Controller: " + controller);
         switch (key) {
-            // Qund E für rotieren/zielen mit den Waffen
-            case KEY_CHARACTER_EXAMPLE:
-                foo += 1;
-                foo = foo % 360;
-                //controller.foo(foo);
+            case KEY_CHARACTER_TILE_UP:
+                selectedTile.y = Math.max(0, selectedTile.y - 1);
+                break;
+            case KEY_CHARACTER_TILE_DOWN:
+                selectedTile.y = Math.min(selectedTile.y + 1, state.getBoardSizeY() - 1);
+                break;
+            case KEY_CHARACTER_TILE_LEFT:
+                selectedTile.x = Math.max(0, selectedTile.x - 1);
+                break;
+            case KEY_CHARACTER_TILE_RIGHT:
+                selectedTile.x = Math.min(selectedTile.x + 1, state.getBoardSizeX() - 1);
+                break;
+            case KEY_CHARACTER_TOWER_PLACE:
+                controller.placeTower(selectedTile.x, selectedTile.y, Tower.TowerType.BASIC_TOWER);
+                break;
+            case KEY_CHARACTER_TOWER_UPGRADE:
+                controller.upgradeTower(selectedTile.x, selectedTile.y);
                 break;
             case KEY_CHARACTER_END_TURN:
                 this.endCurrentTurn();
@@ -132,22 +172,10 @@ public class HumanPlayer extends Player {
             if (lastTick[index] > (NO_TICK/2)) {
                 lastTick[index] += delta;
                 while (lastTick[index] >= 0.0f) {
-                    lastTick[index] -= tickspeed[index];
+                    lastTick[index] -= tickSpeed[index];
                     execute(key);
                 }
             }
-        }
-    }
-
-
-    public void processKeyUp(int keycode) {
-
-
-        switch (keycode) {
-            // Qund E für rotieren/zielen mit den Waffen
-            case KEY_CHARACTER_EXAMPLE:
-                lastTick[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = NO_TICK;
-                break;
         }
     }
 
@@ -156,9 +184,7 @@ public class HumanPlayer extends Player {
         return PlayerType.Human;
     }
 
-
-
-    public int getTurnDuration(){
-        return this.turnDuration;
+    public int getTurnDuration() {
+        return turnDuration;
     }
 }
