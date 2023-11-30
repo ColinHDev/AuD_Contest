@@ -196,7 +196,7 @@ public class Game extends Executable {
                 animationLogProcessor.animate(log);
             }
         }
-        scores = state.getScores();
+        scores = state.getHealth();
         setStatus(Status.COMPLETED);
         for (CompletionHandler<Executable> completionListener : completionListeners) {
             completionListener.onComplete(this);
@@ -210,7 +210,7 @@ public class Game extends Executable {
         if (simulationThread != null) {
             simulationThread.interrupt();
         }
-        if (state!=null) scores = state.getScores();
+        if (state!=null) scores = state.getHealth();
         simulation = null;
         state = null;
         simulationThread = null;

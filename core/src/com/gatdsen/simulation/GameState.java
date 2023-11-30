@@ -1,50 +1,54 @@
 package com.gatdsen.simulation;
 
-import com.gatdsen.manager.Timer;
-
 import java.io.Serializable;
 import java.util.*;
-
 
 /**
  * Repräsentiert ein laufendes Spiel mit allen dazugehörigen Daten
  */
 public class GameState implements Serializable {
+
+    /**
+     * Enum für die verschiedenen Spielmodi
+     */
     public enum GameMode {
         Normal,
         Campaign,
         Exam_Admission,
         Tournament_Phase_1,
         Tournament_Phase_2,
-        Replay
-        }
+        Replay;
+
+    }
+
+    /**
+     * Enum für die verschiedenen Feldtypen
+     */
     public enum MapTileType {
         LAND,
         OBSTACLE,
         PATH_RIGHT,
         PATH_DOWN,
         PATH_LEFT,
-        PATH_UP
+        PATH_UP;
 
     }
 
     PlayerState[] playerStates;
-    protected MapTileType[][] map;
+    MapTileType[][] map;
     private int turn;
     private boolean active;
     private final GameMode gameMode;
     private final int playerCount;
     private final transient Simulation sim;
-    private transient Timer turnTimer;
-
 
     /**
-     * Creates a new GameState for the specified attributes.
+     * Erstellt ein neues GameState-Objekt mit den angegebenen Attributen.
      *
-     * @param gameMode    selected game mode
-     * @param mapName     name of the selected map as String
-     * @param playerCount number of players
-     * @param sim         the respective simulation instance
+     * @param gameMode    Spielmodus
+     * @param mapName     Name der Map als String
+     * @param playerCount Anzahl der Spieler
+     * @param sim         Simulation Instanz
      */
     GameState(GameMode gameMode, String mapName, int playerCount, Simulation sim) {
         this.gameMode = gameMode;
@@ -59,10 +63,14 @@ public class GameState implements Serializable {
         Arrays.setAll(playerStates, p -> new PlayerState(this, 300, 100));
     }
 
+    /**
+     * Copy constructor erstellt eine Kopie des übergebenen GameState-Objekts.
+     *
+     * @param original Das zu kopierende GameState-Objekt
+     */
     private GameState(GameState original) {
         //ToDo this needs to deep copy all read only attributes
         gameMode = original.gameMode;
-        turnTimer = original.turnTimer;
         turn = original.turn;
         map = Arrays.copyOf(original.map, original.map.length);
         playerStates = new PlayerState[original.playerStates.length];
@@ -75,43 +83,57 @@ public class GameState implements Serializable {
     }
 
     /**
+     * Erstellt eine Kopie des GameState-Objekts.
+     *
+     * @return Kopie des GameState-Objekts
+     */
+    public GameState copy() {
+        return new GameState(this);
+    }
+
+    /**
      * Gibt die PlayerStates beider Spieler zurück
+     *
      * @return PlayerStates
      */
     public PlayerState[] getPlayerStates() {
         return playerStates;
     }
 
-    void nextTurn(){
+    /**
+     * Erhöht den Turn-Zähler um 1
+     */
+    void nextTurn() {
         ++turn;
     }
-
     // ToDo: getter for boards
+
     public Tile[][] getPlayerBoard(int player) {
         return playerStates[player].getMap();
     }
-
     //ToDo: getter for map
+
     public MapTileType[][] getMap() {
         return map;
     }
 
+    /**
+     * @return Aktueller Turn
+     */
     public int getTurn() {
         return turn;
     }
 
-    public float[] getScores() {
+    /**
+     * @return Lebenspunkte beider Spieler
+     */
+    public float[] getHealth() {
         float[] healths = new float[playerStates.length];
         for (int i = 0; i < playerStates.length; i++) {
             healths[i] = playerStates[i].getHealth();
         }
         return healths;
     }
-
-    public GameState copy() {
-        return new GameState(this);
-    }
-
 
 
     /**
@@ -123,11 +145,9 @@ public class GameState implements Serializable {
         return gameMode;
     }
 
-    /**
-     * Spawns players randomly distributed over the possible spawn-location, specified by the map.
-     */
 
     //ToDo migrate to Simulation
+
     /**
      * Return whether the Game is still active.
      *
@@ -138,6 +158,10 @@ public class GameState implements Serializable {
     }
 
     //ToDo migrate to Simulation
+
+    /**
+     * Deactivates the game.
+     */
     protected void deactivate() {
         this.active = false;
     }
@@ -145,10 +169,13 @@ public class GameState implements Serializable {
     /**
      * @return the respective simulation instance
      */
+
+    /**
+     * @return die Simulation Instanz
+     */
     protected Simulation getSim() {
         return sim;
     }
-
 
     /**
      * @return Anzahl der Spieler
@@ -156,14 +183,6 @@ public class GameState implements Serializable {
     public int getPlayerCount() {
         return playerCount;
     }
-
-
-    /**
-     * @return The 2D array that saves all Tiles
-     */
-//    Tile[][] getBoard() {
-//        return board;
-//    }
 
     /**
      * @return Horizontale Größe des Spielfeldes in #Boxen
@@ -177,13 +196,5 @@ public class GameState implements Serializable {
      */
     public int getBoardSizeY() {
         return map[0].length;
-    }
-
-    public Timer getTurnTimer() {
-        return turnTimer;
-    }
-
-    protected void setTurnTimer(Timer turnTimer) {
-        this.turnTimer = turnTimer;
     }
 }
