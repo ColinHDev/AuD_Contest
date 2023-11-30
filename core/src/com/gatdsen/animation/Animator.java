@@ -53,6 +53,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private static GameEnemy[][][] enemies;
 
+    // TODO: BlockingQueue<ActionLog> muss BlockingQueue<Action> sein - gez. Corny
     private final BlockingQueue<ActionLog> pendingLogs = new LinkedBlockingQueue<>();
 
 
