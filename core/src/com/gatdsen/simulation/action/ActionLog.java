@@ -1,6 +1,8 @@
 package com.gatdsen.simulation.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representiert eine Sammlung aller UI-relevanten {@link Action Actions},
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * Normalerweise ist dies die Ausführung eines einzelnen Befehls.
  */
 public class ActionLog implements Serializable {
-    private final Action rootAction;
+    private final List<Action> rootActions = new ArrayList<>();
 
     /**
      * Erstellt ein neues ActionLog. Aufgrund der Struktur von {@link Action Actions}.
@@ -20,7 +22,7 @@ public class ActionLog implements Serializable {
      * @param rootAction die erste Aktion des Protokolls
      */
     public ActionLog(Action rootAction) {
-        this.rootAction = rootAction;
+        this.rootActions.add(rootAction);
     }
 
     /**
@@ -29,6 +31,24 @@ public class ActionLog implements Serializable {
      * @return Die rootAction
      */
     public Action getRootAction() {
-        return rootAction;
+        return rootActions.get(rootActions.size() - 1);
+    }
+
+    /**
+     * Gibt die Liste der rootActions zurück.
+     *
+     * @return Die Liste der rootActions
+     */
+    public List<Action> getRootActions() {
+        return rootActions;
+    }
+
+    /**
+     * Fügt eine neue rootAction hinzu.
+     *
+     * @param rootAction Die neue rootAction
+     */
+    public void addRootAction(Action rootAction) {
+        rootActions.add(rootAction);
     }
 }
