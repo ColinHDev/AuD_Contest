@@ -5,6 +5,8 @@ import com.gatdsen.manager.Controller;
 import com.gatdsen.manager.StaticGameState;
 import com.gatdsen.simulation.GameState;
 
+import java.util.Arrays;
+
 //ToDo migrate to UI
 public class HumanPlayer extends Player {
 
@@ -24,24 +26,22 @@ public class HumanPlayer extends Player {
     final int KEY_CHARACTER_END_TURN = Input.Keys.X;
 
 
-    private float[] lastTick = new float[Key.values().length];
+    private final float[] lastTick = new float[Key.values().length];
+    private static final float[] tickSpeed = new float[Key.values().length]; // in Hz
 
-    private static final float[] tickspeed = new float[Key.values().length]; // in Hz
+    static {
+        tickSpeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = 0.1f;
 
-    {
-        tickspeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = 0.1f;
-
-        tickspeed[Key.KEY_CHARACTER_END_TURN.ordinal()] = 0.1f;
+        tickSpeed[Key.KEY_CHARACTER_END_TURN.ordinal()] = 0.1f;
     }
 
     //amount of time in seconds, the turn of the human player will take
     //if the time limit is reached, the execute turn will wait for turnOverhead seconds
     // to make sure everything is calculated and no GameState inconsistency is created
-    private int turnDuration = 60;
-    private int turnStartWaitTime = 2;
+    private final int turnDuration = 60;
+    private final int turnStartWaitTime = 2;
 
     private boolean turnInProgress;
-    private StaticGameState state;
     private Controller controller;
 
     @Override
@@ -51,7 +51,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public void init(StaticGameState state) {
-
     }
 
     /**
@@ -65,27 +64,17 @@ public class HumanPlayer extends Player {
 
     @Override
     public void executeTurn(StaticGameState state, Controller controller) {
-        this.state = state;
         this.controller = controller;
-        for (int i = 0; i < lastTick.length; i++) lastTick[i] = NO_TICK;
+        Arrays.fill(lastTick, NO_TICK);
 
-//                System.out.println("Turn has been ended preemptively");
-
-
-       synchronized (this) {
+        synchronized (this) {
             try {
-
-
-                this.wait(turnDuration* 1000L);
-
+                this.wait(turnDuration * 1000L);
             } catch (InterruptedException ignored) {
-
             }
         }
-
     }
 
-    //ToDo: make protected after migration to UI
     /**
      * Ends the current turn of the player preemptively.
      * Callen when pressing {@link HumanPlayer#KEY_CHARACTER_END_TURN}.
@@ -101,7 +90,7 @@ public class HumanPlayer extends Player {
 //        System.out.println("Received Key: " + keycode);
         switch (keycode) {
             case KEY_CHARACTER_EXAMPLE:
-                lastTick[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = -tickspeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()];
+                lastTick[Key.KEY_CHARACTER_EXAMPLE.ordinal()] = -tickSpeed[Key.KEY_CHARACTER_EXAMPLE.ordinal()];
                 execute(Key.KEY_CHARACTER_EXAMPLE);
                 break;
             case KEY_CHARACTER_END_TURN:
@@ -112,7 +101,6 @@ public class HumanPlayer extends Player {
     }
 
     private void execute(Key key) {
-//        System.out.println("Commanding Controller: " + controller);
         switch (key) {
             // Qund E für rotieren/zielen mit den Waffen
             case KEY_CHARACTER_EXAMPLE:
@@ -132,7 +120,7 @@ public class HumanPlayer extends Player {
             if (lastTick[index] > (NO_TICK/2)) {
                 lastTick[index] += delta;
                 while (lastTick[index] >= 0.0f) {
-                    lastTick[index] -= tickspeed[index];
+                    lastTick[index] -= tickSpeed[index];
                     execute(key);
                 }
             }
@@ -141,8 +129,6 @@ public class HumanPlayer extends Player {
 
 
     public void processKeyUp(int keycode) {
-
-
         switch (keycode) {
             // Qund E für rotieren/zielen mit den Waffen
             case KEY_CHARACTER_EXAMPLE:
