@@ -135,6 +135,12 @@ public class GADSAssetManager {
 //        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] =
 //                new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catWalking"), Animation.PlayMode.LOOP);
 
+        // Provisorium ToDo: entfernen
+        IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.turnChange = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButtonPressed = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButtonChecked = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButton = atlas.findRegion("background/mainTitleBackground");
 
         IngameAssets.outlineShader = manager.get(outlineShader, ShaderProgram.class);
 
