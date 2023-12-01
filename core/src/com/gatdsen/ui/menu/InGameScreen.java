@@ -60,8 +60,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         this.runConfiguration.uiMessenger = hud.getUiMessenger();
         this.runConfiguration.inputProcessor = hud.getInputHandler();
 
-        //run = manager.startRun(this.runConfiguration);
-        //Executable game = run.getGames().get(0);
+        run = manager.startRun(this.runConfiguration);
     }
 
 //gets called when the screen becomes the main screen of GADS
