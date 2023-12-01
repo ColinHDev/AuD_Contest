@@ -42,7 +42,6 @@ public class Animator implements Screen, AnimationLogProcessor {
     private Viewport backgroundViewport;
 
     private SpriteEntity background;
-    private final GameState.GameMode gameMode;
 
 
     private final Batch batch;
@@ -214,18 +213,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             if (winAction.getTeam() < 0) {
                 gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true);
             } else {
-                if (animator.gameMode == GameState.GameMode.Campaign || animator.gameMode == GameState.GameMode.Exam_Admission) {
-                    //ToDo rewrite this to fit your PvP structure
-                    if (winAction.getTeam() == 0) {
-                        //if the player 0 (human or bot of student) has not won then display defeat
-                        gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam(), Color.CYAN);
-                    } else {
-                        gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, false, winAction.getTeam(), Color.CYAN);
-                    }
-                } else {
-                    gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam(), Color.CYAN);
-
-                }
+                gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam(), Color.CYAN);
             }
 
             return new ExpandedAction(gameEndedAction);
@@ -276,8 +264,7 @@ public class Animator implements Screen, AnimationLogProcessor {
      *
      * @param viewport viewport used for rendering
      */
-    public Animator(Viewport viewport, GameState.GameMode gameMode, UiMessenger uiMessenger) {
-        this.gameMode = gameMode;
+    public Animator(Viewport viewport, UiMessenger uiMessenger) {
         this.uiMessenger = uiMessenger;
         this.batch = new SpriteBatch();
         this.root = new Entity();

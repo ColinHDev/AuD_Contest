@@ -43,7 +43,6 @@ public class Hud implements Disposable {
 
 	private FastForwardButton fastForwardButton;
 
-	private RunConfiguration runConfiguration;
 	private float renderingSpeed = 1;
 
 	private boolean debugVisible;
@@ -53,8 +52,7 @@ public class Hud implements Disposable {
 	private String[] names;
 
 	private ScoreView scoreView;
-	public Hud(InGameScreen ingameScreen, RunConfiguration runConfig) {
-		this.runConfiguration = runConfig;
+	public Hud(InGameScreen ingameScreen) {
 
 		this.inGameScreen = ingameScreen;
 
