@@ -8,36 +8,27 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.Serializable;
 
 /**
- * Stores a 2D Vector consisting of integer values.
+ * Speichert einen 2D-Vektor, der aus ganzzahligen Werten besteht.
  */
 public class IntVector2 implements Serializable, Vector<IntVector2> {
 
     /**
-     * The values are protected on purpose. Do not lower their protection level.
-     * Since these constants store objects, a malicious
-     * bot could read the object and alter one or multiple of its attributes.
-     * For this reason, do not use any of the constant objects of the library anywhere in the project.
+     * Die Werte sind absichtlich protected. Nicht die Sichtbarkeit erhöhen.
+     * Da diese Konstanten Objekte speichern, könnte ein bösartiger Bot
+     * das Objekt lesen und eine oder mehrere seiner Attribute verändern.
+     * Aus diesem Grund dürfen keine der Konstantenobjekte der Bibliothek irgendwo im Projekt verwendet werden.
      */
     protected final static IntVector2 X = new IntVector2(1, 0);
     protected final static IntVector2 Y = new IntVector2(0, 1);
     protected final static IntVector2 Zero = new IntVector2(0, 0);
 
-
-    /**
-     * the x-component of this vector
-     **/
     public int x;
-
-    /**
-     * the y-component of this vector
-     **/
     public int y;
 
     /**
-     * Constructs a new Vector at the given Coordinates
-     *
-     * @param x the x-component
-     * @param y the y-component
+     * Konstruiert einen neuen Vektor mit den angegebenen Koordinaten.
+     * @param x x-Komponente
+     * @param y y-Komponente
      */
     public IntVector2(int x, int y) {
         this.x = x;
@@ -45,16 +36,15 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Constructs a vector from the given vector
-     *
-     * @param v The vector
+     * Konstruiert einen Vector als Kopie eines anderen Vektors.
+     * @param v Vektor, von dem kopiert werden soll
      */
     public IntVector2(IntVector2 v) {
         set(v);
     }
 
     /**
-     * @return a new instance with the same attributes
+     * @return eine Kopie dieses Vektors
      */
     @Override
     public IntVector2 cpy() {
@@ -62,7 +52,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return the magnitude of this vector in euclidean space
+     * @return Die Länge dieses Vektors im euklidischen Raum
      */
     @Override
     public float len() {
@@ -70,10 +60,9 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * This method is faster than {@link #len()} as it avoids calculating a square root.
-     * It might be used for length comparison of two vectors.
-     *
-     * @return the squared euclidean length
+     * Diese Methode ist schneller als {@link #len()}, da sie keine Wurzel berechnet.
+     * Sie kann für die Längenvergleich von zwei Vektoren verwendet werden.
+     * @return Das Quadrat der Länge dieses Vektors im euklidischen Raum
      */
     @Override
     public float len2() {
@@ -81,11 +70,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Limits the length of this vector, based on the desired maximum length.
-     * It will be rounded to the next integer closest to zero in both dimensions independently, if necessary.
-     *
-     * @param limit desired maximum length for this vector
-     * @return this vector for chaining
+     * Limitiert die Länge dieses Vektors auf den angegebenen Wert.
+     * Die Länge wird auf die nächste ganze Zahl in Richtung null gerundet.
+     * @param limit gewünschte maximale Länge
+     * @return dieser Vektor zum Verketten
      */
     @Override
     public IntVector2 limit(float limit) {
@@ -99,11 +87,11 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Limits the length of this vector, based on the square of the desired maximum length.
-     * It will be rounded to the next integer closest to zero in both dimensions independently, if necessary.
+     * Limitiert die Länge dieses Vektors auf das Quadrat des angegebenen Werts.
+     * Die Länge wird auf die nächste ganze Zahl in Richtung null gerundet.
      *
-     * @param limit2 desired squared maximum length for this vector
-     * @return this vector for chaining
+     * @param limit2 gewünschte maximale Länge im Quadrat
+     * @return dieser Vektor zum Verketten
      */
     @Override
     public IntVector2 limit2(float limit2) {
@@ -117,12 +105,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Alters the magnitude of this vector in euclidean space
-     * It will be rounded to the nearest integer values in both dimensions independently.
-     * Does nothing if the current length is zero.
+     * Ändert die Länge dieses Vektors im euklidischen Raum.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
+     * Macht nichts, wenn die aktuelle Länge null ist.
      *
-     * @param len desired magnitude in euclidean space
-     * @return this vector for chaining
+     * @param len gewünschte Größe im euklidischen Raum
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 setLength(float len) {
@@ -131,12 +119,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Alters the magnitude of this vector in euclidean space
-     * It will be rounded to the nearest integer values in both dimensions independently.
-     * Does nothing if the current length is zero.
+     * Ändert die Länge dieses Vektors im euklidischen Raum.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
+     * Macht nichts, wenn die aktuelle Länge null ist.
      *
-     * @param len2 desired squared magnitude in euclidean space
-     * @return this vector for chaining
+     * @param len2 gewünschte Größe im Quadrat im euklidischen Raum
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 setLength2(float len2) {

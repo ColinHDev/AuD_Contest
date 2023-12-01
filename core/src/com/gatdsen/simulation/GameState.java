@@ -89,19 +89,28 @@ public class GameState implements Serializable {
     }
 
     /**
+     * Gibt den Spiel-Modus des laufenden Spiels zurück.
+     *
+     * @return Spiel-Modus als int
+     */
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * @return die Simulation Instanz
+     */
+    protected Simulation getSim() {
+        return sim;
+    }
+
+    /**
      * Gibt die PlayerStates beider Spieler zurück
      *
      * @return PlayerStates
      */
     public PlayerState[] getPlayerStates() {
         return playerStates;
-    }
-
-    /**
-     * Erhöht den Turn-Zähler um 1
-     */
-    void nextTurn() {
-        ++turn;
     }
 
     /**
@@ -124,73 +133,6 @@ public class GameState implements Serializable {
     }
 
     /**
-     * @return Aktueller Turn
-     */
-    public int getTurn() {
-        return turn;
-    }
-
-    /**
-     * @return Lebenspunkte beider Spieler
-     */
-    public float[] getHealth() {
-        float[] healths = new float[playerStates.length];
-        for (int i = 0; i < playerStates.length; i++) {
-            healths[i] = playerStates[i].getHealth();
-        }
-        return healths;
-    }
-
-
-    /**
-     * Gibt den Spiel-Modus des laufenden Spiels zurück.
-     *
-     * @return Spiel-Modus als int
-     */
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-
-    //ToDo migrate to Simulation
-
-    /**
-     * Return whether the Game is still active.
-     *
-     * @return True, if the game is still in progress.
-     */
-    public boolean isActive() {
-        return active;
-    }
-
-    //ToDo migrate to Simulation
-
-    /**
-     * Deactivates the game.
-     */
-    protected void deactivate() {
-        this.active = false;
-    }
-
-    /**
-     * @return the respective simulation instance
-     */
-
-    /**
-     * @return die Simulation Instanz
-     */
-    protected Simulation getSim() {
-        return sim;
-    }
-
-    /**
-     * @return Anzahl der Spieler
-     */
-    public int getPlayerCount() {
-        return playerCount;
-    }
-
-    /**
      * @return Horizontale Größe des Spielfeldes in #Boxen
      */
     public int getBoardSizeX() {
@@ -202,5 +144,53 @@ public class GameState implements Serializable {
      */
     public int getBoardSizeY() {
         return map[0].length;
+    }
+
+    /**
+     * @return Anzahl der Spieler
+     */
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    /**
+     * @return Lebenspunkte aller Spieler
+     */
+    public float[] getHealth() {
+        float[] healths = new float[playerStates.length];
+        for (int i = 0; i < playerStates.length; i++) {
+            healths[i] = playerStates[i].getHealth();
+        }
+        return healths;
+    }
+
+    /**
+     * @return Aktueller Turn
+     */
+    public int getTurn() {
+        return turn;
+    }
+
+    /**
+     * Erhöht den Turn-Zähler um 1
+     */
+    void nextTurn() {
+        ++turn;
+    }
+
+    /**
+     * @return True, wenn das Spiel aktiv ist
+     */
+    public boolean isActive() {
+        //ToDo migrate to Simulation
+        return active;
+    }
+
+    /**
+     * Deaktiviert das Spiel.
+     */
+    protected void deactivate() {
+        //ToDo migrate to Simulation
+        this.active = false;
     }
 }
