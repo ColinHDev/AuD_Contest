@@ -52,10 +52,11 @@ public class Animator implements Screen, AnimationLogProcessor {
     private TileMap mapPlayer0;
     private TileMap mapPlayer1;
 
+    private static GameTower[][][] towers;
     private static GameEnemy[][][] enemies;
 
     // TODO: BlockingQueue<ActionLog> muss BlockingQueue<Action> sein - gez. Corny
-    private final BlockingQueue<ActionLog> pendingLogs = new LinkedBlockingQueue<>();
+    private final BlockingQueue<com.gatdsen.simulation.action.Action> pendingLogs = new LinkedBlockingQueue<>();
 
 
     private final Object notificationObject = new Object();
@@ -119,7 +120,10 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
+                        //put(EnemyMoveAction.class, ActionConverters::convertEnemyMoveAction);
+                        put(EnemyDefeatAction.class, ActionConverters::convertEnemyDefeatAction);
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
+                        put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
                     }
                 };
 
@@ -161,12 +165,24 @@ public class Animator implements Screen, AnimationLogProcessor {
                     (GameEnemy enemy) -> {
                         enemies[spawnAction.getTeam()][spawnAction.getPosition().x][spawnAction.getPosition().y] = enemy;
                     },
-                    () -> new GameEnemy(spawnAction.getLevel())
+                    () -> {
+                        GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
+                        enemy.setRelPos(spawnAction.getPosition().x * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().x,
+                                spawnAction.getPosition().y * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().y);
+
+                        animator.root.add(enemy);
+                        return enemy;
+                    }
             );
 
             return new ExpandedAction(spawnEnemy);
         }
 
+        /* ToDo: convertEnemyMoveAction
+        private static ExpandedAction convertEnemyMoveAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            EnemyMoveAction moveAction = (EnemyMoveAction) action;
+        }
+        */
 
         private static ExpandedAction convertEnemyDefeatAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
@@ -175,7 +191,10 @@ public class Animator implements Screen, AnimationLogProcessor {
                     defeatAction.getDelay(),
                     enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y],
                     null,
-                    (GameEnemy enemy) -> enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null
+                    (GameEnemy enemy) -> {
+                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y]);
+                        enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null;
+                    }
             );
 
             return new ExpandedAction(killEnemy);
@@ -184,17 +203,34 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertTowerPlaceAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             TowerPlaceAction placeAction = (TowerPlaceAction) action;
 
-            SummonAction summonTower = new SummonAction(action.getDelay(), target -> {
-                // ToDo: change sim TowerPlaceAction to include a team
-                //towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
+            SummonAction<GameTower> summonTower = new SummonAction<GameTower>(action.getDelay(), target -> {
+                towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
             }, () -> {
-                Entity tower = new GameTower(1, placeAction.getType());
+                GameTower tower = new GameTower(1, placeAction.getType());
+                tower.setRelPos(placeAction.getPos().x * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().x,
+                        placeAction.getPos().y * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().y);
                 animator.root.add(tower);
 
                 return tower;
             });
 
             return new ExpandedAction(summonTower);
+        }
+
+        private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            TowerDestroyAction destroyAction = (TowerDestroyAction) action;
+
+            DestroyAction<GameTower> destroyTower = new DestroyAction<GameTower>(
+                    destroyAction.getDelay(),
+                    towers[destroyAction.getTeam()][destroyAction.getPos().x][destroyAction.getPos().y],
+                    null,
+                    (GameTower tower) -> {
+                        animator.root.remove(towers[destroyAction.getTeam()][destroyAction.getPos().x][destroyAction.getPos().y]);
+                        towers[destroyAction.getTeam()][destroyAction.getPos().x][destroyAction.getPos().y] = null;
+                    }
+            );
+
+            return new ExpandedAction(destroyTower);
         }
 
         private static ExpandedAction convertTurnStartAction(com.gatdsen.simulation.action.Action action, Animator animator) {
@@ -349,7 +385,7 @@ public class Animator implements Screen, AnimationLogProcessor {
      * @param log Queue aller {@link com.gatdsen.simulation.action.Action animations-relevanten Ereignisse}
      */
     public void animate(ActionLog log) {
-        pendingLogs.add(log);
+        pendingLogs.addAll(log.getRootActions());
     }
 
     private Action convertAction(com.gatdsen.simulation.action.Action action) {
@@ -366,7 +402,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
         if (actionList.isEmpty()) {
             if (!pendingLogs.isEmpty()) {
-                actionList.add(convertAction(pendingLogs.poll().getRootAction()));
+                actionList.add(convertAction(pendingLogs.poll()));
             } else {
                 synchronized (notificationObject) {
                     notificationObject.notifyAll();
