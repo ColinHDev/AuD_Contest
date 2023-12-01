@@ -48,7 +48,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         setupInput();
 
         manager = Manager.getManager();
-        animator = new Animator(gameViewport, runConfig.gameMode, runConfig.uiMessenger);
+        animator = new Animator(gameViewport, runConfig.uiMessenger);
     }
 
     @Override

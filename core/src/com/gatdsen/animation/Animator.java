@@ -42,7 +42,6 @@ public class Animator implements Screen, AnimationLogProcessor {
     private Viewport backgroundViewport;
 
     private SpriteEntity background;
-    private final GameState.GameMode gameMode;
 
 
     private final Batch batch;
@@ -276,8 +275,7 @@ public class Animator implements Screen, AnimationLogProcessor {
      *
      * @param viewport viewport used for rendering
      */
-    public Animator(Viewport viewport, GameState.GameMode gameMode, UiMessenger uiMessenger) {
-        this.gameMode = gameMode;
+    public Animator(Viewport viewport, UiMessenger uiMessenger) {
         this.uiMessenger = uiMessenger;
         this.batch = new SpriteBatch();
         this.root = new Entity();
