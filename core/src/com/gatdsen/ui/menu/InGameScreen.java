@@ -36,19 +36,19 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     private Run run;
 
     private DebugView debugView;
-    public InGameScreen(GADS instance, RunConfiguration runConfig){
+    public InGameScreen(GADS instance){
 
         gameManager = instance;
         gameViewport = new FillViewport(worldWidth,worldHeight);
 
-        hud = new Hud(this, runConfig);
+        hud = new Hud(this);
 
         debugView = new DebugView(AssetContainer.MainMenuAssets.skin);
 
         setupInput();
 
         manager = Manager.getManager();
-        animator = new Animator(gameViewport, runConfig.uiMessenger);
+        animator = new Animator(gameViewport, hud.getUiMessenger());
     }
 
     @Override

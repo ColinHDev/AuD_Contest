@@ -73,7 +73,7 @@ public class GADS extends Game {
             case MAINSCREEN:
                 return new MainScreen(this);
             case INGAMESCREEN:
-                return new InGameScreen(this, runConfig);
+                return new InGameScreen(this);
             case NORMALMODESCREEN:
                 return new GamemodeNormalScreen(this);
             default:
