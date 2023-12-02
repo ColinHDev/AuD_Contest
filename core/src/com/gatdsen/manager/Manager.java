@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Manager {
 
@@ -28,8 +27,6 @@ public class Manager {
     private int writtenFiles = 0;
 
     private final Thread executionManager;
-
-    private ThreadPoolExecutor threadPoolExecutor;
 
     private final ArrayList<Executable> games = new ArrayList<>();
     private final ArrayList<Executable> scheduledGames = new ArrayList<>();
@@ -334,7 +331,6 @@ public class Manager {
             return "Manager{" +
                     "pendingShutdown=" + pendingShutdown +
                     ", executionManager=" + executionManager +
-                    ", threadPoolExecutor=" + threadPoolExecutor +
                     ", games=" + games +
                     ", scheduledGames=" + scheduledGames +
                     ", activeGames=" + activeGames +
