@@ -27,6 +27,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
 
     /**
      * Konstruiert einen neuen Vektor mit den angegebenen Koordinaten.
+     *
      * @param x x-Komponente
      * @param y y-Komponente
      */
@@ -37,6 +38,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
 
     /**
      * Konstruiert einen Vector als Kopie eines anderen Vektors.
+     *
      * @param v Vektor, von dem kopiert werden soll
      */
     public IntVector2(IntVector2 v) {
@@ -62,6 +64,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     /**
      * Diese Methode ist schneller als {@link #len()}, da sie keine Wurzel berechnet.
      * Sie kann für die Längenvergleich von zwei Vektoren verwendet werden.
+     *
      * @return Das Quadrat der Länge dieses Vektors im euklidischen Raum
      */
     @Override
@@ -72,6 +75,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     /**
      * Limitiert die Länge dieses Vektors auf den angegebenen Wert.
      * Die Länge wird auf die nächste ganze Zahl in Richtung null gerundet.
+     *
      * @param limit gewünschte maximale Länge
      * @return dieser Vektor zum Verketten
      */
@@ -133,13 +137,13 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Alters the magnitude of this vector to be between min and max
-     * It will be rounded to the nearest integer values in both dimensions independently.
-     * Does nothing if the current length is zero.
+     * Ändert die Länge dieses Vektors im euklidischen Raum auf einen Wert zwischen min und max.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
+     * Macht nichts, wenn die aktuelle Länge null ist.
      *
-     * @param min Min length
-     * @param max Max length
-     * @return this vector for chaining
+     * @param min Minimale Länge
+     * @param max Maximale Länge
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 clamp(float min, float max) {
@@ -151,10 +155,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Copies the attributes from another instance
+     * Kopiert die Attribute von einem anderen Vektor.
      *
-     * @param v The vector
-     * @return this vector for chaining
+     * @param v der Vektor, von dem kopiert werden soll
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 set(IntVector2 v) {
@@ -164,11 +168,11 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Alters the attributes of this instance.
+     * Setzt die Attribute dieses Vektors auf die angegebenen Werte.
      *
-     * @param x x-component of this vector
-     * @param y y-component of this vector
-     * @return this vector for chaining
+     * @param x x-Komponente
+     * @param y y-Komponente
+     * @return dieser Vektor zur Verkettung
      */
     public IntVector2 set(int x, int y) {
         this.x = x;
@@ -177,10 +181,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Subtracts another vector
+     * Subtrahiert einen anderen Vektor von diesem Vektor.
      *
-     * @param v The other vector
-     * @return this vector for chaining
+     * @param v der andere Vektor
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 sub(IntVector2 v) {
@@ -190,12 +194,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Sets the length of this vector to 1.
-     * Will result in a unit vector, that most closely retains this vectors direction.
-     * Prioritises (-1,0) and (1,0) if angle is 45 degree (tied).
-     * Does nothing if this vector is zero.
+     * Setzt die Länge dieses Vektors auf 1.
+     * Das Ergebnis ist ein Einheitsvektor, der die Richtung dieses Vektors möglichst genau beibehält.
+     * Priorisiert (-1,0) und (1,0), wenn der Winkel 45 Grad beträgt (unentschieden).
+     * Macht nichts, wenn dieser Vektor null ist.
      *
-     * @return this vector for chaining
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 nor() {
@@ -220,11 +224,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Adds the specified vector to this vector.
-     * Will alter the attributes of this instance.
+     * Addiert einen anderen Vektor zu diesem Vektor.
      *
-     * @param v vector to add
-     * @return this vector for chaining
+     * @param v der andere Vektor
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 add(IntVector2 v) {
@@ -234,10 +237,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Calculates the dot product between this vector and the specified vector.
+     * Berechnet das Skalarprodukt zwischen diesem Vektor und dem angegebenen Vektor.
      *
-     * @param v vector to multiply with
-     * @return the dot product
+     * @param v der andere Vektor
+     * @return das Skalarprodukt
      */
     @Override
     public float dot(IntVector2 v) {
@@ -245,11 +248,11 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Multiplies this vector with the specified scalar.
-     * It will be rounded to the nearest integer values in both dimensions independently.
+     * Multipliziert diesen Vektor mit dem angegebenen Skalar.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
      *
-     * @param scalar amount to scale
-     * @return this vector for chaining
+     * @param scalar Skalar
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 scl(float scalar) {
@@ -259,10 +262,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Scales each dimension of this instance by the equivalent value of the specified vector
+     * Skaliert diesen Vektor mit dem angegebenen Vektor.
      *
-     * @param v amount to scale in each dimension
-     * @return this vector for chaining
+     * @param v der andere Vektor
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 scl(IntVector2 v) {
@@ -272,10 +275,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Returns the euclidean distance between this vector and the specified vector.
+     * Gib die euklidische Distanz zwischen diesem Vektor und dem angegebenen Vektor zurück.
      *
-     * @param v the other vector
-     * @return euclidean distance
+     * @param v der andere Vektor
+     * @return euklidische Distanz
      */
     @Override
     public float dst(IntVector2 v) {
@@ -285,10 +288,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Returns the square of the euclidean distance between this vector and the specified vector.
+     * Gib das Quadrat der euklidischen Distanz zwischen diesem Vektor und dem angegebenen Vektor zurück.
+     * Diese Methode ist schneller als {@link #dst(IntVector2)}, da sie keine Wurzel berechnet.
+     * Sie kann für die Distanzvergleich von zwei Vektoren verwendet werden.
      *
-     * @param v the other vector
-     * @return squared euclidean distance
+     * @param v der andere Vektor
+     * @return Quadrat der euklidischen Distanz
      */
     @Override
     public float dst2(IntVector2 v) {
@@ -298,13 +303,13 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Linearly interpolates between this vector and the target vector by alpha which is in the range [0,1].
-     * Will alter the attributes of this instance.
-     * It will be rounded to the nearest integer values in both dimensions independently.
+     * Interpoliert zwischen diesem Vektor und dem angegebenen Vektor mit dem angegebenen Interpolationskoeffizienten,
+     * welcher einen Werteberich von 0 bis 1 hat.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
      *
-     * @param target The target vector
-     * @param alpha  The interpolation coefficient
-     * @return This vector for chaining.
+     * @param target der Zielvektor
+     * @param alpha  der Interpolationskoeffizient
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 lerp(IntVector2 target, float alpha) {
@@ -315,15 +320,14 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Interpolates between this vector and the given target vector by alpha (within range [0,1]) using the given Interpolation
-     * method.
-     * Will alter the attributes of this instance.
-     * It will be rounded to the nearest integer values in both dimensions independently.
+     * Interpoliert mithilfe der angegeben Interpolationsmethode zwischen diesem Vektor und dem angegebenen
+     * Vektor mit dem angegebenen Interpolationskoeffizienten, welcher einen Werteberich von 0 bis 1 hat.
+     * Er wird in beiden Dimensionen unabhängig voneinander auf die nächstliegenden ganzzahligen Werte gerundet.
      *
-     * @param target        The target vector
-     * @param alpha         The interpolation coefficient
-     * @param interpolation An Interpolation object describing the used interpolation method
-     * @return This vector for chaining.
+     * @param target        der Zielvektor
+     * @param alpha         der Interpolationskoeffizient
+     * @param interpolation das Interpolationsobjekt welches die Interpolationsmethode beschreibt
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 interpolate(IntVector2 target, float alpha, Interpolation interpolation) {
@@ -331,10 +335,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Sets this vector to the unit vector with a random direction.
-     * Since this is an integer vector, unit vectors only exist along the axis.
+     * Setzt diesen Vektor auf den Einheitsvektor mit einer zufälligen Richtung.
+     * Da dies ein ganzzahliger Vektor ist, existieren Einheitsvektoren nur entlang der Achsen.
      *
-     * @return This vector for chaining
+     * @return dieser Vektor zur Verkettung
      */
     @Override
     public IntVector2 setToRandomDirection() {
@@ -359,7 +363,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return True if this is a unit vector
+     * @return True wenn dieser Vektor ein Einheitsvektor ist
      */
     @Override
     public boolean isUnit() {
@@ -367,9 +371,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Calculates whether this vector is a unit vector within the specified margin.
+     * Berechnet, ob dieser Vektor ein Einheitsvektor mit Abweichung ist.
      *
-     * @return True if this is a unit vector
+     * @param margin erlaubte Abweichung
+     * @return True wenn dieser Vektor ein Einheitsvektor ist
      */
     @Override
     public boolean isUnit(final float margin) {
@@ -377,7 +382,7 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return True if this is a zero vector
+     * @return True wenn dieser Vektor ein Nullvektor ist
      */
     @Override
     public boolean isZero() {
@@ -385,9 +390,10 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Calculates whether this vector is a zero vector within the specified margin.
+     * Berechnet, ob dieser Vektor ein Nullvektor mit Abweichung ist.
      *
-     * @return True if this is a zero vector
+     * @param margin erlaubte Abweichung
+     * @return True wenn dieser Vektor ein Nullvektor ist
      */
     @Override
     public boolean isZero(float margin) {
@@ -395,7 +401,8 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is in line with the other vector (either in the same or the opposite direction)
+     * @param other der andere Vektor
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt (unabhängig von der Richtung)
      */
     @Override
     public boolean isOnLine(IntVector2 other) {
@@ -403,7 +410,9 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is in line with the other vector (either in the same or the opposite direction)
+     * @param other   der andere Vektor
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt (unabhängig von der Richtung)
      */
     @Override
     public boolean isOnLine(IntVector2 other, float epsilon) {
@@ -411,8 +420,9 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is collinear with the other vector ({@link #isOnLine(IntVector2, float)} &&
-     * {@link #hasSameDirection(IntVector2)}).
+     * @param other   der andere Vektor
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt und die gleiche Richtung hat
      */
     @Override
     public boolean isCollinear(IntVector2 other, float epsilon) {
@@ -420,8 +430,8 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is collinear with the other vector ({@link #isOnLine(IntVector2)} &&
-     * {@link #hasSameDirection(IntVector2)}).
+     * @param other der andere Vektor
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt und die gleiche Richtung hat
      */
     @Override
     public boolean isCollinear(IntVector2 other) {
@@ -429,8 +439,9 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is opposite collinear with the other vector ({@link #isOnLine(IntVector2, float)} &&
-     * {@link #hasOppositeDirection(IntVector2)}).
+     * @param other   der andere Vektor
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt und die entgegengesetzte Richtung hat
      */
     @Override
     public boolean isCollinearOpposite(IntVector2 other, float epsilon) {
@@ -438,8 +449,8 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return true if this vector is opposite collinear with the other vector ({@link #isOnLine(IntVector2)} &&
-     * {@link #hasOppositeDirection(IntVector2)}).
+     * @param other der andere Vektor
+     * @return True wenn dieser Vektor auf der selben Linie wie der andere Vektor liegt und die entgegengesetzte Richtung hat
      */
     @Override
     public boolean isCollinearOpposite(IntVector2 other) {
@@ -447,7 +458,8 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @return Whether this vector is perpendicular with the other vector. True if the dot product is 0.
+     * @param vector der andere Vektor
+     * @return True wenn dieser Vektor senkrecht zum anderen Vektor ist
      */
     @Override
     public boolean isPerpendicular(IntVector2 vector) {
@@ -455,28 +467,38 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * @param epsilon a positive small number close to zero
-     * @return Whether this vector is perpendicular with the other vector. True if the dot product is 0.
+     * @param vector  der andere Vektor
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn dieser Vektor senkrecht zum anderen Vektor ist
      */
     @Override
     public boolean isPerpendicular(IntVector2 vector, float epsilon) {
         return MathUtils.isZero(dot(vector), epsilon);
     }
 
-    /** @return Whether this vector has similar direction compared to the other vector. True if the normalized dot product is >
-     *         0. */
+    /**
+     * @param vector der andere Vektor
+     * @return True wenn dieser Vektor die gleiche Richtung wie der andere Vektor hat
+     */
     @Override
     public boolean hasSameDirection(IntVector2 vector) {
         return dot(vector) > 0;
     }
 
-    /** @return Whether this vector has opposite direction compared to the other vector. True if the normalized dot product is <
-     *         0. */
+    /**
+     * @param vector der andere Vektor
+     * @return True wenn dieser Vektor die entgegengesetzte Richtung wie der andere Vektor hat
+     */
     @Override
     public boolean hasOppositeDirection(IntVector2 vector) {
         return dot(vector) < 0;
     }
 
+    /**
+     * Berechnet den Hashcode dieses Vektors.
+     *
+     * @return Hashcode
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -486,6 +508,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
         return result;
     }
 
+    /**
+     * Vergleicht diesen Vektor mit einem anderen Objekt.
+     *
+     * @param obj das andere Objekt
+     * @return True wenn das andere Objekt ein Vektor ist und die gleichen Werte hat
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -496,10 +524,13 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
         return y == other.y;
     }
 
-    /** Compares this vector with the other vector, using the supplied epsilon for fuzzy equality testing.
-     * @param other the other vector
-     * @param epsilon margin
-     * @return whether the vectors have fuzzy equality. */
+    /**
+     * Vergleicht diesen Vektor mit einem anderen Vektor und einer erlaubten Abweichung.
+     *
+     * @param other   der andere Vektor
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn die Vektoren die gleichen Werte haben (innerhalb der erlaubten Abweichung)
+     */
     @Override
     public boolean epsilonEquals(IntVector2 other, float epsilon) {
         if (other == null) return false;
@@ -508,9 +539,12 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Compares this vector with the other vector, using the supplied epsilon for fuzzy equality testing.
+     * Vergleicht diesen Vektor mit einem anderen Vektor und einer erlaubten Abweichung.
      *
-     * @return whether the vectors are the same.
+     * @param x       x-Komponente des anderen Vektors
+     * @param y       y-Komponente des anderen Vektors
+     * @param epsilon erlaubte Abweichung
+     * @return True wenn die Vektoren die gleichen Werte haben (innerhalb der erlaubten Abweichung)
      */
     public boolean epsilonEquals(float x, float y, float epsilon) {
         if (Math.abs(x - this.x) > epsilon) return false;
@@ -518,29 +552,33 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
     }
 
     /**
-     * Compares this vector with the other vector using MathUtils.FLOAT_ROUNDING_ERROR for fuzzy equality testing
+     * Vergleicht diesen Vektor mit einem anderen Vektor mithilfe von MathUtils.FLOAT_ROUNDING_ERROR als erlaubte Abweichung.
      *
-     * @param other other vector to compare
-     * @return true if vector are equal, otherwise false
+     * @param other der andere Vektor
+     * @return True wenn die Vektoren die gleichen Werte haben (innerhalb der erlaubten Abweichung)
      */
     public boolean epsilonEquals(final IntVector2 other) {
         return epsilonEquals(other, MathUtils.FLOAT_ROUNDING_ERROR);
     }
 
     /**
-     * Compares this vector with the other vector using MathUtils.FLOAT_ROUNDING_ERROR for fuzzy equality testing
+     * Vergleicht diesen Vektor mit einem anderen Vektor mithilfe von MathUtils.FLOAT_ROUNDING_ERROR als erlaubte Abweichung.
      *
-     * @param x x component of the other vector to compare
-     * @param y y component of the other vector to compare
-     * @return true if vector are equal, otherwise false
+     * @param x x-Komponente des anderen Vektors
+     * @param y y-Komponente des anderen Vektors
+     * @return True wenn die Vektoren die gleichen Werte haben (innerhalb der erlaubten Abweichung)
      */
     public boolean epsilonEquals(float x, float y) {
         return epsilonEquals(x, y, MathUtils.FLOAT_ROUNDING_ERROR);
     }
 
-    /** First scale a supplied vector, then add it to this vector.
-     * @param v addition vector
-     * @param scalar for scaling the addition vector */
+    /**
+     * Erst wird der angegebene Vektor skaliert, dann zu diesem Vektor addiert.
+     *
+     * @param v      der Vektor, der addiert werden soll
+     * @param scalar Skalar, mit dem der Vektor skaliert werden soll
+     * @return dieser Vektor zur Verkettung
+     */
     @Override
     public IntVector2 mulAdd(IntVector2 v, float scalar) {
         this.x += v.x * scalar;
@@ -548,10 +586,14 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
         return this;
     }
 
-    /** First scale a supplied vector, then add it to this vector.
-     * Alters only this instance.
-     * @param v addition vector
-     * @param mulVec vector by whose values the addition vector will be scaled */
+    /**
+     * Erst wird der angegebene Vektor skaliert, dann zu diesem Vektor addiert.
+     * Verändert nur diese Instanz.
+     *
+     * @param v      der Vektor, der addiert werden soll
+     * @param mulVec Vektor, mit dem der Vektor skaliert werden soll
+     * @return dieser Vektor zur Verkettung
+     */
     @Override
     public IntVector2 mulAdd(IntVector2 v, IntVector2 mulVec) {
         this.x += v.x * mulVec.x;
@@ -559,25 +601,29 @@ public class IntVector2 implements Serializable, Vector<IntVector2> {
         return this;
     }
 
-    /** Sets the components of this vector to 0
-     * @return This vector for chaining */
+    /**
+     * Setzt die Attribute dieses Vektors auf 0.
+     *
+     * @return dieser Vektor zur Verkettung
+     */
     @Override
     public IntVector2 setZero() {
         return set(0, 0);
     }
 
     /**
-     * @return An equivalent float vector
+     * @return eine Kopie dieses Vektors als Float-Äquivalent {@link Vector2}
      */
     public Vector2 toFloat() {
         return new Vector2(x, y);
     }
 
     /**
-     * Adds the specified values to this vector.
-     * Will alter the attributes of this instance.
+     * Addiert die angegebenen Werte zu diesem Vektor.
      *
-     * @return this vector for chaining
+     * @param x x-Komponente
+     * @param y y-Komponente
+     * @return dieser Vektor zur Verkettung
      */
     public IntVector2 add(int x, int y) {
         this.x += x;
