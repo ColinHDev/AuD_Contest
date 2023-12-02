@@ -34,14 +34,31 @@ public class Simulation {
         return gameState;
     }
 
+    /**
+     * gibt den aktuellen ActionLog zurück
+     *
+     * @return aktueller ActionLog
+     */
     ActionLog getActionLog() {
         return actionLog;
     }
 
+    /**
+     * gibt den PlayerController für einen Spieler zurück
+     *
+     * @param playerIndex Index des Spielers
+     * @return PlayerController für den Spieler
+     */
     public PlayerController getController(int playerIndex) {
         return new PlayerController(playerIndex, gameState);
     }
 
+    /**
+     * Beendet den aktuellen Zug und führt die funktionen aus, die am Ende eines Zuges ausgeführt werden müssen
+     * (Turmactions, Enemyactions, Spawnactions...)
+     *
+     * @return der ActionLog, der durch das Ausführen der Befehle entstanden ist
+     */
     public ActionLog endTurn() {
         Action head = actionLog.getRootAction();
 
@@ -83,6 +100,11 @@ public class Simulation {
         return temp;
     }
 
+    /**
+     * Setzt den ActionLog zurück und gibt den alten zurück
+     *
+     * @return der alte ActionLog
+     */
     public ActionLog clearAndReturnActionLog() {
         ActionLog tmp = this.actionLog;
         this.actionLog = new ActionLog(new InitAction());
