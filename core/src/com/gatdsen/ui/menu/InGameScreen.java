@@ -24,7 +24,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     private final Manager manager;
     private Viewport gameViewport;
     private float worldWidth = 50*200;
-    private float worldHeight = 40*200;
+    private float worldHeight = 30*200;
 
     private float renderingSpeed = 1;
 

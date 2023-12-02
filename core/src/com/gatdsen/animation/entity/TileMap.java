@@ -40,7 +40,7 @@ public class TileMap extends Entity {
     private int sizeX;
     private int sizeY;
 
-    private int tileSize = 12;
+    private int tileSize = 200;
 
     public TileMap(GameState state, int player) {
         sizeX = state.getBoardSizeX();
