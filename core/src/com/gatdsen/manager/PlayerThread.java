@@ -3,6 +3,7 @@ package com.gatdsen.manager;
 import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.command.PlayerInformationCommand;
 import com.gatdsen.manager.concurrent.ThreadExecutor;
+import com.gatdsen.manager.filter.BotClassFilter;
 import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
@@ -56,10 +57,16 @@ public final class PlayerThread {
             );
         };
         controller.commands.add(new PlayerInformationCommand(playerInformation));
+        if (player instanceof Bot) {
+            String[] illegalImports = BotClassFilter.getIllegalImports(((Bot) player).getClass());
+            if (illegalImports.length > 0) {
+                controller.disqualify();
+                return controller.commands;
+            }
+        }
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
             if (player instanceof Bot) {
-                // TODO: Manager.getSeed() nicht über Prozesse hinweg
                 ((Bot) player).setRnd(seed);
             }
             player.init(new StaticGameState(state));
