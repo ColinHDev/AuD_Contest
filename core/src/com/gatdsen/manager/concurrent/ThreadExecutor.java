@@ -1,5 +1,6 @@
 package com.gatdsen.manager.concurrent;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
@@ -38,14 +39,24 @@ public class ThreadExecutor {
         }
     }
 
+    public <T> Future<T> execute(Callable<T> callable) {
+        FutureTask<T> target = new FutureTask<>(callable);
+        execute(target);
+        return target;
+    }
+
     public Future<?> execute(Runnable runnable) {
         FutureTask<?> target = new FutureTask<>(runnable, null);
+        execute(target);
+        return target;
+    }
+
+    private void execute(FutureTask<?> target) {
         synchronized (lock) {
-            if (this.target != null) return null;
+            if (this.target != null) return;
             this.target = target;
             lock.notify();
         }
-        return target;
     }
 
     @SuppressWarnings("removal")
