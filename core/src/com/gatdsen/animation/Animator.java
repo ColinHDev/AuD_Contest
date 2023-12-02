@@ -7,12 +7,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.action.Action;
-import com.gatdsen.animation.action.DestroyAction;
-import com.gatdsen.animation.action.IdleAction;
-import com.gatdsen.animation.action.SummonAction;
+import com.gatdsen.animation.action.*;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
 import com.gatdsen.animation.entity.Entity;
@@ -21,6 +18,8 @@ import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.AnimationLogProcessor;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.IntVector2;
+import com.gatdsen.simulation.LinearPath;
+import com.gatdsen.simulation.Path;
 import com.gatdsen.simulation.action.*;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
 import com.gatdsen.ui.hud.UiMessenger;
@@ -49,11 +48,10 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private final Entity root;
 
-    private TileMap mapPlayer0;
-    private TileMap mapPlayer1;
+    private TileMap[] playerMaps;
 
     private static GameTower[][][] towers;
-    private static GameEnemy[][][] enemies;
+    public static GameEnemy[][][] enemies;
 
     // TODO: BlockingQueue<ActionLog> muss BlockingQueue<Action> sein - gez. Corny
     private final BlockingQueue<com.gatdsen.simulation.action.Action> pendingLogs = new LinkedBlockingQueue<>();
@@ -167,8 +165,8 @@ public class Animator implements Screen, AnimationLogProcessor {
                     },
                     () -> {
                         GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
-                        enemy.setRelPos(spawnAction.getPosition().x * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().x,
-                                spawnAction.getPosition().y * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().y);
+                        enemy.setRelPos(spawnAction.getPosition().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
+                                spawnAction.getPosition().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
 
                         animator.root.add(enemy);
                         return enemy;
@@ -178,11 +176,30 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(spawnEnemy);
         }
 
-        /* ToDo: convertEnemyMoveAction
+        // ToDo: Path Berechnung in den Sim-Teil verschieben
         private static ExpandedAction convertEnemyMoveAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyMoveAction moveAction = (EnemyMoveAction) action;
+            int tileSize = animator.playerMaps[0].getTileSize();
+            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
+
+            Vector2 start = new Vector2(moveAction.getPosition().x*tileSize, moveAction.getPosition().y*tileSize);
+            Vector2 end = new Vector2(moveAction.getDes().x*tileSize, moveAction.getDes().y*tileSize);
+
+            Path enemyPath = new LinearPath(start, end, 100);
+
+            MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
+            ExecutorAction changeArray = new ExecutorAction(0, () -> {
+                Animator.enemies[moveAction.getTeam()][moveAction.getDes().x][moveAction.getDes().y] =
+                        Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
+                Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y] = null;
+                return 0;
+            });
+
+            moveEnemy.setChildren(new Action[]{changeArray});
+
+            return new ExpandedAction(moveEnemy, changeArray);
         }
-        */
+
 
         private static ExpandedAction convertEnemyDefeatAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
@@ -207,8 +224,8 @@ public class Animator implements Screen, AnimationLogProcessor {
                 towers[placeAction.getTeam()][placeAction.getPos().x][placeAction.getPos().y] = target;
             }, () -> {
                 GameTower tower = new GameTower(1, placeAction.getType());
-                tower.setRelPos(placeAction.getPos().x * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().x,
-                        placeAction.getPos().y * animator.mapPlayer0.getTileSize() + animator.mapPlayer0.getPos().y);
+                tower.setRelPos(placeAction.getPos().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[placeAction.getTeam()].getPos().x,
+                        placeAction.getPos().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[placeAction.getTeam()].getPos().y);
                 animator.root.add(tower);
 
                 return tower;
@@ -317,13 +334,14 @@ public class Animator implements Screen, AnimationLogProcessor {
     public void init(GameState state, String[] playerNames, String[][] skins) {
         synchronized (root) {
             this.state = state;
-            mapPlayer0 = new TileMap(state, 0);
-            mapPlayer0.setRelPos(2.5f*200, 0);
-            mapPlayer1 = new TileMap(state, 1);
-            mapPlayer1.setRelPos(27.5f*200, 0);
+            playerMaps = new TileMap[state.getPlayerCount()];
+            playerMaps[0] = new TileMap(state, 0);
+            playerMaps[0].setRelPos(2.5f*200, 0);
+            playerMaps[1] = new TileMap(state, 1);
+            playerMaps[1].setRelPos(27.5f*200, 0);
             root.clear();
-            root.add(mapPlayer0);
-            root.add(mapPlayer1);
+            root.add(playerMaps[0]);
+            root.add(playerMaps[1]);
 
             //ToDo: initialize based on gamestate data
         }
