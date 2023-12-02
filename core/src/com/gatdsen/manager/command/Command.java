@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public abstract class Command implements Serializable {
 
-    public abstract ActionLog onExecute(PlayerController controller);
+    protected abstract ActionLog onExecute(PlayerController controller);
 
     public final ActionLog run(PlayerController controller) {
         return onExecute(controller);
