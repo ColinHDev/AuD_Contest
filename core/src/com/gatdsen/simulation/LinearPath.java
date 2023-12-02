@@ -3,7 +3,7 @@ package com.gatdsen.simulation;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Stores a linear path from a start to an end point
+ * Ein linearer Pfad von einem Punkt zu einem anderen.
  */
 public class LinearPath implements Path {
     private final Vector2 start;
