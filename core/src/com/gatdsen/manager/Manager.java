@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Manager {
 
@@ -28,8 +27,6 @@ public class Manager {
     private int writtenFiles = 0;
 
     private final Thread executionManager;
-
-    private ThreadPoolExecutor threadPoolExecutor;
 
     private final ArrayList<Executable> games = new ArrayList<>();
     private final ArrayList<Executable> scheduledGames = new ArrayList<>();
@@ -230,14 +227,11 @@ public class Manager {
 
                 for (File botFile : Objects.requireNonNull(botDir.listFiles(pathname -> pathname.getName().endsWith(".class")))) {
                     try {
-                        if (containsIllegalTerms(botFile)) {
-                            System.err.printf("File %s contains illegal terms. -> Exclude from Loading%n", botFile);
+                        Class<?> nextClass = loader.loadClass("bots." + botFile.getName().replace(".class", ""));
+                        if (!Bot.class.isAssignableFrom(nextClass)) {
                             continue;
                         }
-                        Class<?> nextClass = loader.loadClass("bots." + botFile.getName().replace(".class", ""));
-                        if (Bot.class.isAssignableFrom(nextClass))
-                            players.add(new NamedPlayerClass((Class<? extends Player>) nextClass, botFile.getName().replace(".class", "")));
-
+                        players.add(new NamedPlayerClass((Class<? extends Player>) nextClass, botFile.getName().replace(".class", "")));
                     } catch (ClassNotFoundException e) {
                         System.err.println("Could not find class for " + botFile.getName());
                     }
@@ -251,28 +245,6 @@ public class Manager {
         NamedPlayerClass[] array = new NamedPlayerClass[players.size()];
         players.toArray(array);
         return array;
-    }
-
-    private static boolean containsIllegalTerms(File botFile) {
-        if (botFile == null) return false;
-        if (!botFile.exists()) return false;
-        if (!botFile.isFile()) return false;
-        StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(botFile.toPath())))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                seed = seed + br.hashCode();
-                resultStringBuilder.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        String fileContent = resultStringBuilder.toString();
-
-        if (fileContent.contains("java/lang/Thread")) return true;
-        if (fileContent.contains("java/util/concurrent/")) return true;
-
-        return false;
     }
 
     public static ArrayList<Class<? extends Player>> getPlayers(String[] names, boolean noGUI) {
@@ -334,7 +306,6 @@ public class Manager {
             return "Manager{" +
                     "pendingShutdown=" + pendingShutdown +
                     ", executionManager=" + executionManager +
-                    ", threadPoolExecutor=" + threadPoolExecutor +
                     ", games=" + games +
                     ", scheduledGames=" + scheduledGames +
                     ", activeGames=" + activeGames +
