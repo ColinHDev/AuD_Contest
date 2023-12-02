@@ -8,7 +8,7 @@ public class PathTile extends Tile {
     private PathTile prev;
     private PathTile next;
     private int index;
-    private List<Enemy> enemies;
+    private List<Enemy> enemies = new ArrayList<>();
 
     PathTile(int x, int y) {
         super(x, y);

@@ -70,7 +70,7 @@ public class TileMap extends Entity {
         Tile next = cur.getNext();
         to = getRelPos(cur, next);
 
-        return pathTypes[from][to];
+        return pathTypes[from][to] + NUM_NON_PATH_TILES;
     }
 
     private int getRelPos(PathTile cur, Tile other) {
@@ -78,7 +78,7 @@ public class TileMap extends Entity {
         if (other == null) pos = 0;
         else {
             // Position von other relativ zu cur bestimmen
-            IntVector2 difNext = other.getPosition().sub(cur.getPosition());
+            IntVector2 difNext = other.getPosition().cpy().sub(cur.getPosition());
             switch (difNext.x) {
                 case 0:
                     if (difNext.y == 1) pos = UP;
@@ -94,20 +94,19 @@ public class TileMap extends Entity {
                     pos = 0;
             }
         }
-        return pos + NUM_NON_PATH_TILES;
+        return pos;
     }
 
 
     @Override
     public void draw(Batch batch, float deltaTime, float parentAlpha) {
         super.draw(batch, deltaTime, parentAlpha);
-        Vector2 pos = new Vector2(0, 0);
         //Vector2 pos = new Vector2(sizeX/2f * tileSize, sizeY/2f * tileSize).add(getPos());
         for (int i = 0; i < sizeX; i++)
             for (int j = 0; j < sizeY; j++) {
                 int type = tiles[i][j];
                 if (type != TILE_TYPE_NONE) {
-                    batch.draw(AssetContainer.IngameAssets.tileTextures[type], pos.x + i * tileSize, pos.y + j * tileSize);
+                    batch.draw(AssetContainer.IngameAssets.tileTextures[type], getPos().x + i * tileSize, getPos().y + j * tileSize);
                 }
             }
     }

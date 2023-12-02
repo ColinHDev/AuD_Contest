@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.action.Action;
 import com.gatdsen.animation.action.DestroyAction;
@@ -317,7 +318,9 @@ public class Animator implements Screen, AnimationLogProcessor {
         synchronized (root) {
             this.state = state;
             mapPlayer0 = new TileMap(state, 0);
+            mapPlayer0.setRelPos(2.5f*200, 0);
             mapPlayer1 = new TileMap(state, 1);
+            mapPlayer1.setRelPos(27.5f*200, 0);
             root.clear();
             root.add(mapPlayer0);
             root.add(mapPlayer1);
@@ -348,6 +351,7 @@ public class Animator implements Screen, AnimationLogProcessor {
         int height = Gdx.graphics.getHeight();
         int width = Gdx.graphics.getWidth();
         this.viewport = newViewport;
+        //this.backgroundViewport = new FitViewport(viewport.getWorldWidth(), viewport.getWorldHeight());
         this.backgroundViewport = new FillViewport(259, 128);
         //center camera once
         //camera.position.set(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/2f-12,0);
@@ -356,12 +360,12 @@ public class Animator implements Screen, AnimationLogProcessor {
         //viewport.update(400,400);
 
 
-        this.camera = new AnimatorCamera(30, 30f * width / height);
+        this.camera = new AnimatorCamera(viewport.getWorldWidth(), viewport.getWorldHeight());
         this.viewport.setCamera(camera);
         camera.zoom = 1f;
-        camera.position.set(new float[]{0, 0, 0});
+        camera.position.set(new float[]{1000, 1000, 0});    // nutzlos, viewport.update zentriert die Kamera
         this.backgroundViewport.update(width, height);
-        this.viewport.update(width, height, true);
+        this.viewport.update(width, height, false);
         camera.update();
 
     }
