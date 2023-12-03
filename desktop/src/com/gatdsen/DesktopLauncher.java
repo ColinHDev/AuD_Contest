@@ -105,7 +105,7 @@ public class DesktopLauncher {
             if(runConfig.players!=null) runConfig.teamCount = runConfig.players.size();
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setForegroundFPS(60);
-            config.setTitle("Castle Cats"); //ToDo find game titel
+            config.setTitle("Gadsen: Tower Defense");
             config.setWindowIcon(Files.FileType.Classpath, "icon/icon.png");
             new Lwjgl3Application(new GADS(runConfig), config);
         } else {

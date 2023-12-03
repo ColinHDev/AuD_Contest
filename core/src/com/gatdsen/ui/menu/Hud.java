@@ -1,21 +1,29 @@
 package com.gatdsen.ui.menu;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.player.HumanPlayer;
-import com.gatdsen.manager.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
+import com.gatdsen.simulation.Tower;
 import com.gatdsen.ui.assets.AssetContainer;
 import com.gatdsen.ui.hud.*;
 
@@ -26,336 +34,378 @@ import com.gatdsen.ui.hud.*;
  */
 public class Hud implements Disposable {
 
-    private Stage stage;
-	private InputHandler inputHandler;
-	private InputMultiplexer inputMultiplexer;
+    private static Stage stage;
+    private Group group;
+    private InputHandler inputHandler;
+    private InputMultiplexer inputMultiplexer;
+    private TurnTimer turnTimer;
+    private Table layoutTable;
+    private Container<ImagePopup> turnPopupContainer;
+    private InGameScreen inGameScreen;
+    private TextureRegion turnChangeSprite;
+    private float turnChangeDuration;
+    private UiMessenger uiMessenger;
+    private FastForwardButton fastForwardButton;
+    private float renderingSpeed = 1;
+    private boolean debugVisible;
+    private float[] scores;
+    private String[] names;
+    private ScoreView scoreView;
+    private TileMap tileMap;
+    private SelectBox<Tower.TowerType> towerSelectBox;
 
-	private TurnTimer turnTimer;
-	private Table layoutTable;
-	private Container<ImagePopup> turnPopupContainer;
-	private InGameScreen inGameScreen;
+    Viewport gameViewport;
 
-	private TextureRegion turnChangeSprite;
+    public Hud(InGameScreen ingameScreen, Viewport gameViewport) {
 
-	private float turnChangeDuration;
+        this.inGameScreen = ingameScreen;
+        this.gameViewport = gameViewport;
 
-	private UiMessenger uiMessenger;
+        this.uiMessenger = new UiMessenger(this);
 
-	private FastForwardButton fastForwardButton;
-
-	private float renderingSpeed = 1;
-
-	private boolean debugVisible;
-
-	private float[] scores;
-
-	private String[] names;
-
-	private ScoreView scoreView;
-	public Hud(InGameScreen ingameScreen) {
-
-		this.inGameScreen = ingameScreen;
-
-		this.uiMessenger = new UiMessenger(this);
-
-		int viewportSizeX = 1028;
-		int viewportSizeY = 1028;
-		float animationSpeedupValue = 8;
-		turnChangeDuration = 2;
-		turnChangeSprite = AssetContainer.IngameAssets.turnChange;
+        int viewportSizeX = 1028;
+        int viewportSizeY = 1028;
+        float animationSpeedupValue = 8;
+        turnChangeDuration = 2;
+        turnChangeSprite = AssetContainer.IngameAssets.turnChange;
 
 
-		Camera cam = new OrthographicCamera(viewportSizeX,viewportSizeY);
-		//Viewport entweder extend oder Fit -> noch nicht sicher welchen ich nehmen soll
-		Viewport viewport= new ExtendViewport(viewportSizeX,viewportSizeY,cam);
+        Camera cam = new OrthographicCamera(viewportSizeX, viewportSizeY);
+        //Viewport entweder extend oder Fit -> noch nicht sicher welchen ich nehmen soll
+        //Viewport viewport = new ExtendViewport(viewportSizeX, viewportSizeY, cam);
 
 
-		stage = new Stage(viewport);
+        stage = new Stage(gameViewport);
         layoutTable = setupLayoutTable();
 
-		inputHandler = setupInputHandler(ingameScreen,this);
-		inputHandler.setUiMessenger(uiMessenger);
+        inputHandler = setupInputHandler(ingameScreen, this);
+        inputHandler.setUiMessenger(uiMessenger);
 
-		turnTimer = new TurnTimer(AssetContainer.IngameAssets.turnTimer);
-		turnTimer.setCurrentTime(0);
-		fastForwardButton =	setupFastForwardButton(uiMessenger, animationSpeedupValue);
+        turnTimer = new TurnTimer(AssetContainer.IngameAssets.turnTimer);
+        turnTimer.setCurrentTime(0);
+        fastForwardButton = setupFastForwardButton(uiMessenger, animationSpeedupValue);
 
-		turnPopupContainer = new Container<ImagePopup>();
-		layoutHudElements();
+        turnPopupContainer = new Container<ImagePopup>();
+        layoutHudElements();
 
-		//Combine input from both processors
-		inputMultiplexer = new InputMultiplexer();
-		//needed for input for the simulation
-		inputMultiplexer.addProcessor(inputHandler);
-		//input for the ui buttons
-		inputMultiplexer.addProcessor(stage);
+        //Combine input from both processors
+        inputMultiplexer = new InputMultiplexer();
+        //needed for input for the simulation
+        inputMultiplexer.addProcessor(inputHandler);
+        //input for the ui buttons
+        inputMultiplexer.addProcessor(stage);
 
-		stage.addActor(layoutTable);
+        stage.addActor(layoutTable);
 
-		scoreView = new ScoreView(null);
-
-	}
-
-
-
-	private InputHandler setupInputHandler(InGameScreen ingameScreen,Hud h){
-		return new InputHandler(ingameScreen,h);
-	}
-
-
-	/**
-	 * Creates a Table for the Button/Element Layout and applies some Settings.
-	 * @return
-	 */
-    private Table setupLayoutTable(){
-       Table table = new Table(AssetContainer.MainMenuAssets.skin);
-
-        table.setFillParent(true);
-		//align the table to the left of the stage
-		table.center();
-		return table;
+        scoreView = new ScoreView(null);
     }
 
-	public void setupScoreboard(GameState game){
+    private InputHandler setupInputHandler(InGameScreen ingameScreen, Hud h) {
+        return new InputHandler(ingameScreen, h);
+    }
 
-		//ToDo read player count and assign individual colors
-		ScoreBoard scores = new ScoreBoard(new Color[]{Color.WHITE, Color.WHITE},names, game);
+    /**
+     * Creates a Table for the Button/Element Layout and applies some Settings.
+     *
+     * @return
+     */
+    private Table setupLayoutTable() {
+        Table table = new Table(AssetContainer.MainMenuAssets.skin);
 
-		this.scores = game.getHealth();
+        table.setFillParent(true);
+        table.center();
+        return table;
+    }
 
-		scoreView.addScoreboard(scores);
+    public void setupScoreboard(GameState game) {
 
-	}
+        //ToDo read player count and assign individual colors
+        ScoreBoard scores = new ScoreBoard(new Color[]{Color.WHITE, Color.WHITE}, names, game);
 
-	public void setPlayerNames(String[] names){
-		this.names = names;
-	}
+        this.scores = game.getHealth();
 
+        scoreView.addScoreboard(scores);
 
-	/**
-	 * Places Hud Elements inside the Table to define their positions on the screen.
-	 */
-	private void layoutHudElements() {
-		float padding = 10;
+    }
 
-		//currently setting the element size of elements in their class file: hardcoded
-		//changing the size via the table/actor methods does not really work. could be a fault of not implementing the ui elementparents correctly
-		//-> yet it is a bit too much work for now
-		//Todo Refactor resizing of every Ui element
+    public void setPlayerNames(String[] names) {
+        this.names = names;
+    }
 
+    /**
+     * Places Hud Elements inside the Table to define their positions on the screen.
+     */
+    private void layoutHudElements() {
+        float padding = 10;
 
+        //currently setting the element size of elements in their class file: hardcoded
+        //changing the size via the table/actor methods does not really work. could be a fault of not implementing the ui elementparents correctly
+        //-> yet it is a bit too much work for now
+        //Todo Refactor resizing of every Ui element
 
-		//set a fixed size for the turnPopupContainer, so it will not change the layout, once the turn Sprite is added
-		layoutTable.add(turnPopupContainer).pad(padding).expandX().expandY().size(750,750).fill();
-		layoutTable.row();
-		layoutTable.add(fastForwardButton).pad(padding).left().bottom().size(64,64);
+        //set a fixed size for the turnPopupContainer, so it will not change the layout, once the turn Sprite is added
+        //layoutTable.add(turnPopupContainer).pad(padding).expandX().expandY().size(750,750).fill();
+        //layoutTable.row();
+        //layoutTable.add(fastForwardButton).pad(padding).left().bottom().size(64,64);
 
-		layoutTable.add(turnTimer).pad(padding).right().bottom();
-	}
+        //layoutTable.add(turnTimer).pad(padding).right().bottom();
+    }
 
+    /**
+     * Creates a {@link FastForwardButton} with the correct sprites.
+     *
+     * @param uiMessenger
+     * @param speedUp
+     * @return
+     */
+    private FastForwardButton setupFastForwardButton(UiMessenger uiMessenger, float speedUp) {
 
-	/**
-	 * Creates a {@link FastForwardButton} with the correct sprites.
-	 * @param uiMessenger
-	 * @param speedUp
-	 * @return
-	 */
-	private FastForwardButton setupFastForwardButton(UiMessenger uiMessenger,float speedUp){
+        FastForwardButton button = new FastForwardButton(new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButton),
+                new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButtonPressed),
+                new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButtonChecked),
+                uiMessenger, speedUp);
+        return button;
+    }
 
-		FastForwardButton button = new FastForwardButton(new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButton),
-				new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButtonPressed),
-				new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButtonChecked),
-				uiMessenger,speedUp);
-		return button;
-	}
+    /**
+     * Input Processor handling all of the Inputs meant to be sent to {@link Simulation} via {@link HumanPlayer}
+     *
+     * @return
+     */
+    public InputHandler getInputHandler() {
+        return inputHandler;
+    }
 
-	/**
-	 * Input Processor handling all of the Inputs meant to be sent to {@link Simulation} via {@link HumanPlayer}
-	 * @return
-	 */
-	public InputHandler getInputHandler() {
-		return inputHandler;
-	}
+    /**
+     * Returns all Input Processors inside a Multiplexer.
+     *
+     * @return
+     */
+    public InputProcessor getInputProcessor() {
+        return inputMultiplexer;
+    }
 
-	/**
-	 * Returns all Input Processors inside a Multiplexer.
-	 * @return
-	 */
-	public InputProcessor getInputProcessor(){
-		return inputMultiplexer;
-	}
+    public void draw() {
+        //apply the viewport, so the glViewport is using the correct settings for drawing
 
-	public void draw() {
-		//apply the viewport, so the glViewport is using the correct settings for drawing
+        stage.getViewport().apply(true);
+        stage.draw();
+        if (scoreView != null) {
+            scoreView.draw();
+        }
+    }
 
-		stage.getViewport().apply(true);
-       	stage.draw();
-		   if(scoreView!=null){
-			   scoreView.draw();
-		   }
-	}
-
-	protected void tick(float delta) {
-		inputHandler.tick(delta);
+    protected void tick(float delta) {
+        inputHandler.tick(delta);
         stage.act(delta);
-	}
+    }
 
+    /**
+     * Creates a Turn Change Popup for {@link Hud#turnChangeDuration} second, with a hardcoded height of 300,300
+     */
+    public void createTurnChangePopup(Color outlinecolor) {
+        drawImagePopup(new ImagePopup(turnChangeSprite, turnChangeDuration / renderingSpeed, turnChangeSprite.getRegionWidth() * 8, turnChangeSprite.getRegionHeight() * 8, outlinecolor), false);
+    }
 
+    public void drawImagePopup(ImagePopup image, boolean center) {
+        if (turnPopupContainer.hasChildren()) {
+            turnPopupContainer.removeActorAt(0, false);
+        }
+        turnPopupContainer.setActor(image);
+        if (center) {
+            turnPopupContainer.center();
+        } else {
+            turnPopupContainer.top();
+        }
+        image.setScaling(Scaling.fit);
+        turnPopupContainer.fill();
+        turnPopupContainer.maxSize(image.getWidthForContainer(), image.getHeightForContainer());
+    }
 
-	/**
-	 * Creates a Turn Change Popup for {@link Hud#turnChangeDuration} second, with a hardcoded height of 300,300
-	 */
-	public void createTurnChangePopup(Color outlinecolor) {
-		drawImagePopup(new ImagePopup(turnChangeSprite,turnChangeDuration/renderingSpeed,turnChangeSprite.getRegionWidth()*8,turnChangeSprite.getRegionHeight()*8,outlinecolor),false);
-	}
+    public void resizeViewport(int width, int height) {
+        stage.getViewport().update(width, height, true);
+        if (scoreView != null) {
+            scoreView.getViewport().update(width, height, true);
+        }
+    }
 
-	public void drawImagePopup(ImagePopup image,boolean center){
-		if(turnPopupContainer.hasChildren()) {
-			turnPopupContainer.removeActorAt(0,false);
-		}
-		turnPopupContainer.setActor(image);
-		if(center) {
-			turnPopupContainer.center();
-		}
-		else {
-			turnPopupContainer.top();
-		}
-		image.setScaling(Scaling.fit);
-		turnPopupContainer.fill();
-		turnPopupContainer.maxSize(image.getWidthForContainer(),image.getHeightForContainer());
-	}
+    public UiMessenger getUiMessenger() {
+        return uiMessenger;
+    }
 
-	public void resizeViewport(int width, int height) {
-		stage.getViewport().update(width, height, true);
-		if(scoreView!=null) {
-			scoreView.getViewport().update(width, height, true);
-		}
-	}
+    /**
+     * Changes the animation playback speed. And adjustes the turn wait time.
+     *
+     * @param speed Will multiply with the normal playback.
+     */
+    public void setRenderingSpeed(float speed) {
+        inGameScreen.setRenderingSpeed(speed);
+        inputHandler.turnChangeSpeedup(speed);
+        this.renderingSpeed = speed;
+    }
 
-	public UiMessenger getUiMessenger() {
-		return uiMessenger;
-	}
+    /**
+     * Sets the value of the remaining turn time to display.
+     *
+     * @param time
+     */
+    public void setTurntimeRemaining(int time) {
+        turnTimer.setCurrentTime(time);
+    }
 
-	/**
-	 * Changes the animation playback speed. And adjustes the turn wait time.
-	 * @param speed Will multiply with the normal playback.
-	 */
-	public void setRenderingSpeed(float speed){
-		inGameScreen.setRenderingSpeed(speed);
-		inputHandler.turnChangeSpeedup(speed);
-		this.renderingSpeed = speed;
+    public void startTurnTimer(int seconds) {
+        turnTimer.startTimer(seconds);
+    }
 
-	}
+    public void stopTurnTimer() {
+        turnTimer.stopTimer();
+    }
 
-	/**
-	 * Sets the value of the remaining turn time to display.
-	 * @param time
-	 */
-	public void setTurntimeRemaining(int time){
-		turnTimer.setCurrentTime(time);
-	}
+    @Override
+    public void dispose() {
+        stage.dispose();
+    }
 
+    public void toggleDebugOutlines() {
+        this.debugVisible = !debugVisible;
 
-	public void startTurnTimer(int seconds){
-		turnTimer.startTimer(seconds);
-	}
+        this.layoutTable.setDebug(debugVisible);
+    }
 
-	public void stopTurnTimer(){
-		turnTimer.stopTimer();
-	}
+    public void toggleScores() {
+        if (scoreView != null) {
+            scoreView.toggleEnabled();
+        }
+    }
 
+    public void adjustScores(float[] scores) {
+        this.scores = scores;
 
-	@Override
-	public void dispose() {
-		stage.dispose();
-	}
+        if (scoreView != null) {
+            scoreView.adjustScores(scores);
+        }
+    }
 
+    public void adjustScores(int team, float score) {
+        this.scores[team] = score;
 
-	public void toggleDebugOutlines() {
-		this.debugVisible = !debugVisible;
+        if (scoreView != null) {
+            scoreView.adjustScores(scores);
+        }
+    }
 
-		this.layoutTable.setDebug(debugVisible);
-	}
+    public void gameEnded(boolean won, int team, boolean isDraw) {
+        gameEnded(won, team, isDraw, null);
+    }
 
-	public void toggleScores(){
-		if(scoreView!=null) {
-			scoreView.toggleEnabled();
-		}
-	}
+    /**
+     * Creates a popup Display for displaying the GameOver Situation and Tints the Screen in a semi-Transparent Black
+     *
+     * @param won
+     * @param team
+     */
+    public void gameEnded(boolean won, int team, boolean isDraw, Color color) {
 
-	public void adjustScores(float[] scores){
-		this.scores = scores;
+        //create a pixel with a set color that will be used as Background
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        //set the color to black
+        pixmap.setColor(0, 0, 0, 0.5f);
+        pixmap.fill();
+        layoutTable.setBackground(new TextureRegionDrawable(new Texture(pixmap)));
+        pixmap.dispose();
 
-		if(scoreView!=null){
-			scoreView.adjustScores(scores);
-		}
+        ImagePopup display;
 
-	}
+        //determine sprite
+        if (isDraw) {
+            display = new ImagePopup(AssetContainer.IngameAssets.drawDisplay, -1,
+                    AssetContainer.IngameAssets.drawDisplay.getRegionWidth() * 2,
+                    AssetContainer.IngameAssets.drawDisplay.getRegionHeight() * 2);
+        } else if (won) {
+            display = new ImagePopup(AssetContainer.IngameAssets.victoryDisplay, -1,
+                    AssetContainer.IngameAssets.victoryDisplay.getRegionWidth() * 2,
+                    AssetContainer.IngameAssets.victoryDisplay.getRegionHeight() * 2, color, 2f);
+        } else {
+            display = new ImagePopup(AssetContainer.IngameAssets.lossDisplay, -1,
+                    AssetContainer.IngameAssets.lossDisplay.getRegionWidth() * 2,
+                    AssetContainer.IngameAssets.lossDisplay.getRegionHeight() * 2, color, 2f);
+        }
+        drawImagePopup(display, true);
+    }
 
-	public void adjustScores(int team, float score){
-		this.scores[team] = score;
+    public void skipTurnStart() {
+        if (turnPopupContainer.getActor() != null)
+            turnPopupContainer.getActor().remove();
+    }
 
-		if(scoreView!=null){
-			scoreView.adjustScores(scores);
-		}
+    //ToDo Aufräumen
+    public void newGame(GameState gameState, Vector2[] arrayPositionTileMaps, int tileSize, TileMap tileMap) {
+        group = new Group();
 
-	}
+        stage.addActor(group);
 
+        int numberOfTeams = gameState.getPlayerCount();
+        TextButton[] teamButtons;
+        teamButtons = new TextButton[numberOfTeams];
 
+        for (int i = 0; i < numberOfTeams; i++) {
+            teamButtons[i] = tileMapButton(i, tileMap);
+            teamButtons[i].setSize(gameState.getBoardSizeX() * tileSize, gameState.getBoardSizeY() * tileSize);
+            group.addActor(teamButtons[i]);
+            teamButtons[i].setPosition(arrayPositionTileMaps[i].x, arrayPositionTileMaps[i].y);
+            teamButtons[i].setColor(Color.CLEAR);
+        }
+        layoutTable.setBackground((Drawable) null);
+        if (turnPopupContainer.hasChildren()) {
+            turnPopupContainer.removeActorAt(0, false);
+        }
+        setupScoreboard(gameState);
+    }
 
+    private TextButton tileMapButton(int team, TileMap tileMap) {
+        this.tileMap = tileMap;
+        Skin skin = AssetContainer.MainMenuAssets.skin;
 
-	public void gameEnded(boolean won,int team,boolean isDraw) {
-		gameEnded(won,team,isDraw,null);
-	}
+        TextButton tileMapButton = new TextButton("", skin);
+        tileMapButton.addListener(new ClickListener() {
+            private boolean scaled = false;
 
-	/**
-	 * Creates a popup Display for displaying the GameOver Situation and Tints the Screen in a semi-Transparent Black
-	 * @param won
-	 * @param team
-	 */
-	public void gameEnded(boolean won,int team,boolean isDraw, Color color){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int posX = (int) (x / tileMap.getTileSize());
+                int posY = (int) (y / tileMap.getTileSize());
+                if (tileMap.getTile(posX, posY) == 0) {
+                    if (towerSelectBox != null) {
+                        towerSelectBox.remove();
+                    }
 
-		//create a pixel with a set color that will be used as Background
-		Pixmap pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
-		//set the color to black
-		pixmap.setColor(0,0,0,0.5f);
-		pixmap.fill();
-		layoutTable.setBackground( new TextureRegionDrawable(new Texture(pixmap)));
-		pixmap.dispose();
+                    towerSelectBox = new SelectBox<>(skin);
+                    if (!scaled) {
+                        BitmapFont font = towerSelectBox.getStyle().font;
+                        font.getData().setScale(6);
+                        scaled = true;
+                    }
+                    Tower.TowerType[] towerTypes = Tower.TowerType.values();
+                    towerSelectBox.setItems(towerTypes);
 
-		ImagePopup display;
+                    towerSelectBox.setSize(1000, 200);
 
-		//determine sprite
-		if(isDraw){
-			display = new ImagePopup(AssetContainer.IngameAssets.drawDisplay,-1,
-					AssetContainer.IngameAssets.drawDisplay.getRegionWidth()*2,
-					AssetContainer.IngameAssets.drawDisplay.getRegionHeight()*2);
-		}
-		else if(won){
-			display= new ImagePopup(AssetContainer.IngameAssets.victoryDisplay,-1,
-					AssetContainer.IngameAssets.victoryDisplay.getRegionWidth()*2,
-					AssetContainer.IngameAssets.victoryDisplay.getRegionHeight()*2,color,2f);
-		}
-		else {
-			display = new ImagePopup(AssetContainer.IngameAssets.lossDisplay, -1,
-					AssetContainer.IngameAssets.lossDisplay.getRegionWidth()*2,
-					AssetContainer.IngameAssets.lossDisplay.getRegionHeight()*2,color,2f);
-		}
-		drawImagePopup(display,true);
+                    towerSelectBox.setPosition(tileMapButton.getX() + x, tileMapButton.getY() + y);
 
-	}
+                    group.addActor(towerSelectBox);
 
-	public void skipTurnStart() {
-		if (turnPopupContainer.getActor() != null)
-			turnPopupContainer.getActor().remove();
-	}
-
-
-	public void newGame(GameState state){
-		layoutTable.setBackground((Drawable) null);
-		if(turnPopupContainer.hasChildren()) {
-			turnPopupContainer.removeActorAt(0, false);
-		}
-		setupScoreboard(state);
-	}
+                    towerSelectBox.addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            System.out.println("Auswahl: " + towerSelectBox.getSelected().toString());
+                        }
+                    });
+                }
+            }
+        });
+        return tileMapButton;
+    }
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
 }
