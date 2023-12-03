@@ -65,7 +65,7 @@ public final class Controller {
 
     /**
      * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
-     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber muss der Spieler den darauffolgenden Zug aussetzen.
      */
     void missNextTurn() {
         commands.add(new MissNextTurnCommand());
