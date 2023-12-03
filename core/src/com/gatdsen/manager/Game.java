@@ -202,7 +202,7 @@ public class Game extends Executable {
         }
     }
 
-@Override
+    @Override
     public void dispose() {
         //Shutdown all running threads
         super.dispose();
@@ -214,6 +214,9 @@ public class Game extends Executable {
         state = null;
         simulationThread = null;
         gameResults = null;
+        for (PlayerHandler playerHandler : playerHandlers) {
+            playerHandler.dispose();
+        }
     }
 
     protected String[] getPlayerNames() {
