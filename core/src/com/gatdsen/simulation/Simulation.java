@@ -91,6 +91,7 @@ public class Simulation {
             head = new InitAction();
             actionLog.addRootAction(head);
             head.addChild(new GameOverAction(winner));
+            gameState.deactivate();
         }
 
         gameState.nextTurn();
