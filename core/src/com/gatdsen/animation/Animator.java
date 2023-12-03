@@ -166,12 +166,12 @@ public class Animator implements Screen, AnimationLogProcessor {
             SummonAction<GameEnemy> spawnEnemy = new SummonAction<>(
                     spawnAction.getDelay(),
                     (GameEnemy enemy) -> {
-                        enemies[spawnAction.getTeam()][spawnAction.getPosition().x][spawnAction.getPosition().y] = enemy;
+                        enemies[spawnAction.getTeam()][spawnAction.getPos().x][spawnAction.getPos().y] = enemy;
                     },
                     () -> {
                         GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
-                        enemy.setRelPos(spawnAction.getPosition().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
-                                spawnAction.getPosition().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
+                        enemy.setRelPos(spawnAction.getPos().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
+                                spawnAction.getPos().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
 
                         animator.root.add(enemy);
                         return enemy;
@@ -185,9 +185,9 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertEnemyMoveAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyMoveAction moveAction = (EnemyMoveAction) action;
             int tileSize = animator.playerMaps[0].getTileSize();
-            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
+            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
 
-            Vector2 start = new Vector2(moveAction.getPosition().x * tileSize, moveAction.getPosition().y * tileSize);
+            Vector2 start = new Vector2(moveAction.getPos().x * tileSize, moveAction.getPos().y * tileSize);
             Vector2 end = new Vector2(moveAction.getDes().x * tileSize, moveAction.getDes().y * tileSize);
 
             Path enemyPath = new LinearPath(start, end, 100);
@@ -195,8 +195,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
             ExecutorAction changeArray = new ExecutorAction(0, () -> {
                 Animator.enemies[moveAction.getTeam()][moveAction.getDes().x][moveAction.getDes().y] =
-                        Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
-                Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y] = null;
+                        Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
+                Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y] = null;
                 return 0;
             });
 
@@ -209,7 +209,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             EnemyUpdateHealthAction updateHealth = (EnemyUpdateHealthAction) action;
 
             ExecutorAction changeHealth = new ExecutorAction(updateHealth.getDelay(), () -> {
-                enemies[updateHealth.getTeam()][updateHealth.getPosition().x][updateHealth.getPosition().y].healthbar.changeHealth(updateHealth.getNewHealth());
+                enemies[updateHealth.getTeam()][updateHealth.getPos().x][updateHealth.getPos().y].healthbar.changeHealth(updateHealth.getNewHealth());
                 return 0;
             });
 
@@ -222,11 +222,11 @@ public class Animator implements Screen, AnimationLogProcessor {
 
             DestroyAction<GameEnemy> killEnemy = new DestroyAction<>(
                     defeatAction.getDelay(),
-                    enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y],
+                    enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
                     null,
                     (GameEnemy enemy) -> {
-                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y]);
-                        enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null;
+                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
                     }
             );
 
