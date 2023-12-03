@@ -60,21 +60,20 @@ public class BotProcess {
                 throw new RuntimeException("Could not dequeue information from the parent process.");
             }
             BlockingQueue<Command> commands;
-            switch (information) {
-                case CreatePlayerInformation ignored -> commands = playerThread.create(playerClass, null);
-                case GameInformation gameInformation -> {
-                    if (playerThread.isCreated()) {
-                        throw new RuntimeException("Received GameInformation before CreatePlayerInformation.");
-                    }
-                    commands = playerThread.init(gameInformation.state(), gameInformation.isDebug(), gameInformation.seed());
+            if (information instanceof CreatePlayerInformation) {
+                commands = playerThread.create(playerClass, null);
+            } else if (information instanceof GameInformation gameInformation) {
+                if (playerThread.isCreated()) {
+                    throw new RuntimeException("Received GameInformation before CreatePlayerInformation.");
                 }
-                case TurnInformation turnInformation -> {
-                    if (playerThread.isInitialized()) {
-                        throw new RuntimeException("Received TurnInformation before GameInformation.");
-                    }
-                    commands = playerThread.executeTurn(turnInformation.state());
+                commands = playerThread.init(gameInformation.state(), gameInformation.isDebug(), gameInformation.seed());
+            } else if (information instanceof TurnInformation turnInformation) {
+                if (playerThread.isInitialized()) {
+                    throw new RuntimeException("Received TurnInformation before GameInformation.");
                 }
-                case null, default -> throw new RuntimeException("Received unknown information type.");
+                commands = playerThread.executeTurn(turnInformation.state());
+            } else {
+                throw new RuntimeException("Received unknown information type.");
             }
             Command command;
             do {
