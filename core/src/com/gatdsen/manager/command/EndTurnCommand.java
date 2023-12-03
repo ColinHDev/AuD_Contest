@@ -11,12 +11,6 @@ import com.gatdsen.simulation.action.ActionLog;
  */
 public class EndTurnCommand extends Command {
 
-    /**
-     * Erstellt einen neuen Befehl, der das Ende des aktuellen Zuges markiert.
-     */
-    public EndTurnCommand() {
-    }
-
     @Override
     protected ActionLog onExecute(PlayerHandler playerHandler) {
         return null;

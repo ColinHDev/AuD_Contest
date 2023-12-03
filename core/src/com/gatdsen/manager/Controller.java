@@ -1,7 +1,9 @@
 package com.gatdsen.manager;
 
 import com.gatdsen.manager.command.Command;
+import com.gatdsen.manager.command.DisqualifyCommand;
 import com.gatdsen.manager.command.EndTurnCommand;
+import com.gatdsen.manager.command.MissNextTurnCommand;
 import com.gatdsen.simulation.Tower;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -66,7 +68,7 @@ public final class Controller {
      * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
      */
     void missNextTurn() {
-        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.MISS_TURN));
+        commands.add(new MissNextTurnCommand());
         deactivate();
     }
 
@@ -76,7 +78,7 @@ public final class Controller {
      * werden kann.
      */
     void disqualify() {
-        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.DISQUALIFY));
+        commands.add(new DisqualifyCommand());
         deactivate();
     }
 
