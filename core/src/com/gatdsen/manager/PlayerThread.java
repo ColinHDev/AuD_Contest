@@ -8,6 +8,7 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.simulation.GameState;
+import org.lwjgl.Sys;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
@@ -76,22 +77,7 @@ public final class PlayerThread {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
                     player.init(new StaticGameState(state));
                 });
-                try {
-                    if (isDebug) {
-                        future.get();
-                    } else {
-                        future.get(HUMAN_EXECUTE_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("bot was interrupted");
-                } catch (ExecutionException e) {
-                    System.out.println("bot failed initialization with exception: " + e.getCause());
-                } catch (TimeoutException e) {
-                    future.cancel(true);
-                    executor.interrupt();
-                    System.out.println(player.getName() + " initialization surpassed timeout");
-                }
-                controller.endTurn();
+                awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_INIT_TIMEOUT);
             }
             case AI -> {
                 Future<?> future = executor.execute(() -> {
@@ -99,34 +85,7 @@ public final class PlayerThread {
                     ((Bot) player).setRnd(seed);
                     player.init(new StaticGameState(state));
                 });
-                long startTime = System.currentTimeMillis();
-                try {
-                    if (isDebug) {
-                        future.get();
-                    } else {
-                        future.get(2 * AI_EXECUTE_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("bot was interrupted");
-                } catch (ExecutionException e) {
-                    System.out.println("bot failed initialization with exception: " + e.getCause());
-                    controller.missNextTurn();
-                    return controller.commands;
-                } catch (TimeoutException e) {
-                    future.cancel(true);
-                    executor.interrupt();
-                    System.out.println(player.getName() + " initialization surpassed timeout");
-                    controller.missNextTurn();
-                    return controller.commands;
-                }
-                long endTime = System.currentTimeMillis();
-                if (!isDebug && endTime - startTime > AI_EXECUTE_TURN_TIMEOUT) {
-                    System.out.println("Bot " + player.getName() + " surpassed computation timeout by taking " + (endTime - startTime - AI_EXECUTE_TURN_TIMEOUT) + "ms longer than allowed");
-                    System.err.println("The failed bot has to miss the next turn!");
-                    controller.missNextTurn();
-                } else {
-                    controller.endTurn();
-                }
+                awaitBotFuture(future, controller, AI_EXECUTE_INIT_TIMEOUT);
             }
         }
         return controller.commands;
@@ -142,70 +101,74 @@ public final class PlayerThread {
             case Human -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
                 inputGenerator.activateTurn((HumanPlayer) player);
-                try {
-                    if (isDebug) {
-                        future.get();
-                    } else {
-                        future.get(HUMAN_EXECUTE_TURN_TIMEOUT, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    // Executor was interrupted: Interrupt Player
-                    future.cancel(true);
-                    System.err.println("HumanPlayer was interrupted");
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    System.err.println("HumanPlayer failed with exception: " + e.getCause());
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
-                    future.cancel(true);
-                    executor.forceStop();
-                    System.err.println("HumanPlayer computation surpassed timeout");
-                }
+                awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_TURN_TIMEOUT);
                 inputGenerator.endTurn();
-                controller.endTurn();
             });
             case AI -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
-                long startTime = System.currentTimeMillis();
-                try {
-                    if (isDebug) {
-                        future.get();
-                    } else {
-                        // TODO: Kommentar
-                        future.get(2 * AI_EXECUTE_TURN_TIMEOUT, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    // Executor was interrupted: Interrupt Bot
-                    future.cancel(true);
-                    System.err.println("Bot " + player.getName() + " was interrupted");
-                    e.printStackTrace(System.err);
-                } catch (ExecutionException e) {
-                    System.out.println("Bot " + player.getName() + " failed with exception: " + e.getCause());
-                    e.printStackTrace();
-                    System.err.println("The failed player has to miss the next turn!");
-                    controller.missNextTurn();
-                    return;
-                } catch (TimeoutException e) {
-                    future.cancel(true);
-                    executor.forceStop();
-
-                    System.out.println("Bot " + player.getName() + " surpassed computation timeout by taking more than " + 2 * AI_EXECUTE_TURN_TIMEOUT + "ms");
-                    System.err.println("The failed bot has been disqualified!");
-                    controller.disqualify();
-                    return;
-                }
-                long endTime = System.currentTimeMillis();
-                if (!isDebug && endTime - startTime > AI_EXECUTE_TURN_TIMEOUT) {
-                    System.out.println("Bot " + player.getName() + " surpassed computation timeout by taking " + (endTime - startTime - AI_EXECUTE_TURN_TIMEOUT) + "ms longer than allowed");
-                    System.err.println("The failed bot has to miss the next turn!");
-                    controller.missNextTurn();
-                    return;
-                }
-                controller.endTurn();
+                awaitBotFuture(future, controller, AI_EXECUTE_TURN_TIMEOUT);
             });
         };
         futureExecutor.start();
         return controller.commands;
+    }
+
+    private void awaitHumanPlayerFuture(Future<?> future, Controller controller, long timeout) {
+        try {
+            if (isDebug) {
+                future.get();
+            } else {
+                future.get(timeout, TimeUnit.MILLISECONDS);
+            }
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            System.out.println("HumanPlayer was interrupted");
+            e.printStackTrace(System.err);
+        } catch (ExecutionException e) {
+            System.out.println("HumanPlayer failed with exception: " + e.getCause());
+            e.printStackTrace(System.err);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            executor.interrupt();
+            System.out.println("HumanPlayer computation surpassed timeout");
+        }
+        controller.endTurn();
+    }
+
+    private void awaitBotFuture(Future<?> future, Controller controller, long timeout) {
+        long startTime = System.currentTimeMillis();
+        try {
+            if (isDebug) {
+                future.get();
+            } else {
+                future.get(2 * timeout, TimeUnit.MILLISECONDS);
+            }
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            System.out.println("Bot \"" + player.getName() + "\" was interrupted");
+            e.printStackTrace(System.err);
+        } catch (ExecutionException e) {
+            System.out.println("Bot \"" + player.getName() + "\" failed with exception: " + e.getCause());
+            e.printStackTrace(System.err);
+            System.err.println("Bot \"" + player.getName() + "\" has to miss the next turn!");
+            controller.missNextTurn();
+            return;
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            executor.interrupt();
+            System.out.println("Bot \"" + player.getName() + "\" surpassed computation timeout by taking more than " + 2 * timeout + "ms");
+            System.err.println("Bot \"" + player.getName() + "\" has been disqualified!");
+            controller.disqualify();
+            return;
+        }
+        long endTime = System.currentTimeMillis();
+        if (!isDebug && endTime - startTime > timeout) {
+            System.out.println("Bot " + player.getName() + " surpassed computation timeout by taking " + (endTime - startTime - timeout) + "ms longer than allowed");
+            System.err.println("Bot \"" + player.getName() + "\" has to miss the next turn!");
+            controller.missNextTurn();
+            return;
+        }
+        controller.endTurn();
     }
 
     private Controller createController() {
