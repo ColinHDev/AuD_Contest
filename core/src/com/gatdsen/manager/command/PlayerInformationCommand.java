@@ -16,6 +16,8 @@ public final class PlayerInformationCommand extends Command {
 
     @Override
     protected ActionLog onExecute(PlayerHandler playerHandler) {
+        playerHandler.setPlayerInformation(information);
+        playerHandler.setSeedModifier(seedModifier);
         return null;
     }
 }

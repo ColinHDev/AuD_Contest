@@ -1,6 +1,7 @@
 package com.gatdsen.manager.player;
 
 import com.gatdsen.manager.command.CommandHandler;
+import com.gatdsen.manager.player.data.PlayerInformation;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.PlayerController;
 
@@ -10,6 +11,8 @@ public abstract class PlayerHandler {
 
     protected final Class<? extends Player> playerClass;
     protected PlayerController controller;
+    protected PlayerInformation information;
+    protected long seedModifier;
 
     public PlayerHandler(Class<? extends Player> playerClass) {
         this.playerClass = playerClass;
@@ -25,6 +28,18 @@ public abstract class PlayerHandler {
 
     public final void setPlayerController(PlayerController controller) {
         this.controller = controller;
+    }
+
+    public final void setPlayerInformation(PlayerInformation information) {
+        this.information = information;
+    }
+
+    public final void setSeedModifier(long seedModifier) {
+        this.seedModifier = seedModifier;
+    }
+
+    public final long getSeedModifier() {
+        return seedModifier;
     }
 
     public abstract Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler);
