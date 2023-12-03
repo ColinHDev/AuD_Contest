@@ -54,7 +54,7 @@ public final class LocalPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Future<?> executeTurn(GameState gameState, CommandHandler commandHandler) {
+    protected Future<?> onExecuteTurn(GameState gameState, CommandHandler commandHandler) {
         return executor.execute(() -> {
             BlockingQueue<Command> commands = playerThread.executeTurn(gameState);
             Command command;

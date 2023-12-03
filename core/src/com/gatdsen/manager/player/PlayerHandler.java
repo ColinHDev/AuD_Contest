@@ -5,6 +5,7 @@ import com.gatdsen.manager.player.data.PlayerInformation;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.PlayerController;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public abstract class PlayerHandler {
@@ -13,6 +14,8 @@ public abstract class PlayerHandler {
     protected PlayerController controller;
     protected PlayerInformation information;
     protected long seedModifier;
+
+    protected int turnsToMiss = 0;
 
     public PlayerHandler(Class<? extends Player> playerClass) {
         this.playerClass = playerClass;
@@ -46,11 +49,23 @@ public abstract class PlayerHandler {
         return seedModifier;
     }
 
+    public final void missNextTurn() {
+        turnsToMiss++;
+    }
+
     public abstract Future<?> create(CommandHandler commandHandler);
 
     public abstract Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler);
 
-    public abstract Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);
+    public final Future<?> executeTurn(GameState gameState, CommandHandler commandHandler) {
+        if (turnsToMiss > 0) {
+            turnsToMiss--;
+            return CompletableFuture.completedFuture(null);
+        }
+        return onExecuteTurn(gameState, commandHandler);
+    }
+
+    protected abstract Future<?> onExecuteTurn(GameState gameState, CommandHandler commandHandler);
 
     public abstract void dispose();
 }

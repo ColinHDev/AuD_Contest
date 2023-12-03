@@ -13,7 +13,7 @@ public class MissNextTurnCommand extends EndTurnCommand {
 
     @Override
     protected ActionLog onExecute(PlayerHandler playerHandler) {
-        // TODO: playerHandler.missNextTurn();
+        playerHandler.missNextTurn();
         return super.onExecute(playerHandler);
     }
 }

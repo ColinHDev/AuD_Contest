@@ -133,7 +133,7 @@ public final class ProcessPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Future<?> executeTurn(GameState gameState, CommandHandler commandHandler) {
+    protected Future<?> onExecuteTurn(GameState gameState, CommandHandler commandHandler) {
         try {
             communicator.queueInformation(new TurnInformation(gameState));
         } catch (RemoteException e) {
