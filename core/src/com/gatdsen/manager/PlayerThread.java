@@ -29,41 +29,33 @@ public final class PlayerThread {
     private static final int HUMAN_CONTROLLER_USES = 100000;
 
     private final ThreadExecutor executor = new ThreadExecutor();
-    private final boolean isDebug;
 
-    private final Player player;
-    private final InputProcessor inputGenerator;
+    private Player player;
+    private InputProcessor inputGenerator;
 
-    public PlayerThread(Class<? extends Player> playerClass, boolean isDebug) {
+    private boolean isDebug;
+
+    public BlockingQueue<Command> create(Class<? extends Player> playerClass, InputProcessor inputGenerator) {
+        this.inputGenerator = inputGenerator;
+        Controller controller = createController();
         try {
-            this.player = (Player) playerClass.getDeclaredConstructors()[0].newInstance();
+            player = (Player) playerClass.getDeclaredConstructors()[0].newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        this.isDebug = isDebug;
-        inputGenerator = null;
-    }
-
-    public BlockingQueue<Command> init(GameState state, long seed) {
-        Controller controller = createController();
-        // TODO: In Player und Bot Klasse auslagern
-        PlayerInformation playerInformation = switch (player.getType()) {
-            case Human -> new PlayerInformation(player.getType(), player.getName());
-            case AI -> new BotInformation(
-                    player.getType(),
-                    player.getName(),
-                    ((Bot) player).getStudentName(),
-                    ((Bot) player).getMatrikel()
-            );
-        };
-        controller.commands.add(new PlayerInformationCommand(playerInformation));
+        controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation()));
         if (player instanceof Bot) {
             String[] illegalImports = BotClassFilter.getIllegalImports(((Bot) player).getClass());
             if (illegalImports.length > 0) {
                 controller.disqualify();
-                return controller.commands;
             }
         }
+        return controller.commands;
+    }
+
+    public BlockingQueue<Command> init(GameState state, boolean isDebug, long seed) {
+        this.isDebug = isDebug;
+        Controller controller = createController();
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
             if (player instanceof Bot) {
