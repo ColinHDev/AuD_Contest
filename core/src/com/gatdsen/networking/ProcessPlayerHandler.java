@@ -3,8 +3,6 @@ package com.gatdsen.networking;
 import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.command.CommandHandler;
 import com.gatdsen.manager.concurrent.ThreadExecutor;
-import com.gatdsen.manager.player.Bot;
-import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.networking.data.GameInformation;
@@ -23,14 +21,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Future;
 
-public final class ProcessPlayerHandler implements PlayerHandler {
+public final class ProcessPlayerHandler extends PlayerHandler {
 
     public static final int registryPort = 1099;
     public static final String stubNamePrefix = "ProcessCommunicator_";
 
     private final ThreadExecutor executor = new ThreadExecutor();
 
-    private final Class<? extends Player> playerClass;
     private final String remoteReferenceName;
 
     private Registry registry;
@@ -38,18 +35,8 @@ public final class ProcessPlayerHandler implements PlayerHandler {
     private Process process;
 
     public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerId) {
-        this.playerClass = playerClass;
+        super(playerClass);
         remoteReferenceName = stubNamePrefix + gameId + "_" + playerId;
-    }
-
-    @Override
-    public boolean isHumanPlayer() {
-        return HumanPlayer.class.isAssignableFrom(playerClass);
-    }
-
-    @Override
-    public boolean isBotPlayer() {
-        return Bot.class.isAssignableFrom(playerClass);
     }
 
     @Override

@@ -5,15 +5,25 @@ import com.gatdsen.simulation.GameState;
 
 import java.util.concurrent.Future;
 
-public interface PlayerHandler {
+public abstract class PlayerHandler {
 
-    boolean isHumanPlayer();
+    protected final Class<? extends Player> playerClass;
 
-    boolean isBotPlayer();
+    public PlayerHandler(Class<? extends Player> playerClass) {
+        this.playerClass = playerClass;
+    }
 
-    Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler);
+    public final boolean isHumanPlayer() {
+        return HumanPlayer.class.isAssignableFrom(playerClass);
+    }
 
-    Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);
+    public final boolean isBotPlayer() {
+        return Bot.class.isAssignableFrom(playerClass);
+    }
 
-    void dispose();
+    public abstract Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler);
+
+    public abstract Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);
+
+    public abstract void dispose();
 }
