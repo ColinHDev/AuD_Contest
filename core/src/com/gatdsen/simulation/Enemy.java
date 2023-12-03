@@ -44,9 +44,9 @@ public class Enemy implements Serializable {
      *
      * @param damage Der Schaden, der dem Gegner zugefügt wird.
      * @param head   Die vorrausgehende Action.
+     * @return Die letzte Action.
      */
     Action updateHealth(int damage, Action head) {
-
         if (health - damage <= 0) {
             health = 0;
             posTile.getEnemies().remove(this);
@@ -66,8 +66,14 @@ public class Enemy implements Serializable {
         return head;
     }
 
+    /**
+     * Bewegt den Gegner auf dem Spielfeld. Falls der Gegner das Ende des Pfades erreicht,
+     * verliert der Spieler Lebenspunkte.
+     *
+     * @param head Die vorrausgehende Action
+     * @return Die letzte Action
+     */
     Action move(Action head) {
-
         if (posTile.getNext() != null) {
             posTile.getEnemies().remove(this);
             posTile = posTile.getNext();
@@ -81,7 +87,6 @@ public class Enemy implements Serializable {
         }
         return head;
     }
-
 
     /**
      * @return Die Lebenspunkte des Gegners.

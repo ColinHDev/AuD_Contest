@@ -5,40 +5,52 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.Serializable;
 
 /**
- * Stores the path an object travels, within the interval between 0 and {@link #getDuration()}
+ * Speichert den Pfad, den ein Objekt zurücklegt, innerhalb des Intervalls zwischen 0 und {@link #getDuration()}
  */
 public interface Path extends Serializable {
 
     /**
-     * Returns the position for the specified time.
-     * Will only give valid results between 0 and {@link #getDuration()} (inclusive).
-     * @param t time in seconds
-     * @return the position at time t
+     * Gibt die Position für die angegebene Zeit zurück.
+     * Liefert nur gültige Ergebnisse zwischen 0 und {@link #getDuration()} (einschließlich).
+     *
+     * @param t Zeit in Sekunden
+     * @return die Position zur Zeit t
      */
     Vector2 getPos(float t);
 
     /**
-     * Returns a tangent on the path at the specified time.
-     * Will only give valid results between 0 and {@link #getDuration()} (inclusive).
-     * @param t time in seconds
-     * @return the movement direction at time t
+     * Gibt eine Tangente an dem Pfad zur angegebenen Zeit zurück.
+     * Liefert nur gültige Ergebnisse zwischen 0 und {@link #getDuration()} (einschließlich).
+     *
+     * @param t Zeit in Sekunden
+     * @return die Bewegungsrichtung zur Zeit t
      */
     Vector2 getDir(float t);
 
 
     /**
-     * @return the maximum valid input-time for this path in seconds
+     * @return die Dauer des Pfades in Sekunden
      */
     float getDuration();
 
 
     /**
-     * sets the maximum valid input-time for this path
-     * @param duration duration in seconds
+     * Setzt die Dauer des Pfades in Sekunden.
+     *
+     * @param duration die Dauer des Pfades in Sekunden
      */
     void setDuration(float duration);
 
+    /**
+     * Setzt die Dauer des Pfades anhand der Start- und Endposition.
+     *
+     * @param endPosition die Endposition
+     */
     void setDuration(Vector2 endPosition);
 
+    /**
+     * @return den Pfad als String
+     */
+    @Override
     String toString();
 }

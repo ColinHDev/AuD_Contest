@@ -7,20 +7,19 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.Serializable;
 
 /**
- * Stores the boundaries of a rectangle that is located in an array or grid.
- * As a result the minimum width and height of this rectangle will be 1, since even an IntRectangle going from the points
- * (0,0) to (0,0) will occupy at least the pixel/cell at (0,0).
+ * Speichert die Grenzen eines Rechtecks, das sich in einem Array oder Gitter befindet.
+ * Als Ergebnis wird die minimale Breite und Höhe dieses Rechtecks 1 sein, da selbst ein IntRectangle von den Punkten
+ * (0,0) bis (0,0) mindestens das Pixel / die Zelle bei (0,0) belegt.
  */
 public class IntRectangle implements Serializable, Shape2D {
-
-    public int x;
-    public int y;
-    public int width;
-    public int height;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
 
     /**
-     * Creates a new IntRectangle with the dimensions:
-     * X = Y = 0 and width = height = 1
+     * Erstellt ein neues IntRectangle mit den Abmessungen:
+     * X = Y = 0 und Breite = Höhe = 1
      */
     public IntRectangle() {
         width = 1;
@@ -28,14 +27,14 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * Creates a new IntRectangle with the specified dimensions.
-     * The width and height have to be at least 1, since the rectangle
-     * will at least occupy the pixel/cell at position (x,y).
+     * Erstellt ein neues IntRectangle mit den angegebenen Abmessungen.
+     * Die Breite und Höhe müssen mindestens 1 sein, da das Rechteck
+     * mindestens das Pixel / die Zelle an der Position (x, y) belegt.
      *
-     * @param x      x-position of the lower left corner
-     * @param y      y-position of the lower left corner
-     * @param width  size of the rectangle in x-direction
-     * @param height size of the rectangle in y-direction
+     * @param x      x-Position der unteren linken Ecke
+     * @param y      y-Position der unteren linken Ecke
+     * @param width  Größe des Rechtecks in x-Richtung
+     * @param height Größe des Rechtecks in y-Richtung
      */
     public IntRectangle(int x, int y, int width, int height) {
         this.x = x;
@@ -47,10 +46,10 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * Creates a copy of another instance.
-     * Will copy position and size of the specified rectangle.
+     * Erstellt eine Kopie einer anderen Instanz.
+     * Kopiert Position und Größe des angegebenen Rechtecks.
      *
-     * @param rect instance to copy from
+     * @param rect Instanz, von der kopiert werden soll
      */
     public IntRectangle(IntRectangle rect) {
         x = rect.x;
@@ -60,15 +59,25 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * Alter the position and dimension of this instance.
-     * The width and height have to be at least 1, since the rectangle
-     * will at least occupy the pixel/cell at position (x,y).
+     * Erstellt eine Kopie dieser Instanz.
+     * Kopiert Position und Größe des angegebenen Rechtecks.
      *
-     * @param x      x-position of the lower left corner
-     * @param y      y-position of the lower left corner
-     * @param width  size of the rectangle in x-direction
-     * @param height size of the rectangle in y-direction
-     * @return this instance for chaining
+     * @return Kopie dieser Instanz
+     */
+    public IntRectangle copy() {
+        return new IntRectangle(this.x, this.y, this.width, this.height);
+    }
+
+    /**
+     * Ändert die Position und Abmessung dieser Instanz.
+     * Die Breite und Höhe müssen mindestens 1 sein, da das Rechteck
+     * mindestens das Pixel / die Zelle an der Position (x, y) belegt.
+     *
+     * @param x      x-Position der unteren linken Ecke
+     * @param y      y-Position der unteren linken Ecke
+     * @param width  Größe des Rechtecks in x-Richtung
+     * @param height Größe des Rechtecks in y-Richtung
+     * @return diese Instanz zum Verketten
      */
     public IntRectangle set(int x, int y, int width, int height) {
         this.x = x;
@@ -81,62 +90,50 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * Moves this rectangle by the specified amount and direction.
-     *
-     * @param vector2 amount and direction to move this rectangle in
-     * @return this instance for chaining
-     */
-    public IntRectangle add(IntVector2 vector2) {
-        x += vector2.x;
-        y += vector2.y;
-        return this;
-    }
-
-    /**
-     * @return x-position of the lower left corner
+     * @return x-Position der unteren linken Ecke
      */
     public int getX() {
         return x;
     }
 
     /**
-     * Alters the x-component of this rectangles position.
+     * Verändert die x-Komponente der Position dieses Rechtecks.
      *
-     * @param x x-position of the lower left corner
+     * @param x x-Position der unteren linken Ecke
      */
     public void setX(int x) {
         this.x = x;
     }
 
     /**
-     * @return y-position of the lower left corner
+     * @return y-Position der unteren linken Ecke
      */
     public int getY() {
         return y;
     }
 
     /**
-     * Alters the y-component of this rectangles position.
+     * Verändert die y-Komponente der Position dieses Rechtecks.
      *
-     * @param y y-position of the lower left corner
+     * @param y y-Position der unteren linken Ecke
      */
     public void setY(int y) {
         this.y = y;
     }
 
     /**
-     * @return size of the rectangle in x-direction
+     * @return größe des Rechtecks in x-Richtung
      */
     public int getWidth() {
         return width;
     }
 
     /**
-     * Alters the width of this rectangle.
-     * The width has to be at least 1, since the rectangle
-     * will at least occupy the pixel/cell at position (x,y).
+     * Verändert die Breite dieses Rechtecks.
+     * Die Breite muss mindestens 1 sein, da das Rechteck
+     * mindestens das Pixel / die Zelle an der Position (x, y) belegt.
      *
-     * @param width size of the rectangle in x-direction
+     * @param width Größe des Rechtecks in x-Richtung
      */
     public void setWidth(int width) {
         if (width < 1) throw new IllegalArgumentException("An IntRectangle has to be at least of width 1");
@@ -144,18 +141,18 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * @return size of the rectangle in y-direction
+     * @return größe des Rechtecks in y-Richtung
      */
     public int getHeight() {
         return height;
     }
 
     /**
-     * Alters the height of this rectangle.
-     * The height has to be at least 1, since the rectangle
-     * will at least occupy the pixel/cell at position (x,y).
+     * Verändert die Höhe dieses Rechtecks.
+     * Die Höhe muss mindestens 1 sein, da das Rechteck
+     * mindestens das Pixel / die Zelle an der Position (x, y) belegt.
      *
-     * @param height size of the rectangle in y-direction
+     * @param height Größe des Rechtecks in y-Richtung
      */
     public void setHeight(int height) {
         if (height < 0) throw new IllegalArgumentException("An IntRectangle has to be at least of height 1");
@@ -163,31 +160,30 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * @return A rectangle that covers the same area in float coordinates
+     * Bewegt dieses Rechteck um den angegebenen Betrag und die angegebene Richtung.
+     *
+     * @param intVector2 Betrag und Richtung, um dieses Rechteck zu bewegen
+     * @return diese Instanz zum Verketten
+     */
+    public IntRectangle add(IntVector2 intVector2) {
+        x += intVector2.x;
+        y += intVector2.y;
+        return this;
+    }
+
+    /**
+     * @return Ein Rechteck, das den gleichen Bereich in Gleitkommakoordinaten abdeckt
      */
     public Rectangle toFloat() {
         return new Rectangle(x, y, width, height);
     }
 
     /**
-     * Tests whether the specified position is located within the rectangle defined by this instance.
+     * Testet, ob die angegebene Position innerhalb des Rechtecks liegt, das durch diese Instanz definiert ist.
      *
-     * @param point the position to be tested as a 2D float vector
-     * @return True, if point is located within this rectangle
-     */
-
-    //TODO: add IntVector Overload
-    @Override
-    public boolean contains(Vector2 point) {
-        return contains(point.x, point.y);
-    }
-
-    /**
-     * Tests whether the specified position is located within the rectangle defined by this instance.
-     *
-     * @param x x-component of the position
-     * @param y y-component of the position
-     * @return True, if point is located within this rectangle
+     * @param x x-Komponente der Position
+     * @param y y-Komponente der Position
+     * @return True, wenn der Punkt innerhalb dieses Rechtecks liegt
      */
     @Override
     public boolean contains(float x, float y) {
@@ -195,21 +191,62 @@ public class IntRectangle implements Serializable, Shape2D {
     }
 
     /**
-     * Gets the min point from a hitbox, to make it AABB compatible
-     * @return minimum point from the hitbox
+     * Testet, ob die angegebene Position innerhalb des Rechtecks liegt, das durch diese Instanz definiert ist.
+     *
+     * @param x x-Komponente der Position
+     * @param y y-Komponente der Position
+     * @return True, wenn der Punkt innerhalb dieses Rechtecks liegt
+     */
+    public boolean contains(int x, int y) {
+        return this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y;
+    }
+
+    /**
+     * Testet, ob die angegebene Position innerhalb des Rechtecks liegt, das durch diese Instanz definiert ist.
+     *
+     * @param point die zu testende Position als 2D-Gleitkommavektor
+     * @return True, wenn der Punkt innerhalb dieses Rechtecks liegt
+     */
+    @Override
+    public boolean contains(Vector2 point) {
+        return contains(point.x, point.y);
+    }
+
+    /**
+     * Testet, ob die angegebene Position innerhalb des Rechtecks liegt, das durch diese Instanz definiert ist.
+     *
+     * @param point die zu testende Position als 2D-Ganzzahlvektor
+     * @return True, wenn der Punkt innerhalb dieses Rechtecks liegt
+     */
+    public boolean contains(IntVector2 point) {
+        return contains(point.x, point.y);
+    }
+
+    /**
+     * Gibt den minimalen Punkt von einer Hitbox zurück, um es AABB-kompatibel zu machen
+     *
+     * @return minimaler Punkt von der Hitbox
      */
     public IntVector2 min() {
         return new IntVector2(x, y);
     }
 
     /**
-     * Gets the max point from a hitbox, to make it AABB compatible
-     * @return maximum point from the hitbox
+     * Gibt den maximalen Punkt von einer Hitbox zurück, um es AABB-kompatibel zu machen
+     *
+     * @return maximaler Punkt von der Hitbox
      */
     public IntVector2 max() {
         return new IntVector2(x + width, y + height);
     }
 
+    /**
+     * Testet, ob der angegebene Strahl das Rechteck schneidet, das durch diese Instanz definiert ist.
+     *
+     * @param s Startpunkt des Strahls
+     * @param e Endpunkt des Strahls
+     * @return True, wenn der Strahl das Rechteck schneidet
+     */
     public boolean intersects(Vector2 s, Vector2 e) {
         float tmin = Float.NEGATIVE_INFINITY;
         float tmax = Float.POSITIVE_INFINITY;
@@ -230,9 +267,5 @@ public class IntRectangle implements Serializable, Shape2D {
             tmax = Float.min(tmax, Float.max(ty1, ty2));
         }
         return tmax >= tmin;
-    }
-
-    public IntRectangle copy() {
-        return new IntRectangle(this.x, this.y, this.width, this.height);
     }
 }

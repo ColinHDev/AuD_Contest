@@ -3,10 +3,9 @@ package com.gatdsen.simulation;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Stores a linear path from a start to an end point
+ * Ein linearer Pfad von einem Punkt zu einem anderen.
  */
 public class LinearPath implements Path {
-
     private final Vector2 start;
     private float duration;
     private final float v;
@@ -14,12 +13,12 @@ public class LinearPath implements Path {
     private final Vector2 dir;
 
     /**
-     * Creates a linear path from start to end that will be travelled with the specified velocity.
-     * The velocity has to be larger than zero.
+     * Erstellt einen linearen Pfad von start zu end, der mit der angegebenen Geschwindigkeit zurückgelegt wird.
+     * Die Geschwindigkeit muss größer als Null sein.
      *
      * @param start Start-Vektor
-     * @param end End-Vector
-     * @param v velocity
+     * @param end   End-Vector
+     * @param v     Geschwindigkeit
      */
     public LinearPath(Vector2 start, Vector2 end, float v) {
         this.start = start;
@@ -30,12 +29,13 @@ public class LinearPath implements Path {
     }
 
     /**
-     * Creates a Linear path from start to a duration given end that will be travelled with the specified velocity
-     * The velocity has to be larger
-     * @param start
-     * @param dir
-     * @param duration
-     * @param v
+     * Erstellt einen linearen Pfad von start in Richtung dir, der mit der angegebenen Geschwindigkeit zurückgelegt wird.
+     * Die Geschwindigkeit muss größer als Null sein.
+     *
+     * @param start    Start-Vektor
+     * @param dir      Richtungs-Vektor
+     * @param duration Dauer
+     * @param v        Geschwindigkeit
      */
     public LinearPath(Vector2 start, Vector2 dir, float duration, float v) {
         this.start = start;
@@ -46,10 +46,11 @@ public class LinearPath implements Path {
     }
 
     /**
-     * Returns the position for the specified time, using linear interpolation between start and end
-     * Will only give valid results between 0 and {@link #getDuration()} (inclusive).
-     * @param t time in seconds
-     * @return the position at time t
+     * Gibt die Position für die angegebene Zeit zurück, indem eine lineare Interpolation zwischen Start und Ende verwendet wird.
+     * Liefert nur gültige Ergebnisse zwischen 0 und {@link #getDuration()} (einschließlich).
+     *
+     * @param t Zeit in Sekunden
+     * @return die Position zur Zeit t
      */
     @Override
     public Vector2 getPos(float t) {
@@ -60,18 +61,18 @@ public class LinearPath implements Path {
     }
 
     /**
-     * @return the duration
+     * @return die Dauer des Pfades in Sekunden
      */
     public float getDuration() {
         return duration;
     }
 
     /**
-     * Returns the direction of this path.
-     * Since this is a linear path it will be constant for all times t
+     * Gibt die Richtung dieses Pfades zurück.
+     * Da dies ein linearer Pfad ist, wird er für alle Zeiten t konstant sein.
      *
-     * @param t time in seconds
-     * @return the movement direction
+     * @param t Zeit in Sekunden
+     * @return die Bewegungsrichtung
      */
     @Override
     public Vector2 getDir(float t) {
@@ -79,30 +80,43 @@ public class LinearPath implements Path {
     }
 
     /**
-     * @return the start position of the path
+     * @return die Startposition des Pfades
      */
     protected Vector2 getStart() {
         return start;
     }
 
     /**
-     * @return the end position of the path
+     * @return die Endposition des Pfades
      */
     protected Vector2 getEnd() {
         return getPos(duration);
     }
 
+    /**
+     * Setzt die Dauer des Pfades.
+     *
+     * @param duration die neue Dauer in Sekunden
+     */
     public void setDuration(float duration) {
         this.duration = duration;
     }
 
+    /**
+     * Setzt die Dauer des Pfades anhand der Endposition.
+     *
+     * @param endPosition die neue Endposition
+     */
     @Override
     public void setDuration(Vector2 endPosition) {
         this.duration = endPosition.cpy().sub(start).len() / v;
     }
 
+    /**
+     * @return der Pfad als String
+     */
     @Override
     public String toString() {
-        return "from: " + getPos(0) + "to: " +getPos(getDuration());
+        return "from: " + getPos(0) + "to: " + getPos(getDuration());
     }
 }
