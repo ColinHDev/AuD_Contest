@@ -17,7 +17,7 @@ public class EndTurnCommand extends Command {
     }
 
     @Override
-    public ActionLog onExecute(PlayerController controller) {
+    protected ActionLog onExecute(PlayerController controller) {
         return null;
     }
 

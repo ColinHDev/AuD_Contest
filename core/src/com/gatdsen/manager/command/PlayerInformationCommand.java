@@ -13,7 +13,7 @@ public final class PlayerInformationCommand extends Command {
     }
 
     @Override
-    public ActionLog onExecute(PlayerController controller) {
+    protected ActionLog onExecute(PlayerController controller) {
         return null;
     }
 }
