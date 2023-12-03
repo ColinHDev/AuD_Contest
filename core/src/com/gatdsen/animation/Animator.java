@@ -48,7 +48,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private final Entity root;
 
-    private TileMap[] playerMaps;
+    public TileMap[] playerMaps;
 
     private static GameTower[][][] towers;
     public static GameEnemy[][][] enemies;

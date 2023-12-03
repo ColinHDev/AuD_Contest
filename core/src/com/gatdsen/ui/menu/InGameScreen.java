@@ -9,6 +9,7 @@ import com.gatdsen.animation.Animator;
 import com.gatdsen.animation.AnimatorCamera;
 import com.gatdsen.manager.*;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.IntVector2;
 import com.gatdsen.simulation.action.Action;
 import com.gatdsen.simulation.action.ActionLog;
 import com.gatdsen.ui.ConfigScreen;
@@ -32,7 +33,6 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     private Hud hud;
     private Animator animator;
     private final GADS gameManager;
-
     private Run run;
 
     private DebugView debugView;
@@ -41,7 +41,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         gameManager = instance;
         gameViewport = new FitViewport(worldWidth,worldHeight);
 
-        hud = new Hud(this);
+        hud = new Hud(this, gameViewport);
 
         debugView = new DebugView(AssetContainer.MainMenuAssets.skin);
 
@@ -66,6 +66,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
 //gets called when the screen becomes the main screen of GADS
     @Override
     public void show() {
+        hud.show();
         animator.show();
     }
     public void setRenderingSpeed(float speed){
@@ -85,9 +86,14 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     public void init(GameState state, String[] playerNames, String[][] skins) {
         //ToDo the game is starting remove waiting screen etc.
 
-        hud.setPlayerNames(playerNames);
-        hud.newGame(state);
         animator.init(state,playerNames, skins);
+
+        int tileSize = animator.playerMaps[0].getTileSize();
+
+        Vector2 [] positionTileMaps = new Vector2[]{animator.playerMaps[0].getPos(), animator.playerMaps[1].getPos()};
+
+        hud.setPlayerNames(playerNames);
+        hud.newGame(state, positionTileMaps, tileSize, animator.playerMaps[0]);
     }
 
     /**

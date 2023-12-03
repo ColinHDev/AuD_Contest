@@ -98,7 +98,7 @@ public class PlayerState implements Serializable {
         }
 
         for (int i = 0; i < boardX; i++) {
-            for (int j = 0; j < boardX; j++) {
+            for (int j = 0; j < boardY; j++) {
                 if (board[i][j] instanceof PathTile actual) {
                     PathTile originalPT = (PathTile) original.board[i][j];
                     PathTile next = null;
