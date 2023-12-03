@@ -51,7 +51,7 @@ public class RunConfiguration {
 
     public boolean replay = false;
 
-    public int teamCount;
+    public int teamCount = 2;
 
     public ArrayList<Class<? extends Player>> players;
 

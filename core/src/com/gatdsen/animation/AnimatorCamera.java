@@ -29,7 +29,7 @@ public class AnimatorCamera extends OrthographicCamera {
     private boolean canMoveToVector;
     public AnimatorCamera(float viewportWidth, float viewportHeight) {
         super(viewportWidth,viewportHeight);
-        this.defaultPosition = new Vector3(258,258,0);
+        this.defaultPosition = new Vector3(1000,1000,0);
         this.cameraDirection = new Vector3(0,0,0);
         this.cameraSpeed = 200;
         this.canMoveToVector = true;
