@@ -23,8 +23,8 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
 
     private final Manager manager;
     private Viewport gameViewport;
-    private float worldWidth = 80*12;
-    private float worldHeight = 80*12;
+    private float worldWidth = 50*200;
+    private float worldHeight = 30*200;
 
     private float renderingSpeed = 1;
 
@@ -39,7 +39,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     public InGameScreen(GADS instance){
 
         gameManager = instance;
-        gameViewport = new FillViewport(worldWidth,worldHeight);
+        gameViewport = new FitViewport(worldWidth,worldHeight);
 
         hud = new Hud(this);
 

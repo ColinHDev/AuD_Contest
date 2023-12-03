@@ -8,7 +8,7 @@ import static com.gatdsen.ui.assets.AssetContainer.IngameAssets.gameCharacterAni
 
 public class GameEnemy extends AnimatedEntity {
     private int level;
-    private Healthbar healthbar;
+    public Healthbar healthbar;
 
     public GameEnemy(int level) {
         super(gameCharacterAnimations[AssetContainer.IngameAssets.GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()]);
