@@ -6,7 +6,7 @@ import com.gatdsen.simulation.action.ActionLog;
 
 public final class PlayerInformationCommand extends Command {
 
-    public final PlayerInformation information;
+    private final PlayerInformation information;
 
     public PlayerInformationCommand(PlayerInformation information) {
         this.information = information;
