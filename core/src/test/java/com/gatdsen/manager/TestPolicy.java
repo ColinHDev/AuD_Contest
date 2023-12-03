@@ -26,7 +26,8 @@ public class TestPolicy {
             Assert.fail(e.getMessage());
         }*/
 
-        String[] illegalImports = PlayerClassAnalyzer.getIllegalImports(MalBot.class);
+        PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(MalBot.class);
+        String[] illegalImports = analyzer.getIllegalImports();
         for (String illegalImport : illegalImports) {
             if (!contains(MalBot.ILLEGAL_IMPORTS, illegalImport)) {
                 Assert.fail("MalBot imports " + illegalImport + " but it is unexpected.");
