@@ -117,9 +117,14 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+
+                        // Gegner Actions
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
                         put(EnemyMoveAction.class, ActionConverters::convertEnemyMoveAction);
+                        put(EnemyUpdateHealthAction.class, ActionConverters::convertEnemyUpdateHealthAction);
                         put(EnemyDefeatAction.class, ActionConverters::convertEnemyDefeatAction);
+
+                        // Tower Actions
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                         put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
                     }
