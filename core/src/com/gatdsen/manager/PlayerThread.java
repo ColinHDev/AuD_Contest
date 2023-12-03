@@ -48,13 +48,13 @@ public final class PlayerThread {
         isCreated = true;
         isInitialized = false;
         this.inputGenerator = inputGenerator;
-        Controller controller = createController();
         try {
             player = (Player) playerClass.getDeclaredConstructors()[0].newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
         PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(playerClass);
+        Controller controller = createController();
         controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation(), analyzer.getSeedModifier()));
         if (player.getType().equals(Player.PlayerType.AI)) {
             String[] illegalImports = analyzer.getIllegalImports();
@@ -62,6 +62,7 @@ public final class PlayerThread {
                 controller.disqualify();
             }
         }
+        controller.endTurn();
         return controller.commands;
     }
 
