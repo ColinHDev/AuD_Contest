@@ -1,19 +1,23 @@
-
 package com.gatdsen.simulation;
-
 
 import com.gatdsen.simulation.action.Action;
 import com.gatdsen.simulation.action.ProjectileAction;
 import com.gatdsen.simulation.action.TowerAttackAction;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * Speichert einen Tower. Beinhalet Methoden zum ausführen von Tower-Aktionen.
+ */
 public class Tower extends Tile {
 
     // ToDo: lookup table for upgraded values
 
+    /**
+     * Speichert die verschiedenen Typen von Türmen
+     */
     public enum TowerType {
         BASIC_TOWER,
         AOE_TOWER,
@@ -52,7 +56,15 @@ public class Tower extends Tile {
     private final Tile[][] board;
     private final List<PathTile> pathInRange = new ArrayList<>();
 
-
+    /**
+     * Erstellt einen Tower an der angegebenen Position.
+     *
+     * @param playerState der PlayerState, zu dem der Tower gehört
+     * @param type        der Typ des Towers
+     * @param x           x-Koordinate
+     * @param y           y-Koordinate
+     * @param board       die Map, auf der der Tower steht
+     */
     public Tower(PlayerState playerState, TowerType type, int x, int y, Tile[][] board) {
         super(x, y);
         this.playerState = playerState;
@@ -63,6 +75,11 @@ public class Tower extends Tile {
         this.inRange = getNeighbours(getRange(), board);
     }
 
+    /**
+     * Erstellt eine Kopie eines Towers.
+     *
+     * @param original der zu kopierende Tower
+     */
     public Tower(Tower original) {
         this(original.playerState, original.type, original.pos.x, original.pos.y, null);
         this.level = original.level;
@@ -70,12 +87,20 @@ public class Tower extends Tile {
         this.inRange = original.inRange;
     }
 
+    /**
+     * Erstellt eine Kopie des Towers.
+     *
+     * @return eine Kopie des Towers
+     */
     @Override
     protected Tile copy() {
         return new Tower(this);
     }
 
-    private void setPathList(Tile[][] board) {
+    /**
+     * Setzt die Liste der Tiles, die in Reichweite des Towers sind.
+     */
+    private void setPathList() {
         for (Tile tile : inRange) {
             if (tile instanceof PathTile pathTile) {
                 pathInRange.add(pathTile);
@@ -84,10 +109,22 @@ public class Tower extends Tile {
         pathInRange.sort(Comparator.comparingInt(PathTile::getIndex));
     }
 
+    /**
+     * Gibt die Liste der Tiles, die in Reichweite des Towers sind, zurück.
+     *
+     * @return Liste der Tiles, die in Reichweite des Towers sind
+     */
     private List<PathTile> getPathInRange() {
         return pathInRange;
     }
 
+    /**
+     * Gibt den Preis für ein Upgrade des Towers zurück
+     *
+     * @param type  Typ des Towers
+     * @param level Level des Towers
+     * @return Preis für ein Upgrade des Towers
+     */
     public static int getUpgradePrice(TowerType type, int level) {
         return (int) (getPrice(type) * (Math.pow(1.25, level) - 0.5));
     }
@@ -132,50 +169,99 @@ public class Tower extends Tile {
         return PRICE_VALUES[type.ordinal()];
     }
 
+    /**
+     * Gibt den maximalen Level des Towers zurück
+     *
+     * @return maximaler Level des Towers
+     */
     public static int getMaxLevel() {
         return MAX_LEVEL;
     }
 
+    /**
+     * Gibt den Typ des Towers zurück
+     *
+     * @return Typ des Towers
+     */
     public TowerType getType() {
         return type;
     }
 
+    /**
+     * Gibt den Preis für ein Upgrade des Towers zurück
+     *
+     * @return Preis für ein Upgrade des Towers
+     */
     public int getUpgradePrice() {
         return getUpgradePrice(type, level);
     }
 
+    /**
+     * Gibt den Level des Towers zurück
+     *
+     * @return Level des Towers
+     */
     public int getLevel() {
         return level;
     }
 
+    /**
+     * Gibt den Damage-Wert des Towers zurück
+     *
+     * @return Damage-Wert des Towers
+     */
     public int getDamage() {
         return getDamage(type);
     }
 
+    /**
+     * Gibt den Range-Wert des Towers zurück
+     *
+     * @return Range-Wert des Towers
+     */
     public int getRange() {
         return getRange(type);
     }
 
+    /**
+     * Gibt den RechargeTime-Wert des Towers zurück
+     *
+     * @return RechargeTime-Wert des Towers
+     */
     public int getRechargeTime() {
         return getRechargeTime(type);
     }
 
+    /**
+     * Gibt den Preis des Towers zurück
+     *
+     * @return Preis des Towers
+     */
     public int getPrice() {
         return getPrice(type);
     }
 
+    /**
+     * Upgraded den Tower
+     */
     void upgrade() {
         // ToDo: implement upgrade after christmas task
         this.inRange = getNeighbours(getRange() + level, board);
         ++level;
     }
 
-    public Action attack(Tile[][] board, Action head) {
+    /**
+     * Führt einen Angriff aus, wenn möglich.
+     *
+     * @param head Kopf der Action-Liste
+     * @return neuer Kopf der Action-Liste
+     */
+    public Action attack(Action head) {
         if (getRechargeTime() > 0) {
             --cooldown;
             return head;
         }
-        setPathList(board);
+        setPathList();
         if (pathInRange.isEmpty()) {
             return head;
         }
@@ -200,8 +286,14 @@ public class Tower extends Tile {
         return head;
     }
 
+    /**
+     * Führt einen Tower-Tick aus.
+     *
+     * @param head Kopf der Action-Liste
+     * @return neuer Kopf der Action-Liste
+     */
     Action tick(Action head) {
-        head.addChild(attack(board, head));
+        head.addChild(attack(head));
         return head;
     }
 }
