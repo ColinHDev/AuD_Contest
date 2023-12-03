@@ -67,6 +67,6 @@ public class MainScreen extends BaseMenuScreen {
      */
     @Override
     String getTitelString() {
-        return "Willkommen zu Castle Cats";
+        return "Willkommen zu Gadsen: Tower Defense";
     }
 }
