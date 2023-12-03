@@ -3,6 +3,8 @@ package com.gatdsen.simulation;
 import com.gatdsen.simulation.GameState.GameMode;
 import com.gatdsen.simulation.action.*;
 
+import java.util.Arrays;
+
 /**
  * Enthält die Logik, welche die Spielmechaniken bestimmt.
  * Während die Simulation läuft werden alle Ereignisse in ActionLogs festgehalten, die anschließend durch das animation package dargestellt werden können.
@@ -83,7 +85,7 @@ public class Simulation {
         int winner = -1;
         int livingPlayers = playerStates.length;
         for (int i = 0; i < playerStates.length; i++) {
-            if (playerStates[i].getHealth() <= 0) --livingPlayers;
+            if (playerStates[i].isDeactivated()) --livingPlayers;
             else winner = i;
         }
 

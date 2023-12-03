@@ -12,7 +12,13 @@ public class PlayerController {
     private final int playerIndex;
     private final GameState state;
     private final PlayerState playerState;
-    boolean active = true;
+
+    /**
+     * Disqualifiziert den Spieler
+     */
+    public void disqualify() {
+       playerState.disqualify();
+    }
 
     /**
      * @return die root Action des ActionLogs, welches die Simulation aktuell aufzeichnet
