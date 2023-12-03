@@ -1,7 +1,7 @@
 package com.gatdsen.manager;
 
 import bots.MalBot;
-import com.gatdsen.manager.player.analyzer.BotClassAnalyzer;
+import com.gatdsen.manager.player.analyzer.PlayerClassAnalyzer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class TestPolicy {
             Assert.fail(e.getMessage());
         }*/
 
-        String[] illegalImports = BotClassAnalyzer.getIllegalImports(MalBot.class);
+        String[] illegalImports = PlayerClassAnalyzer.getIllegalImports(MalBot.class);
         for (String illegalImport : illegalImports) {
             if (!contains(MalBot.ILLEGAL_IMPORTS, illegalImport)) {
                 Assert.fail("MalBot imports " + illegalImport + " but it is unexpected.");

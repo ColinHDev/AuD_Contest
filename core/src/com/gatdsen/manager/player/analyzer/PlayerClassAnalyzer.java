@@ -9,10 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class BotClassAnalyzer {
-
-    private BotClassAnalyzer() {
-    }
+public final class PlayerClassAnalyzer {
 
     /**
      * Die Klassen, die nicht von Bots importiert werden dürfen.
