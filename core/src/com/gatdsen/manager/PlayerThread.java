@@ -41,9 +41,10 @@ public final class PlayerThread {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+        PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(playerClass);
         controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation()));
         if (player instanceof Bot) {
-            String[] illegalImports = PlayerClassAnalyzer.getIllegalImports(((Bot) player).getClass());
+            String[] illegalImports = analyzer.getIllegalImports();
             if (illegalImports.length > 0) {
                 controller.disqualify();
             }
