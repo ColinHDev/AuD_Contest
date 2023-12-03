@@ -118,7 +118,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
-                        //put(EnemyMoveAction.class, ActionConverters::convertEnemyMoveAction);
+                        put(EnemyMoveAction.class, ActionConverters::convertEnemyMoveAction);
                         put(EnemyDefeatAction.class, ActionConverters::convertEnemyDefeatAction);
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                         put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
@@ -182,8 +182,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             int tileSize = animator.playerMaps[0].getTileSize();
             GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
 
-            Vector2 start = new Vector2(moveAction.getPosition().x*tileSize, moveAction.getPosition().y*tileSize);
-            Vector2 end = new Vector2(moveAction.getDes().x*tileSize, moveAction.getDes().y*tileSize);
+            Vector2 start = new Vector2(moveAction.getPosition().x * tileSize, moveAction.getPosition().y * tileSize);
+            Vector2 end = new Vector2(moveAction.getDes().x * tileSize, moveAction.getDes().y * tileSize);
 
             Path enemyPath = new LinearPath(start, end, 100);
 
@@ -198,6 +198,17 @@ public class Animator implements Screen, AnimationLogProcessor {
             moveEnemy.setChildren(new Action[]{changeArray});
 
             return new ExpandedAction(moveEnemy, changeArray);
+        }
+
+        private static ExpandedAction convertEnemyUpdateHealthAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            EnemyUpdateHealthAction updateHealth = (EnemyUpdateHealthAction) action;
+
+            ExecutorAction changeHealth = new ExecutorAction(updateHealth.getDelay(), () -> {
+                enemies[updateHealth.getTeam()][updateHealth.getPosition().x][updateHealth.getPosition().y].healthbar.changeHealth(updateHealth.getNewHealth());
+                return 0;
+            });
+
+            return new ExpandedAction(changeHealth);
         }
 
 
@@ -257,7 +268,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
             //ui Action
 
-            return new ExpandedAction(new IdleAction(0,0));
+            return new ExpandedAction(new IdleAction(0, 0));
         }
 
 
@@ -336,9 +347,9 @@ public class Animator implements Screen, AnimationLogProcessor {
             this.state = state;
             playerMaps = new TileMap[state.getPlayerCount()];
             playerMaps[0] = new TileMap(state, 0);
-            playerMaps[0].setRelPos(2.5f*200, 0);
+            playerMaps[0].setRelPos(2.5f * 200, 0);
             playerMaps[1] = new TileMap(state, 1);
-            playerMaps[1].setRelPos(27.5f*200, 0);
+            playerMaps[1].setRelPos(27.5f * 200, 0);
             root.clear();
             root.add(playerMaps[0]);
             root.add(playerMaps[1]);
