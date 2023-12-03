@@ -67,7 +67,7 @@ public final class Controller {
      * @param command the command to be queued
      */
     private void queue(Command command) {
-        if (uses-- > 0) {
+        if (!isDeactivated()) {
             commands.add(command);
         }
     }
@@ -77,8 +77,10 @@ public final class Controller {
      * {@link Command}s mehr ausgeführt werden können.
      */
     void endTurn() {
-        commands.add(new EndTurnCommand());
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new EndTurnCommand());
+            deactivate();
+        }
     }
 
     /**
@@ -86,8 +88,10 @@ public final class Controller {
      * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber muss der Spieler den darauffolgenden Zug aussetzen.
      */
     void missNextTurn() {
-        commands.add(new MissNextTurnCommand());
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new MissNextTurnCommand());
+            deactivate();
+        }
     }
 
     /**
@@ -96,8 +100,18 @@ public final class Controller {
      * werden kann.
      */
     void disqualify() {
-        commands.add(new DisqualifyCommand());
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new DisqualifyCommand());
+            deactivate();
+        }
+    }
+
+    /**
+     * Gibt an, ob dieser Controller deaktiviert ist.
+     * @return true, wenn dieser Controller deaktiviert ist, sonst false
+     */
+    private boolean isDeactivated() {
+        return uses == -1;
     }
 
     /**
