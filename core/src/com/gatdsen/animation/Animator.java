@@ -3,8 +3,10 @@ package com.gatdsen.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -126,6 +128,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
                         // Tower Actions
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
+                        put(TowerAttackAction.class, ActionConverters::convertTowerAttackAction);
                         put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
                     }
                 };
@@ -248,6 +251,19 @@ public class Animator implements Screen, AnimationLogProcessor {
             });
 
             return new ExpandedAction(summonTower);
+        }
+
+        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            TowerAttackAction towerAttack = (TowerAttackAction) action;
+            GameTower tower = towers[towerAttack.getTeam()][towerAttack.getPos().x][towerAttack.getPos().y];
+
+            ExecutorAction attack = new ExecutorAction(towerAttack.getDelay(), () -> {
+                tower.attack();
+                Animation<TextureRegion> animation = tower.attackAnimation;
+                return animation != null ? animation.getAnimationDuration() : 0;
+            });
+
+            return new ExpandedAction(attack);
         }
 
         private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
