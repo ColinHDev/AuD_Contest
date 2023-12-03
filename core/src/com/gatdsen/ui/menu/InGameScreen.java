@@ -23,8 +23,8 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
 
     private final Manager manager;
     private Viewport gameViewport;
-    private float worldWidth = 80*12;
-    private float worldHeight = 80*12;
+    private float worldWidth = 50*200;
+    private float worldHeight = 30*200;
 
     private float renderingSpeed = 1;
 
@@ -36,19 +36,19 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
     private Run run;
 
     private DebugView debugView;
-    public InGameScreen(GADS instance, RunConfiguration runConfig){
+    public InGameScreen(GADS instance){
 
         gameManager = instance;
-        gameViewport = new FillViewport(worldWidth,worldHeight);
+        gameViewport = new FitViewport(worldWidth,worldHeight);
 
-        hud = new Hud(this, runConfig);
+        hud = new Hud(this);
 
         debugView = new DebugView(AssetContainer.MainMenuAssets.skin);
 
         setupInput();
 
         manager = Manager.getManager();
-        animator = new Animator(gameViewport, runConfig.gameMode, runConfig.uiMessenger);
+        animator = new Animator(gameViewport, hud.getUiMessenger());
     }
 
     @Override
@@ -60,8 +60,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         this.runConfiguration.uiMessenger = hud.getUiMessenger();
         this.runConfiguration.inputProcessor = hud.getInputHandler();
 
-        //run = manager.startRun(this.runConfiguration);
-        //Executable game = run.getGames().get(0);
+        run = manager.startRun(this.runConfiguration);
     }
 
 //gets called when the screen becomes the main screen of GADS

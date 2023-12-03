@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.gatdsen.simulation.GameState;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameCharacterAnimationType;
 import com.gatdsen.ui.assets.AssetContainer.MainMenuAssets;
@@ -118,14 +119,40 @@ public class GADSAssetManager {
 
         IngameAssets.background = atlas.findRegion("background/GADSBG");
 
-//        IngameAssets.tileTextures = new TextureRegion[]{
-//                atlas.findRegion("tile/16x_anchor01"),
-//                atlas.findRegion("tile/16x_box01"),
-//                atlas.findRegion("tile/slimeBox"),
-//                atlas.findRegion("tile/weaponBoxAnchor"),
-//                atlas.findRegion("tile/weaponBoxChest"),
-//                atlas.findRegion("tile/healthBoxOne")
-//        };
+        IngameAssets.tileTextures = new TextureRegion[]{
+                atlas.findRegion("Tileset/GrassTile"),
+                atlas.findRegion("Tileset/WasserTile"),
+
+                // Path Tiles siehe TileMap
+                //0: Spawn nach oben
+                atlas.findRegion("Tileset/WasserTile"),
+                //1: Spawn nach rechts
+                atlas.findRegion("Tileset/WasserTile"),
+                //2: Spawn nach unten
+                atlas.findRegion("Tileset/WasserTile"),
+                //3: Spawn nach rechts
+                atlas.findRegion("Tileset/WasserTile"),
+                //4: Ziel nach unten
+                atlas.findRegion("Tileset/WasserTile"),
+                //5: Ecke rechts Oben
+                atlas.findRegion("Tileset/WegTile_Rechts-Oben"),
+                //6: vertikale Gerade
+                atlas.findRegion("Tileset/WegTile_Vertical"),
+                //7: Ecke links Oben
+                atlas.findRegion("Tileset/WegTile_Links-Oben"),
+                //8: Ziel nach links
+                atlas.findRegion("Tileset/WasserTile"),
+                //9: Ecke rechts Unten
+                atlas.findRegion("Tileset/WegTile_Rechts-Unten"),
+                //10: horizontale Gerade
+                atlas.findRegion("Tileset/WegTile_Horizontal"),
+                //11: Ziel nach oben
+                atlas.findRegion("Tileset/WasserTile"),
+                //12: Ecke links Unten
+                atlas.findRegion("Tileset/WegTile_Links-Unten"),
+                //13: Ziel nach rechts
+                atlas.findRegion("Tileset/WegTile_WasserTile")
+        };
 
         IngameAssets.gameCharacterAnimations = new AtlasAnimation[GameCharacterAnimationType.values().length];
 
@@ -135,6 +162,12 @@ public class GADSAssetManager {
 //        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] =
 //                new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catWalking"), Animation.PlayMode.LOOP);
 
+        // Provisorium ToDo: entfernen
+        IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.turnChange = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButtonPressed = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButtonChecked = atlas.findRegion("background/mainTitleBackground");
+        IngameAssets.fastForwardButton = atlas.findRegion("background/mainTitleBackground");
 
         IngameAssets.outlineShader = manager.get(outlineShader, ShaderProgram.class);
 

@@ -10,7 +10,7 @@ public class PathTile extends Tile {
     private PathTile prev;
     private PathTile next;
     private int index;
-    private List<Enemy> enemies;
+    private List<Enemy> enemies = new ArrayList<>();
 
     /**
      * Erstellt einen PathTile an der angegebenen Position.

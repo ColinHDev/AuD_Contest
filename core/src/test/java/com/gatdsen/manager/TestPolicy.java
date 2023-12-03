@@ -1,42 +1,50 @@
 package com.gatdsen.manager;
 
 import bots.MalBot;
-import com.gatdsen.manager.player.IdleBot;
-import com.gatdsen.simulation.GameState;
+import com.gatdsen.manager.filter.BotClassFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 public class TestPolicy {
-    private final long COMPLETION_TIMEOUT = 10000;
-    final Object lock = new Object();
 
     @Test
     public void TestMalBot() {
-        RunConfiguration config = new RunConfiguration();
-        config.gameMode = GameState.GameMode.Normal;
-        config.mapName = "map1";
-        config.teamCount = 2;
-        config.players = new ArrayList<>();
-        config.players.add(MalBot.class);
-        config.players.add(IdleBot.class);
-        Manager manager = Manager.getManager();
-        Run run = manager.startRun(config);
-        synchronized (lock) {
-            run.addCompletionListener(r -> {
-                synchronized (lock) {
-                    lock.notify();
-                }
-            });
-            try {
-                lock.wait(COMPLETION_TIMEOUT);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        /*Simulation dummySimulation = new Simulation(GameState.GameMode.Normal, "map1", 2);
+
+        LocalPlayerHandler playerHandler = new LocalPlayerHandler(MalBot.class);
+        Future<?> future = playerHandler.init(dummySimulation.getState(), false, Manager.getSeed(), command -> {});
+        try {
+            future.get();
+        } catch (InterruptedException|ExecutionException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        future = playerHandler.executeTurn(dummySimulation.getState(), command -> {});
+        try {
+            future.get();
+        } catch (InterruptedException|ExecutionException e) {
+            Assert.fail(e.getMessage());
+        }*/
+
+        String[] illegalImports = BotClassFilter.getIllegalImports(MalBot.class);
+        for (String illegalImport : illegalImports) {
+            if (!contains(MalBot.ILLEGAL_IMPORTS, illegalImport)) {
+                Assert.fail("MalBot imports " + illegalImport + " but it is unexpected.");
             }
         }
-        Assert.assertTrue(String.format("The bot should not be able to use any system resources or reflections.\n" +
-                "failedExperiments:%s\n" +
-                "Var-Dump:%s", MalBot.failedExperiments, manager), MalBot.failedExperiments.isEmpty());
+        for (String illegalImport : MalBot.ILLEGAL_IMPORTS) {
+            if (!contains(illegalImports, illegalImport)) {
+                Assert.fail("MalBot should import " + illegalImport + " but is was not detected.");
+            }
+        }
+    }
+
+    private static boolean contains(String[] array, String element) {
+        for (String s : array) {
+            if (s.equals(element)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
