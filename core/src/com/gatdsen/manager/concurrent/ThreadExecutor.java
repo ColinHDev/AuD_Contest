@@ -69,7 +69,7 @@ public class ThreadExecutor {
                 target = null;
             }
         }
-        worker.stop();
+        worker.interrupt();
         worker = new Thread(this::waitAndExecute);
         worker.start();
     }
@@ -81,14 +81,6 @@ public class ThreadExecutor {
             target = null;
         }
         worker.interrupt();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-        }
-        if (worker.isAlive())
-            synchronized (lock) {
-                worker.stop();
-            }
     }
 
     public void waitForCompletion() {

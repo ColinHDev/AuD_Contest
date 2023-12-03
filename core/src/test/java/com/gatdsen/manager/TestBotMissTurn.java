@@ -9,9 +9,6 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.gatdsen.manager.PlayerThread.AI_EXECUTE_INIT_TIMEOUT;
-import static com.gatdsen.manager.PlayerThread.AI_EXECUTE_TURN_TIMEOUT;
-
 public class TestBotMissTurn {
 
     private final Simulation dummySimulation = new Simulation(GameState.GameMode.Normal, "map1", 2);
@@ -43,7 +40,7 @@ public class TestBotMissTurn {
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
-            Assert.fail(e.getMessage());
+            Assert.fail("While waiting on future: " + e);
         }
     }
 
@@ -103,7 +100,7 @@ public class TestBotMissTurn {
         @Override
         public void init(StaticGameState state) {
             long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < AI_EXECUTE_INIT_TIMEOUT * 1.5);
+            while (System.currentTimeMillis() - startTime < PlayerThread.AI_EXECUTE_INIT_TIMEOUT * 1.5);
         }
 
         @Override
@@ -125,7 +122,7 @@ public class TestBotMissTurn {
             executedTurns++;
             if (executedTurns == 1) {
                 long startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < AI_EXECUTE_TURN_TIMEOUT * 1.5);
+                while (System.currentTimeMillis() - startTime < PlayerThread.AI_EXECUTE_TURN_TIMEOUT * 1.5);
             }
         }
     }

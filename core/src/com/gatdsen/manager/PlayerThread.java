@@ -70,34 +70,64 @@ public final class PlayerThread {
         isInitialized = true;
         this.isDebug = isDebug;
         Controller controller = createController();
-        Future<?> future = executor.execute(() -> {
-            Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
-            if (player instanceof Bot) {
-                ((Bot) player).setRnd(seed);
+        switch (player.getType()) {
+            case Human ->{
+                Future<?> future = executor.execute(() -> {
+                    Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
+                    player.init(new StaticGameState(state));
+                });
+                try {
+                    if (isDebug) {
+                        future.get();
+                    } else {
+                        future.get(HUMAN_EXECUTE_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("bot was interrupted");
+                } catch (ExecutionException e) {
+                    System.out.println("bot failed initialization with exception: " + e.getCause());
+                } catch (TimeoutException e) {
+                    future.cancel(true);
+                    executor.interrupt();
+                    System.out.println(player.getName() + " initialization surpassed timeout");
+                }
+                controller.endTurn();
             }
-            player.init(new StaticGameState(state));
-        });
-        try {
-            if (isDebug) {
-                future.get();
-            } else {
-                future.get(
-                        player.getType() == Player.PlayerType.Human ? HUMAN_EXECUTE_INIT_TIMEOUT : AI_EXECUTE_INIT_TIMEOUT,
-                        TimeUnit.MILLISECONDS
-                );
+            case AI -> {
+                Future<?> future = executor.execute(() -> {
+                    Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
+                    ((Bot) player).setRnd(seed);
+                    player.init(new StaticGameState(state));
+                });
+                long startTime = System.currentTimeMillis();
+                try {
+                    if (isDebug) {
+                        future.get();
+                    } else {
+                        future.get(2 * AI_EXECUTE_INIT_TIMEOUT, TimeUnit.MILLISECONDS);
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("bot was interrupted");
+                } catch (ExecutionException e) {
+                    System.out.println("bot failed initialization with exception: " + e.getCause());
+                    controller.missNextTurn();
+                    return controller.commands;
+                } catch (TimeoutException e) {
+                    future.cancel(true);
+                    executor.interrupt();
+                    System.out.println(player.getName() + " initialization surpassed timeout");
+                    controller.missNextTurn();
+                    return controller.commands;
+                }
+                long endTime = System.currentTimeMillis();
+                if (!isDebug && endTime - startTime > AI_EXECUTE_TURN_TIMEOUT) {
+                    System.out.println("Bot " + player.getName() + " surpassed computation timeout by taking " + (endTime - startTime - AI_EXECUTE_TURN_TIMEOUT) + "ms longer than allowed");
+                    System.err.println("The failed bot has to miss the next turn!");
+                    controller.missNextTurn();
+                } else {
+                    controller.endTurn();
+                }
             }
-            controller.endTurn();
-        } catch (InterruptedException e) {
-            System.out.println("bot was interrupted");
-            controller.endTurn();
-        } catch (ExecutionException e) {
-            System.out.println("bot failed initialization with exception: " + e.getCause());
-            controller.missNextTurn();
-        } catch (TimeoutException e) {
-            future.cancel(true);
-            executor.forceStop();
-            System.out.println(player.getName() + " initialization surpassed timeout");
-            controller.missNextTurn();
         }
         return controller.commands;
     }
