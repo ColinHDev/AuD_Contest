@@ -7,8 +7,8 @@ import com.gatdsen.simulation.action.ActionLog;
 import java.io.Serializable;
 
 /**
- * Die Basisklasse für alle Commands.
- * Ein Command repräsentiert eine Aktion, die von einem Spieler ausgeführt wird.
+ * Die Basisklasse für alle Befehle.
+ * Ein Befehl repräsentiert eine Aktion, die von einem Spieler ausgeführt wird.
  */
 public abstract class Command implements Serializable {
 
