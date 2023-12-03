@@ -3,10 +3,7 @@ package com.gatdsen.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -15,6 +12,7 @@ import com.gatdsen.animation.action.*;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
 import com.gatdsen.animation.entity.Entity;
+import com.gatdsen.animation.entity.ParticleEntity;
 import com.gatdsen.animation.entity.SpriteEntity;
 import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.AnimationLogProcessor;
@@ -129,6 +127,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         // Tower Actions
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
                         put(TowerAttackAction.class, ActionConverters::convertTowerAttackAction);
+                        put(ProjectileAction.class, ActionConverters::convertProjectileAction);
                         put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
                     }
                 };
@@ -264,6 +263,63 @@ public class Animator implements Screen, AnimationLogProcessor {
             });
 
             return new ExpandedAction(attack);
+        }
+
+        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            ProjectileAction projectileAction = (ProjectileAction) action;
+            Path path = projectileAction.getPath();
+
+            // Target muss null sein, da das Projektil dem converter nicht bekannt ist. Es wird erst in summonProjectile erstellt.
+            MoveAction moveProjectile = new MoveAction(0, null, path.getDuration(), path);
+            RotateAction rotateProjectile = new RotateAction(0, null, path.getDuration(), path);
+
+            DestroyAction<Entity> destroyProjectile = new DestroyAction<>(0, null, null, animator.root::remove);
+
+            // Hier können jetzt die Targets für die anderen Actions gesetzt werden
+            SummonAction<Entity> summonProjectile = new SummonAction<>(action.getDelay(), projectile -> {
+                moveProjectile.setTarget(projectile);
+                rotateProjectile.setTarget(projectile);
+                destroyProjectile.setTarget(projectile);
+            }, () -> {
+                Entity projectile = Projectiles.summon(projectileAction.getType());
+                animator.root.add(projectile);
+                return projectile;
+            });
+
+            summonProjectile.setChildren(new Action[]{moveProjectile, rotateProjectile});
+
+            // Effekt bei Treffer
+            ExpandedAction effects;
+            switch (projectileAction.getType()) {
+                case STANDARD_TYPE:
+                    effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                    moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                    break;
+                default:
+                    moveProjectile.setChildren(new Action[]{destroyProjectile});
+            }
+
+            // Die Action ist unterteilt in: Projektil erzeugen, dann bewegen & rotieren und anschließend mit effekt zerstören
+            return new ExpandedAction(summonProjectile, destroyProjectile);
+        }
+
+        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator animator) {
+            DestroyAction<ParticleEntity> destroyParticle = new DestroyAction<>(dur, null, null, (particle) -> {
+                animator.root.remove(particle);
+                particle.free();
+            });
+
+            SummonAction<ParticleEntity> summonParticle = new SummonAction<>(0, destroyParticle::setTarget, () -> {
+                ParticleEntity particle = ParticleEntity.getParticleEntity(effect);
+                particle.setLoop(false);
+                particle.setRelPos(pos);
+                animator.root.add(particle);
+
+                return particle;
+            });
+
+            summonParticle.setChildren(new Action[]{destroyParticle});
+            return new ExpandedAction(summonParticle, destroyParticle);
         }
 
         private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
