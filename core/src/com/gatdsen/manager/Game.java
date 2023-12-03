@@ -165,26 +165,8 @@ public class Game extends Executable {
                                 // ToDo: discuss synchronisation for human players
                                 // animationLogProcessor.awaitNotification();
                             }
-                            if (!command.endsTurn()) {
-                                return;
-                            }
-                            //Contains actions produced by ending the turn (after last command is executed)
-                            ActionLog finalLog = simulation.endTurn();
-                            if (saveReplay) {
-                                gameResults.addActionLog(finalLog);
-                            }
-                            if (gui) {
-                                animationLogProcessor.animate(finalLog);
-                                animationLogProcessor.awaitNotification();
-                            }
                         }
                 );
-                try {
-                    future.get();
-                } catch (InterruptedException|ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-
                 ActionLog log = simulation.clearAndReturnActionLog();
                 if (saveReplay) {
                     gameResults.addActionLog(log);
@@ -193,6 +175,20 @@ public class Game extends Executable {
                     //Contains Action produced by entering new turn
                     animationLogProcessor.animate(log);
                 }
+                try {
+                    future.get();
+                } catch (InterruptedException|ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            //Contains actions produced by ending the turn (after last command is executed)
+            ActionLog finalLog = simulation.endTurn();
+            if (saveReplay) {
+                gameResults.addActionLog(finalLog);
+            }
+            if (gui) {
+                animationLogProcessor.animate(finalLog);
+                animationLogProcessor.awaitNotification();
             }
         }
         scores = state.getHealth();
