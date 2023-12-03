@@ -1,4 +1,4 @@
-package com.gatdsen.manager.filter;
+package com.gatdsen.manager.player.analyzer;
 
 import com.gatdsen.manager.Manager;
 import com.gatdsen.manager.player.Bot;
@@ -9,9 +9,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class BotClassFilter {
+public final class BotClassAnalyzer {
 
-    private BotClassFilter() {
+    private BotClassAnalyzer() {
     }
 
     /**

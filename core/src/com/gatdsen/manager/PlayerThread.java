@@ -3,12 +3,10 @@ package com.gatdsen.manager;
 import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.command.PlayerInformationCommand;
 import com.gatdsen.manager.concurrent.ThreadExecutor;
-import com.gatdsen.manager.filter.BotClassFilter;
+import com.gatdsen.manager.player.analyzer.BotClassAnalyzer;
 import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
-import com.gatdsen.manager.player.data.BotInformation;
-import com.gatdsen.manager.player.data.PlayerInformation;
 import com.gatdsen.simulation.GameState;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,7 +43,7 @@ public final class PlayerThread {
         }
         controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation()));
         if (player instanceof Bot) {
-            String[] illegalImports = BotClassFilter.getIllegalImports(((Bot) player).getClass());
+            String[] illegalImports = BotClassAnalyzer.getIllegalImports(((Bot) player).getClass());
             if (illegalImports.length > 0) {
                 controller.disqualify();
             }
