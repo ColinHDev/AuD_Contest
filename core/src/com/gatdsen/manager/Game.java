@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
 
-    protected final Object schedulingLock = new Object();
+    private static final long BASE_SEED = 345342624;
 
+    private static final AtomicInteger gameNumber = new AtomicInteger(0);
     private static final boolean isDebug;
 
     static {
@@ -26,14 +27,16 @@ public class Game extends Executable {
         if (isDebug) System.err.println("Warning: Debugger engaged; Disabling Bot-Timeout!");
     }
 
+    protected final Object schedulingLock = new Object();
+
     private GameResults gameResults;
     private Simulation simulation;
     private GameState state;
     private PlayerHandler[] playerHandlers;
 
-    private float[] scores;
+    private long seed = BASE_SEED;
 
-    private static final AtomicInteger gameNumber = new AtomicInteger(0);
+    private float[] scores;
 
     private Thread simulationThread;
 
@@ -58,7 +61,6 @@ public class Game extends Executable {
         if (saveReplay)
             gameResults.setInitialState(state);
 
-        long seed = Manager.getSeed();
         playerHandlers = new PlayerHandler[config.teamCount];
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler playerHandler;
@@ -69,21 +71,22 @@ public class Game extends Executable {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
-                playerHandler = new LocalPlayerHandler(playerClass);
+                playerHandler = new LocalPlayerHandler(playerClass, inputGenerator);
             }
 
             playerHandlers[playerIndex] = playerHandler;
             playerHandler.setPlayerController(simulation.getController(playerIndex));
-            Future<?> future = playerHandler.init(
-                    state,
-                    isDebug,
-                    seed,
-                    (Command command) -> {
-                        // Contains action produced by the commands execution
-                        command.run(playerHandler);
-                        // TODO
-                    }
-            );
+            Future<?> future = playerHandler.create(command -> command.run(playerHandler));
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+            seed += playerHandler.getSeedModifier();
+        }
+        for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
+            PlayerHandler playerHandler = playerHandlers[playerIndex];
+            Future<?> future = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
             try {
                 future.get();
             } catch (InterruptedException|ExecutionException e) {

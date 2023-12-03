@@ -41,8 +41,6 @@ public class Manager {
 
     private final Object schedulingLock = new Object();
 
-    private static long seed = 345342624;
-
     private static int availableCores = 0;
 
     public static Manager getManager() {
@@ -216,7 +214,6 @@ public class Manager {
         players.add(new NamedPlayerClass(HumanPlayer.class, "HumanPlayer"));
         players.add(new NamedPlayerClass(IdleBot.class, "IdleBot"));
         File botDir = new File("bots");
-        seed = 345342624;
         System.out.println(new File("").getAbsolutePath());
         if (botDir.exists()) {
             System.out.println("Attempting to load Bots from " + botDir.getAbsolutePath());
@@ -283,10 +280,6 @@ public class Manager {
                 cur.dispose();
             }
         }
-    }
-
-    public static long getSeed() {
-        return seed;
     }
 
     public static int getSystemReservedProcessorCount() {

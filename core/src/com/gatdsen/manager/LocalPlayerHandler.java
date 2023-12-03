@@ -13,17 +13,34 @@ import java.util.concurrent.Future;
 public final class LocalPlayerHandler extends PlayerHandler {
 
     private final ThreadExecutor executor = new ThreadExecutor();
-    private PlayerThread playerThread;
+    private final PlayerThread playerThread = new PlayerThread();
+    private final InputProcessor inputGenerator;
 
-    public LocalPlayerHandler(Class<? extends Player> playerClass) {
+    public LocalPlayerHandler(Class<? extends Player> playerClass, InputProcessor inputGenerator) {
         super(playerClass);
+        this.inputGenerator = inputGenerator;
+    }
+
+    @Override
+    public Future<?> create(CommandHandler commandHandler) {
+        return executor.execute(() -> {
+            BlockingQueue<Command> commands = playerThread.create(playerClass, inputGenerator);
+            Command command;
+            do {
+                try {
+                    command = commands.take();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                commandHandler.handleCommand(command);
+            } while (!command.endsTurn());
+        });
     }
 
     @Override
     public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
-        playerThread = new PlayerThread(playerClass, isDebug);
         return executor.execute(() -> {
-            BlockingQueue<Command> commands = playerThread.init(gameState, seed);
+            BlockingQueue<Command> commands = playerThread.init(gameState, isDebug, seed);
             Command command;
             do {
                 try {

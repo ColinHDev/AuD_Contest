@@ -42,6 +42,8 @@ public abstract class PlayerHandler {
         return seedModifier;
     }
 
+    public abstract Future<?> create(CommandHandler commandHandler);
+
     public abstract Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler);
 
     public abstract Future<?> executeTurn(GameState gameState, CommandHandler commandHandler);

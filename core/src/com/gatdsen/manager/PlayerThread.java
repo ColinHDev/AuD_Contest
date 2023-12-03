@@ -33,7 +33,20 @@ public final class PlayerThread {
 
     private boolean isDebug;
 
+    private boolean isCreated = false;
+    private boolean isInitialized = false;
+
+    public boolean isCreated() {
+        return isCreated;
+    }
+
+    public boolean isInitialized() {
+        return isInitialized;
+    }
+
     public BlockingQueue<Command> create(Class<? extends Player> playerClass, InputProcessor inputGenerator) {
+        isCreated = true;
+        isInitialized = false;
         this.inputGenerator = inputGenerator;
         Controller controller = createController();
         try {
@@ -53,6 +66,7 @@ public final class PlayerThread {
     }
 
     public BlockingQueue<Command> init(GameState state, boolean isDebug, long seed) {
+        isInitialized = true;
         this.isDebug = isDebug;
         Controller controller = createController();
         Future<?> future = executor.execute(() -> {

@@ -4,6 +4,7 @@ import com.gatdsen.manager.PlayerThread;
 import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.networking.data.CommunicatedInformation;
+import com.gatdsen.networking.data.CreatePlayerInformation;
 import com.gatdsen.networking.data.GameInformation;
 import com.gatdsen.networking.data.TurnInformation;
 import com.gatdsen.networking.rmi.ProcessCommunicator;
@@ -19,13 +20,14 @@ import java.util.concurrent.BlockingQueue;
  */
 public class BotProcess {
 
+    private final PlayerThread playerThread = new PlayerThread();
+
     private final Class<? extends Player> playerClass;
     private final String host;
     private final int port;
     private final String remoteReferenceName;
 
     private ProcessCommunicator communicator;
-    private PlayerThread playerThread = null;
 
     public BotProcess(Class<? extends Player> playerClass, String host, int port, String remoteReferenceName) {
         this.playerClass = playerClass;
@@ -40,23 +42,14 @@ public class BotProcess {
         try {
             registry = LocateRegistry.getRegistry(host, port);
         } catch (RemoteException e) {
-            throw new RuntimeException(
-                    "There was no Remote Object Registry to get at the given host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".",
-                    e
-            );
+            throw new RuntimeException("There was no Remote Object Registry to get at the given host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".", e);
         }
         try {
             communicator = (ProcessCommunicator) registry.lookup(remoteReferenceName);
         } catch (NotBoundException e) {
-            throw new RuntimeException(
-                    "There was no Remote Reference bound under the name \"" + remoteReferenceName + "\" at the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".",
-                    e
-            );
+            throw new RuntimeException("There was no Remote Reference bound under the name \"" + remoteReferenceName + "\" at the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\".", e);
         } catch (RemoteException e) {
-            throw new RuntimeException(
-                    "The connection with the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\" failed.",
-                    e
-            );
+            throw new RuntimeException("The connection with the Remote Object Registry at host \"" + (host == null ? "localhost" : host) + "\" and port \"" + port + "\" failed.", e);
         }
 
         while (true) {
@@ -66,40 +59,37 @@ public class BotProcess {
             } catch (RemoteException e) {
                 throw new RuntimeException("Could not dequeue information from the parent process.");
             }
-            if (information instanceof GameInformation) {
-                playerThread = new PlayerThread(playerClass, ((GameInformation) information).isDebug());
-                BlockingQueue<Command> commands = playerThread.init(((GameInformation) information).state(), ((GameInformation) information).seed());
-                Command command;
-                do {
-                    try {
-                        command = commands.take();
-                        communicator.queueCommand(command);
-                    } catch (InterruptedException|RemoteException e) {
-                        throw new RuntimeException(e);
+            BlockingQueue<Command> commands;
+            switch (information) {
+                case CreatePlayerInformation ignored -> commands = playerThread.create(playerClass, null);
+                case GameInformation gameInformation -> {
+                    if (playerThread.isCreated()) {
+                        throw new RuntimeException("Received GameInformation before CreatePlayerInformation.");
                     }
-                } while (!command.endsTurn());
-            } else if (information instanceof TurnInformation) {
-                if (playerThread == null) {
-                    throw new RuntimeException("Received TurnInformation before GameInformation.");
+                    commands = playerThread.init(gameInformation.state(), gameInformation.isDebug(), gameInformation.seed());
                 }
-                BlockingQueue<Command> commands = playerThread.executeTurn(((TurnInformation) information).state());
-                Command command;
-                do {
-                    try {
-                        command = commands.take();
-                        communicator.queueCommand(command);
-                    } catch (InterruptedException | RemoteException e) {
-                        throw new RuntimeException(e);
+                case TurnInformation turnInformation -> {
+                    if (playerThread.isInitialized()) {
+                        throw new RuntimeException("Received TurnInformation before GameInformation.");
                     }
-                } while (!command.endsTurn());
+                    commands = playerThread.executeTurn(turnInformation.state());
+                }
+                case null, default -> throw new RuntimeException("Received unknown information type.");
             }
+            Command command;
+            do {
+                try {
+                    command = commands.take();
+                    communicator.queueCommand(command);
+                } catch (InterruptedException|RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            } while (!command.endsTurn());
         }
     }
 
     public void dispose() {
-        if (playerThread != null) {
-            playerThread.dispose();
-        }
+        playerThread.dispose();
         System.out.println("BotProcess of player \"" + playerClass.getName() + "\" on process with pid " + ProcessHandle.current().pid() + " is shutting down");
     }
 }

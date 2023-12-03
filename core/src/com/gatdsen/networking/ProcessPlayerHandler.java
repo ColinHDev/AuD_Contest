@@ -5,6 +5,7 @@ import com.gatdsen.manager.command.CommandHandler;
 import com.gatdsen.manager.concurrent.ThreadExecutor;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
+import com.gatdsen.networking.data.CreatePlayerInformation;
 import com.gatdsen.networking.data.GameInformation;
 import com.gatdsen.networking.data.TurnInformation;
 import com.gatdsen.networking.rmi.ProcessCommunicator;
@@ -37,10 +38,11 @@ public final class ProcessPlayerHandler extends PlayerHandler {
     public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerId) {
         super(playerClass);
         remoteReferenceName = stubNamePrefix + gameId + "_" + playerId;
+        createRegistry();
+        createProcess();
     }
 
-    @Override
-    public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
+    private void createRegistry() {
         try {
             // createRegistry() wirft eine RemoteException, wenn an dem Port bereits ein Registry-Objekt existiert
             registry = LocateRegistry.createRegistry(registryPort);
@@ -59,14 +61,14 @@ public final class ProcessPlayerHandler extends PlayerHandler {
             // Exportieren des Objekts, damit es von anderen Prozessen verwendet werden kann
             communicator = (ProcessCommunicator) UnicastRemoteObject.exportObject(localCommunicator, 0);
             registry.rebind(remoteReferenceName, communicator);
-            communicator.queueInformation(new GameInformation(gameState, isDebug, seed));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private void createProcess() {
         ProcessBuilder builder = new ProcessBuilder();
         builder.inheritIO();
-
         File currentJar;
         try {
             currentJar = new File(ProcessPlayerHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -74,18 +76,49 @@ public final class ProcessPlayerHandler extends PlayerHandler {
             throw new RuntimeException(e);
         }
         builder.command(
-                "java", "-cp", currentJar.getPath(), BotProcessLauncher.class.getName(), // Starten der JVM in der main() vom BotProcessLauncher
-                "-p", playerClass.getSimpleName(), // Angabe des Klasse des Spielers
-                "-port", String.valueOf(registryPort), // Angabe des Ports der Remote Object Registry
-                "-reference", remoteReferenceName // Angabe des Namens, unter dem die Remote Reference im Remote Object Registry gebunden ist
+                // Starten der JVM in der main() vom BotProcessLauncher
+                "java", "-cp", currentJar.getPath(), BotProcessLauncher.class.getName(),
+                // Angabe der Klasse des Spielers
+                "-p", playerClass.getSimpleName(),
+                // Angabe des Ports der Remote Object Registry
+                "-port", String.valueOf(registryPort),
+                // Angabe des Namens, unter dem die Remote Reference im Remote Object Registry gebunden ist
+                "-reference", remoteReferenceName
         );
-
         try {
             process = builder.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    @Override
+    public Future<?> create(CommandHandler commandHandler) {
+        try {
+            communicator.queueInformation(new CreatePlayerInformation());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        return executor.execute(() -> {
+            Command command;
+            do {
+                try {
+                    command = communicator.dequeueCommand();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                commandHandler.handleCommand(command);
+            } while (!command.endsTurn());
+        });
+    }
+
+    @Override
+    public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
+        try {
+            communicator.queueInformation(new GameInformation(gameState, isDebug, seed));
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
         return executor.execute(() -> {
             Command command;
             do {
