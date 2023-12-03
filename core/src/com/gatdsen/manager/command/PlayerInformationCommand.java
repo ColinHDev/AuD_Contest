@@ -7,9 +7,11 @@ import com.gatdsen.simulation.action.ActionLog;
 public final class PlayerInformationCommand extends Command {
 
     private final PlayerInformation information;
+    private final long seedModifier;
 
-    public PlayerInformationCommand(PlayerInformation information) {
+    public PlayerInformationCommand(PlayerInformation information, long seedModifier) {
         this.information = information;
+        this.seedModifier = seedModifier;
     }
 
     @Override

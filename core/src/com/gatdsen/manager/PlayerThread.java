@@ -42,7 +42,7 @@ public final class PlayerThread {
             throw new RuntimeException(e);
         }
         PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(playerClass);
-        controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation()));
+        controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation(), analyzer.getSeedModifier()));
         if (player.getType().equals(Player.PlayerType.AI)) {
             String[] illegalImports = analyzer.getIllegalImports();
             if (illegalImports.length > 0) {
