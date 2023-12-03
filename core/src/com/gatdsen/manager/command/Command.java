@@ -1,5 +1,6 @@
 package com.gatdsen.manager.command;
 
+import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.action.ActionLog;
 
@@ -11,10 +12,10 @@ import java.io.Serializable;
  */
 public abstract class Command implements Serializable {
 
-    protected abstract ActionLog onExecute(PlayerController controller);
+    protected abstract ActionLog onExecute(PlayerHandler playerHandler);
 
-    public final ActionLog run(PlayerController controller) {
-        return onExecute(controller);
+    public final ActionLog run(PlayerHandler playerHandler) {
+        return onExecute(playerHandler);
     }
 
     public boolean endsTurn() {

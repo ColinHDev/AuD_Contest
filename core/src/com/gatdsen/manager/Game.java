@@ -61,26 +61,26 @@ public class Game extends Executable {
         long seed = Manager.getSeed();
         playerHandlers = new PlayerHandler[config.teamCount];
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
-            PlayerHandler handler;
+            PlayerHandler playerHandler;
             Class<? extends Player> playerClass = config.players.get(playerIndex);
             if (Bot.class.isAssignableFrom(playerClass)) {
-                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
+                playerHandler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
             } else {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
-                handler = new LocalPlayerHandler(playerClass);
+                playerHandler = new LocalPlayerHandler(playerClass);
             }
 
-            PlayerController gcController = simulation.getController(playerIndex);
-            playerHandlers[playerIndex] = handler;
-            Future<?> future = handler.init(
+            playerHandlers[playerIndex] = playerHandler;
+            playerHandler.setPlayerController(simulation.getController(playerIndex));
+            Future<?> future = playerHandler.init(
                     state,
                     isDebug,
                     seed,
                     (Command command) -> {
                         // Contains action produced by the commands execution
-                        command.run(gcController);
+                        command.run(playerHandler);
                         // TODO
                     }
             );
@@ -147,13 +147,13 @@ public class Game extends Executable {
                     animationLogProcessor.animate(firstLog);
                 }
 
-                PlayerController gcController = simulation.getController(playerIndex);
                 PlayerHandler playerHandler = playerHandlers[playerIndex];
+                playerHandler.setPlayerController(simulation.getController(playerIndex));
                 Future<?> future = playerHandler.executeTurn(
                         state,
                         (Command command) -> {
                             // Contains action produced by the commands execution
-                            ActionLog log = command.run(gcController);
+                            ActionLog log = command.run(playerHandler);
                             if (log == null) {
                                 return;
                             }
