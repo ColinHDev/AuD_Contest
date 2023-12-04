@@ -57,6 +57,7 @@ public class TestBotMissTurn {
         awaitFuture(playerHandler.executeTurn(dummySimulation.getState(), command -> command.run(playerHandler)));
         System.out.println("executeTurn2()");
         awaitFuture(playerHandler.executeTurn(dummySimulation.getState(), command -> command.run(playerHandler)));
+        playerHandler.dispose();
     }
 
     private void awaitFuture(Future<?> future) {
