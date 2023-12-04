@@ -53,6 +53,8 @@ public class Hud implements Disposable {
     private ScoreView scoreView;
     private TileMap tileMap;
     private SelectBox<Tower.TowerType> towerSelectBox;
+    private TextButton nextRoundButton;
+    private Skin skin = AssetContainer.MainMenuAssets.skin;
 
     Viewport gameViewport;
 
@@ -143,8 +145,9 @@ public class Hud implements Disposable {
         //-> yet it is a bit too much work for now
         //Todo Refactor resizing of every Ui element
 
+        nextRoundButton = new TextButton("Neue Runde", skin);
         //set a fixed size for the turnPopupContainer, so it will not change the layout, once the turn Sprite is added
-        //layoutTable.add(turnPopupContainer).pad(padding).expandX().expandY().size(750,750).fill();
+        layoutTable.add(nextRoundButton).pad(padding).expandX().expandY().size(750,200).fill();
         //layoutTable.row();
         //layoutTable.add(fastForwardButton).pad(padding).left().bottom().size(64,64);
 
@@ -364,7 +367,6 @@ public class Hud implements Disposable {
 
     private TextButton tileMapButton(int team, TileMap tileMap) {
         this.tileMap = tileMap;
-        Skin skin = AssetContainer.MainMenuAssets.skin;
 
         TextButton tileMapButton = new TextButton("", skin);
         tileMapButton.addListener(new ClickListener() {
