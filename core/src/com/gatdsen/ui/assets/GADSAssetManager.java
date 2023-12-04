@@ -111,17 +111,17 @@ public class GADSAssetManager {
         TextureAtlas atlas = manager.get(this.atlas, TextureAtlas.class);
 
         //Main Menu
-        MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground");
-        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground");
+        MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground_new");
+        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground_new");
         MainMenuAssets.skin = manager.get(skin, Skin.class);
 
         //Ingame
 
-        IngameAssets.background = atlas.findRegion("background/GADSBG");
+        IngameAssets.background = atlas.findRegion("background/WeihnachtsBG");
 
         IngameAssets.tileTextures = new TextureRegion[]{
-                atlas.findRegion("Tileset/GrassTile"),
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/grass_tile"),
+                atlas.findRegion("Tileset/water_tile"),
 
                 // Path Tiles siehe TileMap
                 //0: Spawn nach oben
