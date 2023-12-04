@@ -17,6 +17,8 @@ public class PlayerState implements Serializable {
     private PathTile endTile;
     private final int enemyTypeCount = 1;
     private final Enemy[][] enemiesToBeSpawned = new Enemy[100][enemyTypeCount];
+    private boolean disqualified;
+    private boolean deactivated;
 
     /**
      * Erstellt einen neuen PlayerState.
@@ -112,6 +114,8 @@ public class PlayerState implements Serializable {
         }
         health = original.health;
         money = original.money;
+        deactivated = original.deactivated;
+        disqualified = original.disqualified;
     }
 
     /**
@@ -122,6 +126,45 @@ public class PlayerState implements Serializable {
      */
     PlayerState copy(GameState newGameState) {
         return new PlayerState(this, newGameState);
+    }
+
+    /**
+     * Deaktiviert den PlayerState
+     *
+     * @param head Kopf der Action-Liste
+     * @return neuer Kopf der Action-Liste
+     */
+    Action deactivate(Action head) {
+        deactivated = true;
+        Action action = new PlayerDeactivateAction(0, index, disqualified);
+        head.addChild(action);
+        return action;
+    }
+
+    /**
+     * Gibt zurück, ob der Spieler deaktiviert ist
+     *
+     * @return true, wenn der Spieler deaktiviert ist
+     */
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    /**
+     * Gibt zurück, ob der Spieler disqualifiziert ist
+     *
+     * @return true, wenn der Spieler disqualifiziert ist
+     */
+    public boolean isDisqualified() {
+        return disqualified;
+    }
+
+    /**
+     * Disqualifiziert den Spieler und deaktiviert seinen PlayerState
+     */
+    void disqualify() {
+        disqualified = true;
+        deactivated = true;
     }
 
     /**
@@ -270,6 +313,7 @@ public class PlayerState implements Serializable {
         Action updateHealthAction = new UpdateHealthAction(0, health, index);
         head.addChild(updateHealthAction);
         head = updateHealthAction;
+        if (health <= 0) head = deactivate(head);
         return head;
     }
 
