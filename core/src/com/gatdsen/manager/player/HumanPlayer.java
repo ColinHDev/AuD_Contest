@@ -179,6 +179,10 @@ public class HumanPlayer extends Player {
         }
     }
 
+    public Controller getController() {
+        return controller;
+    }
+
     @Override
     public PlayerType getType() {
         return PlayerType.Human;
