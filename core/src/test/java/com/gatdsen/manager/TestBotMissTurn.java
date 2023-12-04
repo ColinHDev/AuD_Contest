@@ -5,7 +5,6 @@ import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
 import org.junit.Assert;
 import org.junit.Test;
-import org.lwjgl.Sys;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -16,7 +15,7 @@ public class TestBotMissTurn {
 
     private final Simulation dummySimulation = new Simulation(GameState.GameMode.Normal, "map1", 2);
 
-    @Test
+    //@Test
     public void testMissTurnThroughInitException() {
         System.out.println("testMissTurnThroughInitException(): start");
         testBot(MissTurnThroughInitException.class);

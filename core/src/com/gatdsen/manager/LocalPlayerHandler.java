@@ -6,6 +6,7 @@ import com.gatdsen.manager.concurrent.ThreadExecutor;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.simulation.GameState;
+import org.lwjgl.Sys;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
@@ -56,16 +57,21 @@ public final class LocalPlayerHandler extends PlayerHandler {
     @Override
     protected Future<?> onExecuteTurn(GameState gameState, CommandHandler commandHandler) {
         return executor.execute(() -> {
+            System.out.println("onExecuteTurn()");
             BlockingQueue<Command> commands = playerThread.executeTurn(gameState);
+            System.out.println("onExecuteTurn() - got commands");
             Command command;
             do {
                 try {
+                    System.out.println("onExecuteTurn() - waiting for command");
                     command = commands.take();
+                    System.out.println("onExecuteTurn() - got command");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 commandHandler.handleCommand(command);
             } while (!command.endsTurn());
+            System.out.println("onExecuteTurn() - done");
         });
     }
 
