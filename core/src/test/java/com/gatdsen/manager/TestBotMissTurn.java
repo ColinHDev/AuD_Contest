@@ -15,7 +15,7 @@ public class TestBotMissTurn {
 
     private final Simulation dummySimulation = new Simulation(GameState.GameMode.Normal, "map1", 2);
 
-    //@Test
+    @Test
     public void testMissTurnThroughInitException() {
         System.out.println("testMissTurnThroughInitException(): start");
         testBot(MissTurnThroughInitException.class);
