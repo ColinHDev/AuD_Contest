@@ -95,7 +95,9 @@ public final class PlayerThread {
         Controller controller = createController();
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Run_Thread_Player_" + player.getName());
+            System.out.println("Executing turn for player " + player.getName());
             player.executeTurn(new StaticGameState(state), controller);
+            System.out.println("Executed turn for player " + player.getName());
         });
         Thread futureExecutor = switch (player.getType()) {
             case Human -> new Thread(() -> {

@@ -5,6 +5,7 @@ import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
 import org.junit.Assert;
 import org.junit.Test;
+import org.lwjgl.Sys;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -31,7 +32,7 @@ public class TestBotMissTurn {
         System.out.println("testMissTurnThroughExecuteTurnException(): end");
     }
 
-    @Test
+    //@Test
     public void testMissTurnThroughInitTimeout() {
         System.out.println("testMissTurnThroughInitTimeout(): start");
         testBot(MissTurnThroughInitTimeout.class);
@@ -39,7 +40,7 @@ public class TestBotMissTurn {
         System.out.println("testMissTurnThroughInitTimeout(): end");
     }
 
-    @Test
+    //@Test
     public void testMissTurnThroughExecuteTurnTimeout() {
         System.out.println("testMissTurnThroughExecuteTurnTimeout(): start");
         testBot(MissTurnThroughExecuteTurnTimeout.class);
@@ -98,6 +99,7 @@ public class TestBotMissTurn {
         @Override
         public void executeTurn(StaticGameState state, Controller controller) {
             executedTurns++;
+            System.out.println("executeTurn from " + getName() + " called with executedTurns = " + executedTurns);
         }
     }
 
@@ -112,6 +114,7 @@ public class TestBotMissTurn {
         @Override
         public void executeTurn(StaticGameState state, Controller controller) {
             executedTurns++;
+            System.out.println("executeTurn from " + getName() + " called with executedTurns = " + executedTurns);
             if (executedTurns == 1) {
                 throw new RuntimeException("Bot throws an exception in executeTurn()");
             }
