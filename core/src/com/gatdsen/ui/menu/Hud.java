@@ -4,13 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -18,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.player.HumanPlayer;
@@ -51,31 +48,23 @@ public class Hud implements Disposable {
     private float[] scores;
     private String[] names;
     private ScoreView scoreView;
-    private TileMap tileMap;
     private SelectBox<Tower.TowerType> towerSelectBox;
-
-    Viewport gameViewport;
+    private TextButton nextRoundButton;
+    private Skin skin = AssetContainer.MainMenuAssets.skin;
+    Viewport hudViewport;
 
     public Hud(InGameScreen ingameScreen, Viewport gameViewport) {
 
         this.inGameScreen = ingameScreen;
-        this.gameViewport = gameViewport;
+        hudViewport = new FitViewport(gameViewport.getWorldWidth() / 10, gameViewport.getWorldHeight() / 10);
 
         this.uiMessenger = new UiMessenger(this);
 
-        int viewportSizeX = 1028;
-        int viewportSizeY = 1028;
         float animationSpeedupValue = 8;
         turnChangeDuration = 2;
         turnChangeSprite = AssetContainer.IngameAssets.turnChange;
 
-
-        Camera cam = new OrthographicCamera(viewportSizeX, viewportSizeY);
-        //Viewport entweder extend oder Fit -> noch nicht sicher welchen ich nehmen soll
-        //Viewport viewport = new ExtendViewport(viewportSizeX, viewportSizeY, cam);
-
-
-        stage = new Stage(gameViewport);
+        stage = new Stage(hudViewport);
         layoutTable = setupLayoutTable();
 
         inputHandler = setupInputHandler(ingameScreen, this);
@@ -139,12 +128,23 @@ public class Hud implements Disposable {
         float padding = 10;
 
         //currently setting the element size of elements in their class file: hardcoded
-        //changing the size via the table/actor methods does not really work. could be a fault of not implementing the ui elementparents correctly
+        //changing the size via the table/actor methods does not really work. could be a fault of not implementing the ui element parents correctly
         //-> yet it is a bit too much work for now
-        //Todo Refactor resizing of every Ui element
 
+        nextRoundButton = new TextButton("Neue Runde", skin);
+        layoutTable.add(nextRoundButton).pad(padding).expandX().expandY().size(80, 30).fill();
+//        nextRoundButton.set
+        //nextRoundButton.getStyle().font.getData().setScale(4);
+
+        nextRoundButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                nextRoundButton.setTouchable(Touchable.disabled);
+                towerSelectBox.setTouchable(Touchable.disabled);
+                //ToDo implement next round action
+            }
+        });
         //set a fixed size for the turnPopupContainer, so it will not change the layout, once the turn Sprite is added
-        //layoutTable.add(turnPopupContainer).pad(padding).expandX().expandY().size(750,750).fill();
         //layoutTable.row();
         //layoutTable.add(fastForwardButton).pad(padding).left().bottom().size(64,64);
 
@@ -294,17 +294,13 @@ public class Hud implements Disposable {
         }
     }
 
-    public void gameEnded(boolean won, int team, boolean isDraw) {
-        gameEnded(won, team, isDraw, null);
-    }
-
     /**
      * Creates a popup Display for displaying the GameOver Situation and Tints the Screen in a semi-Transparent Black
      *
      * @param won
      * @param team
      */
-    public void gameEnded(boolean won, int team, boolean isDraw, Color color) {
+    public void gameEnded(boolean won, int team, boolean isDraw) {
 
         //create a pixel with a set color that will be used as Background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -324,11 +320,11 @@ public class Hud implements Disposable {
         } else if (won) {
             display = new ImagePopup(AssetContainer.IngameAssets.victoryDisplay, -1,
                     AssetContainer.IngameAssets.victoryDisplay.getRegionWidth() * 2,
-                    AssetContainer.IngameAssets.victoryDisplay.getRegionHeight() * 2, color, 2f);
+                    AssetContainer.IngameAssets.victoryDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
         } else {
             display = new ImagePopup(AssetContainer.IngameAssets.lossDisplay, -1,
                     AssetContainer.IngameAssets.lossDisplay.getRegionWidth() * 2,
-                    AssetContainer.IngameAssets.lossDisplay.getRegionHeight() * 2, color, 2f);
+                    AssetContainer.IngameAssets.lossDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
         }
         drawImagePopup(display, true);
     }
@@ -350,9 +346,9 @@ public class Hud implements Disposable {
 
         for (int i = 0; i < numberOfTeams; i++) {
             teamButtons[i] = tileMapButton(i, tileMap);
-            teamButtons[i].setSize(gameState.getBoardSizeX() * tileSize, gameState.getBoardSizeY() * tileSize);
+            teamButtons[i].setSize((gameState.getBoardSizeX() * tileSize) / 10.0f, (gameState.getBoardSizeY() * tileSize) / 10.0f);
             group.addActor(teamButtons[i]);
-            teamButtons[i].setPosition(arrayPositionTileMaps[i].x, arrayPositionTileMaps[i].y);
+            teamButtons[i].setPosition((arrayPositionTileMaps[i].x) / 10.0f, (arrayPositionTileMaps[i].y) / 10.0f);
             teamButtons[i].setColor(Color.CLEAR);
         }
         layoutTable.setBackground((Drawable) null);
@@ -363,48 +359,21 @@ public class Hud implements Disposable {
     }
 
     private TextButton tileMapButton(int team, TileMap tileMap) {
-        this.tileMap = tileMap;
-        Skin skin = AssetContainer.MainMenuAssets.skin;
 
         TextButton tileMapButton = new TextButton("", skin);
         tileMapButton.addListener(new ClickListener() {
-            private boolean scaled = false;
-
+//inputHandler muss genutzt werden, da controller nach jeder runde neu, damit User nix zwischen den Runden machen kann
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                int posX = (int) (x / tileMap.getTileSize());
-                int posY = (int) (y / tileMap.getTileSize());
-                if (tileMap.getTile(posX, posY) == 0) {
-                    if (towerSelectBox != null) {
-                        towerSelectBox.remove();
-                    }
-
-                    towerSelectBox = new SelectBox<>(skin);
-                    if (!scaled) {
-                        BitmapFont font = towerSelectBox.getStyle().font;
-                        font.getData().setScale(6);
-                        scaled = true;
-                    }
-                    Tower.TowerType[] towerTypes = Tower.TowerType.values();
-                    towerSelectBox.setItems(towerTypes);
-
-                    towerSelectBox.setSize(1000, 200);
-
-                    towerSelectBox.setPosition(tileMapButton.getX() + x, tileMapButton.getY() + y);
-
-                    group.addActor(towerSelectBox);
-
-                    towerSelectBox.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-                            System.out.println("Auswahl: " + towerSelectBox.getSelected().toString());
-                        }
-                    });
-                }
+                int posX = (int) ((x / tileMap.getTileSize()) * 10);
+                int posY = (int) ((y / tileMap.getTileSize()) * 10);
+                System.out.println("x: " + posX  + " y: " + posY + " Spieler: " + team);
+                inputHandler.playerFieldLeftClicked(team, posX, posY);
             }
         });
         return tileMapButton;
     }
+
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }

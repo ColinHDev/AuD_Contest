@@ -36,9 +36,4 @@ public class FastForwardButton extends Button {
 		}
 		speedUp=!speedUp;
 	}
-
-
-
-
-
 }

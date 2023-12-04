@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.gatdsen.manager.player.HumanPlayer;
+import com.gatdsen.simulation.Tower;
 import com.gatdsen.ui.menu.Hud;
 import com.gatdsen.ui.menu.InGameScreen;
 
@@ -96,6 +97,10 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         if (currentPlayer != null) {
             //ToDo do stuff
         }
+    }
+
+    public void playerFieldLeftClicked(int team, int x, int y){
+        currentPlayer.getController().placeTower(x,y, Tower.TowerType.BASIC_TOWER);
     }
 
     /**
@@ -230,7 +235,6 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         if (button == Input.Buttons.RIGHT) {
             lastMousePosition = new Vector2(screenX, screenY);
             rightMousePressed = true;
-
         }
         if (button == Input.Buttons.LEFT) {
             leftMousePressed = true;

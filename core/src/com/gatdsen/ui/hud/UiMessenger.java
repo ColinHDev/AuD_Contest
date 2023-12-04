@@ -11,7 +11,6 @@ import com.gatdsen.ui.menu.Hud;
  */
 public class UiMessenger {
 
-
 	private Hud hud;
 
 	public UiMessenger(Hud hud){
@@ -42,8 +41,6 @@ public class UiMessenger {
 		hud.setRenderingSpeed(speed);
 	}
 
-
-
 	/**
 	 * Pass the the turnTime to the Hud for displaying it
 	 * @param time
@@ -51,8 +48,6 @@ public class UiMessenger {
 	public void setTurnTimeLeft(int time){
 		hud.setTurntimeRemaining(time);
 	}
-
-
 
 	/**
 	 * Starts the turn timer for specified time.
@@ -64,21 +59,17 @@ public class UiMessenger {
 		}
 		else{
 			stopTurnTimer();
-
 		}
 	}
-
 
 	public void stopTurnTimer(){
 		hud.stopTurnTimer();
 	}
 
 	public void gameEnded(boolean won, int team,boolean isDraw,Color color){
-		hud.gameEnded(won,team,isDraw,color);
+		hud.gameEnded(won,team,isDraw);
 
 	}
-
-
 
 	public void teamScore(int team, float score) {
 		hud.adjustScores(team, score);

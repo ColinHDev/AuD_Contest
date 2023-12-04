@@ -47,24 +47,16 @@ public class AssetContainer {
 
         public static final Animation<TextureRegion> EMPTY_ANIMATION = new Animation<>(1f, new TextureRegion(new Texture(new Pixmap(1, 1, Pixmap.Format.Alpha))));;
         public static Animation<TextureRegion> destroyTileAnimation;
-
         public static TextureRegion victoryDisplay;
         public static TextureRegion lossDisplay;
-
         public static TextureRegion drawDisplay;
 
-
         public static TextureRegion background;
-
         public static TextureRegion[] tileTextures;
-
         public static TextureRegion aimingIndicatorSprite;
         public static TextureRegion aimCircle;
-
         public static ProgressBar.ProgressBarStyle healthbarStyle;
-
         public static Animation<TextureRegion>[] gameCharacterAnimations;
-
         public static TextureRegion pixel;
         public static Texture compressedBaseSkin;
         public static Texture uncompressedBaseSkin;
