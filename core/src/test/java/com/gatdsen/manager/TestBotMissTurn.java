@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class TestBotMissTurn {
 
@@ -15,41 +17,55 @@ public class TestBotMissTurn {
 
     @Test
     public void testMissTurnThroughInitException() {
+        System.out.println("testMissTurnThroughInitException(): start");
         testBot(MissTurnThroughInitException.class);
         Assert.assertEquals("Bot threw an exception in its init() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughInitException.executedTurns, 1, MissTurnThroughInitException.executedTurns);
+        System.out.println("testMissTurnThroughInitException(): end");
     }
 
     @Test
     public void testMissTurnThroughExecuteTurnException() {
+        System.out.println("testMissTurnThroughExecuteTurnException(): start");
         testBot(MissTurnThroughExecuteTurnException.class);
         Assert.assertEquals("Bot threw an exception in its executeTurn() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughExecuteTurnException.executedTurns, 1, MissTurnThroughExecuteTurnException.executedTurns);
+        System.out.println("testMissTurnThroughExecuteTurnException(): end");
     }
 
     @Test
     public void testMissTurnThroughInitTimeout() {
+        System.out.println("testMissTurnThroughInitTimeout(): start");
         testBot(MissTurnThroughInitTimeout.class);
         Assert.assertEquals("Bot timeouted in its init() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughInitTimeout.executedTurns, 1, MissTurnThroughInitTimeout.executedTurns);
+        System.out.println("testMissTurnThroughInitTimeout(): end");
     }
 
     @Test
     public void testMissTurnThroughExecuteTurnTimeout() {
+        System.out.println("testMissTurnThroughExecuteTurnTimeout(): start");
         testBot(MissTurnThroughExecuteTurnTimeout.class);
         Assert.assertEquals("Bot timeouted in its executeTurn() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughExecuteTurnTimeout.executedTurns, 1, MissTurnThroughExecuteTurnTimeout.executedTurns);
+        System.out.println("testMissTurnThroughExecuteTurnTimeout(): end");
     }
 
     private void testBot(Class<? extends Bot> botClass) {
         LocalPlayerHandler playerHandler = new LocalPlayerHandler(botClass, null);
+        System.out.println("create()");
         awaitFuture(playerHandler.create(command -> command.run(playerHandler)));
+        System.out.println("init()");
         awaitFuture(playerHandler.init(dummySimulation.getState(), false, 1337, command -> command.run(playerHandler)));
+        System.out.println("executeTurn1()");
         awaitFuture(playerHandler.executeTurn(dummySimulation.getState(), command -> command.run(playerHandler)));
+        System.out.println("executeTurn2()");
         awaitFuture(playerHandler.executeTurn(dummySimulation.getState(), command -> command.run(playerHandler)));
     }
 
     private void awaitFuture(Future<?> future) {
         try {
-            future.get();
+            future.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException e) {
             Assert.fail("While waiting on future: " + e);
+        } catch (TimeoutException e) {
+            Assert.fail("Waited for 10 seconds on future: " + e);
         }
     }
 
@@ -66,7 +82,7 @@ public class TestBotMissTurn {
 
         @Override
         public String getName() {
-            return "Test Bot";
+            return getClass().getSimpleName();
         }
     }
 
