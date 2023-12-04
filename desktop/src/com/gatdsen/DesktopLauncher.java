@@ -214,7 +214,6 @@ public class DesktopLauncher {
         System.out.println(builder.toString());
     }
 
-
     private static void printHelp() {
         String header = "\n\n";
         String footer = "\nPlease report issues at wettbewerb@acagamics.de";

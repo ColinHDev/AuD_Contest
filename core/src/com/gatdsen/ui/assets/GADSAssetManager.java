@@ -125,33 +125,33 @@ public class GADSAssetManager {
 
                 // Path Tiles siehe TileMap
                 //0: Spawn nach oben
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //1: Spawn nach rechts
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //2: Spawn nach unten
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //3: Spawn nach rechts
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //4: Ziel nach unten
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //5: Ecke rechts Oben
-                atlas.findRegion("Tileset/WegTile_Rechts-Oben"),
+                atlas.findRegion("Tileset/path_right_up_tile"),
                 //6: vertikale Gerade
-                atlas.findRegion("Tileset/WegTile_Vertical"),
+                atlas.findRegion("Tileset/path_vertical_tile"),
                 //7: Ecke links Oben
-                atlas.findRegion("Tileset/WegTile_Links-Oben"),
+                atlas.findRegion("Tileset/path_left_up_tile"),
                 //8: Ziel nach links
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //9: Ecke rechts Unten
-                atlas.findRegion("Tileset/WegTile_Rechts-Unten"),
+                atlas.findRegion("Tileset/path_right_down_tile"),
                 //10: horizontale Gerade
-                atlas.findRegion("Tileset/WegTile_Horizontal"),
+                atlas.findRegion("Tileset/path_horizontal_tile"),
                 //11: Ziel nach oben
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //12: Ecke links Unten
-                atlas.findRegion("Tileset/WegTile_Links-Unten"),
+                atlas.findRegion("Tileset/path_left_down_tile"),
                 //13: Ziel nach rechts
-                atlas.findRegion("Tileset/WegTile_WasserTile")
+                atlas.findRegion("Tileset/water_tile")
         };
 
         IngameAssets.gameCharacterAnimations = new AtlasAnimation[GameCharacterAnimationType.values().length];
