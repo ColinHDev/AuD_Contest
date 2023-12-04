@@ -1,5 +1,7 @@
 package com.gatdsen.manager.player;
 
+import com.gatdsen.manager.player.data.BotInformation;
+
 import java.util.Random;
 
 /**
@@ -27,5 +29,13 @@ public abstract class Bot extends Player{
 
     public final void setRnd(long seed){
         if (rnd == null) rnd = new Random(seed);
+    }
+
+    /**
+     * Wird für interne Zwecke verwendet und besitzt keine Relevanz für die Bot-Entwicklung.
+     * @return Die Informationen über den Bot
+     */
+    public final BotInformation getPlayerInformation() {
+        return new BotInformation(getType(), getName(), getStudentName(), getMatrikel());
     }
 }

@@ -1,7 +1,6 @@
 package com.gatdsen.manager;
 
-import com.gatdsen.manager.command.Command;
-import com.gatdsen.manager.command.EndTurnCommand;
+import com.gatdsen.manager.command.*;
 import com.gatdsen.simulation.Tower;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -32,13 +31,34 @@ public final class Controller {
         return uses;
     }
 
+    /**
+     * Platziert einen neuen Turm auf dem Spielfeld
+     * @param x x-Koordinate, an der der Turm platziert werden soll
+     * @param y y-Koordinate, an der der Turm platziert werden soll
+     * @param type Typ des Turms, der platziert werden soll
+     */
     public void placeTower(int x, int y, Tower.TowerType type) {
-        //queue(new Command.PlaceTower(x, y));
+        queue(new PlaceTowerCommand(x, y, type));
     }
 
+    /**
+     * Verbessert einen Turm auf dem Spielfeld
+     * @param x x-Koordinate, an der sich der Turm befindet
+     * @param y y-Koordinate, an der sich der Turm befindet
+     */
     public void upgradeTower(int x, int y) {
-        //queue(new Command.PlaceTower(x, y, type, id));
+        queue(new UpgradeTowerCommand(x, y));
     }
+
+    /**
+     * Verkauft einen Turm auf dem Spielfeld
+     * @param x x-Koordinate, an der sich der Turm befindet
+     * @param y y-Koordinate, an der sich der Turm befindet
+     */
+    /* TODO:
+    public void sellTower(int x, int y) {
+        queue(new SellTowerCommand(x, y));
+    }*/
 
     /**
      * Internal utility method.
@@ -47,7 +67,7 @@ public final class Controller {
      * @param command the command to be queued
      */
     private void queue(Command command) {
-        if (uses-- > 0) {
+        if (!isDeactivated()) {
             commands.add(command);
         }
     }
@@ -57,17 +77,21 @@ public final class Controller {
      * {@link Command}s mehr ausgeführt werden können.
      */
     void endTurn() {
-        commands.add(new EndTurnCommand());
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new EndTurnCommand());
+            deactivate();
+        }
     }
 
     /**
      * Markiert das Ende des aktuellen Zuges für diesen Controller und deaktiviert diesen, ähnlich wie
-     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber für den nächsten Zug disqualifiziert.
+     * {@link Controller#endTurn()}. Zusätzlich wird der Spieler aber muss der Spieler den darauffolgenden Zug aussetzen.
      */
     void missNextTurn() {
-        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.MISS_TURN));
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new MissNextTurnCommand());
+            deactivate();
+        }
     }
 
     /**
@@ -76,8 +100,18 @@ public final class Controller {
      * werden kann.
      */
     void disqualify() {
-        commands.add(new EndTurnCommand(EndTurnCommand.EndTurnPunishment.DISQUALIFY));
-        deactivate();
+        if (!isDeactivated()) {
+            commands.add(new DisqualifyCommand());
+            deactivate();
+        }
+    }
+
+    /**
+     * Gibt an, ob dieser Controller deaktiviert ist.
+     * @return true, wenn dieser Controller deaktiviert ist, sonst false
+     */
+    private boolean isDeactivated() {
+        return uses == -1;
     }
 
     /**

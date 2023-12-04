@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game extends Executable {
 
-    protected final Object schedulingLock = new Object();
+    private static final long BASE_SEED = 345342624;
 
+    private static final AtomicInteger gameNumber = new AtomicInteger(0);
     private static final boolean isDebug;
 
     static {
@@ -26,14 +27,16 @@ public class Game extends Executable {
         if (isDebug) System.err.println("Warning: Debugger engaged; Disabling Bot-Timeout!");
     }
 
+    protected final Object schedulingLock = new Object();
+
     private GameResults gameResults;
     private Simulation simulation;
     private GameState state;
     private PlayerHandler[] playerHandlers;
 
-    private float[] scores;
+    private long seed = BASE_SEED;
 
-    private static final AtomicInteger gameNumber = new AtomicInteger(0);
+    private float[] scores;
 
     private Thread simulationThread;
 
@@ -58,32 +61,32 @@ public class Game extends Executable {
         if (saveReplay)
             gameResults.setInitialState(state);
 
-        long seed = Manager.getSeed();
         playerHandlers = new PlayerHandler[config.teamCount];
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
-            PlayerHandler handler;
+            PlayerHandler playerHandler;
             Class<? extends Player> playerClass = config.players.get(playerIndex);
             if (Bot.class.isAssignableFrom(playerClass)) {
-                handler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
+                playerHandler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
             } else {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
-                handler = new LocalPlayerHandler(playerClass);
+                playerHandler = new LocalPlayerHandler(playerClass, inputGenerator);
             }
 
-            PlayerController gcController = simulation.getController(playerIndex);
-            playerHandlers[playerIndex] = handler;
-            Future<?> future = handler.init(
-                    state,
-                    isDebug,
-                    seed,
-                    (Command command) -> {
-                        // Contains action produced by the commands execution
-                        command.run(gcController);
-                        // TODO
-                    }
-            );
+            playerHandlers[playerIndex] = playerHandler;
+            playerHandler.setPlayerController(simulation.getController(playerIndex));
+            Future<?> future = playerHandler.create(command -> command.run(playerHandler));
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+            seed += playerHandler.getSeedModifier();
+        }
+        for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
+            PlayerHandler playerHandler = playerHandlers[playerIndex];
+            Future<?> future = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
             try {
                 future.get();
             } catch (InterruptedException|ExecutionException e) {
@@ -147,13 +150,13 @@ public class Game extends Executable {
                     animationLogProcessor.animate(firstLog);
                 }
 
-                PlayerController gcController = simulation.getController(playerIndex);
                 PlayerHandler playerHandler = playerHandlers[playerIndex];
+                playerHandler.setPlayerController(simulation.getController(playerIndex));
                 Future<?> future = playerHandler.executeTurn(
                         state,
                         (Command command) -> {
                             // Contains action produced by the commands execution
-                            ActionLog log = command.run(gcController);
+                            ActionLog log = command.run(playerHandler);
                             if (log == null) {
                                 return;
                             }
@@ -165,26 +168,8 @@ public class Game extends Executable {
                                 // ToDo: discuss synchronisation for human players
                                 // animationLogProcessor.awaitNotification();
                             }
-                            if (!command.endsTurn()) {
-                                return;
-                            }
-                            //Contains actions produced by ending the turn (after last command is executed)
-                            ActionLog finalLog = simulation.endTurn();
-                            if (saveReplay) {
-                                gameResults.addActionLog(finalLog);
-                            }
-                            if (gui) {
-                                animationLogProcessor.animate(finalLog);
-                                animationLogProcessor.awaitNotification();
-                            }
                         }
                 );
-                try {
-                    future.get();
-                } catch (InterruptedException|ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-
                 ActionLog log = simulation.clearAndReturnActionLog();
                 if (saveReplay) {
                     gameResults.addActionLog(log);
@@ -193,6 +178,20 @@ public class Game extends Executable {
                     //Contains Action produced by entering new turn
                     animationLogProcessor.animate(log);
                 }
+                try {
+                    future.get();
+                } catch (InterruptedException|ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            //Contains actions produced by ending the turn (after last command is executed)
+            ActionLog finalLog = simulation.endTurn();
+            if (saveReplay) {
+                gameResults.addActionLog(finalLog);
+            }
+            if (gui) {
+                animationLogProcessor.animate(finalLog);
+                animationLogProcessor.awaitNotification();
             }
         }
         scores = state.getHealth();
@@ -202,7 +201,7 @@ public class Game extends Executable {
         }
     }
 
-@Override
+    @Override
     public void dispose() {
         //Shutdown all running threads
         super.dispose();
@@ -214,6 +213,9 @@ public class Game extends Executable {
         state = null;
         simulationThread = null;
         gameResults = null;
+        for (PlayerHandler playerHandler : playerHandlers) {
+            playerHandler.dispose();
+        }
     }
 
     protected String[] getPlayerNames() {
