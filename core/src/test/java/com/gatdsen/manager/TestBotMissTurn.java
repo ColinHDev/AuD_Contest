@@ -13,18 +13,26 @@ public class TestBotMissTurn {
 
     private final Simulation dummySimulation = new Simulation(GameState.GameMode.Normal, "map1", 2);
 
-    // TODO
-    // @Test
-    public void testMissTurn() {
+    @Test
+    public void testMissTurnThroughInitException() {
         testBot(MissTurnThroughInitException.class);
         Assert.assertEquals("Bot threw an exception in its init() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughInitException.executedTurns, 1, MissTurnThroughInitException.executedTurns);
+    }
 
+    @Test
+    public void testMissTurnThroughExecuteTurnException() {
         testBot(MissTurnThroughExecuteTurnException.class);
         Assert.assertEquals("Bot threw an exception in its executeTurn() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughExecuteTurnException.executedTurns, 1, MissTurnThroughExecuteTurnException.executedTurns);
+    }
 
+    @Test
+    public void testMissTurnThroughInitTimeout() {
         testBot(MissTurnThroughInitTimeout.class);
         Assert.assertEquals("Bot timeouted in its init() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughInitTimeout.executedTurns, 1, MissTurnThroughInitTimeout.executedTurns);
+    }
 
+    @Test
+    public void testMissTurnThroughExecuteTurnTimeout() {
         testBot(MissTurnThroughExecuteTurnTimeout.class);
         Assert.assertEquals("Bot timeouted in its executeTurn() method, got its executeTurn() method called twice and due to a missed turn, should only executed 1 turn, instead of " + MissTurnThroughExecuteTurnTimeout.executedTurns, 1, MissTurnThroughExecuteTurnTimeout.executedTurns);
     }
