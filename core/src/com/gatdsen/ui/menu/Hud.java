@@ -306,6 +306,7 @@ public class Hud implements Disposable {
      */
     public void gameEnded(boolean won, int team, boolean isDraw, Color color) {
 
+        // ToDo: Remove color
         //create a pixel with a set color that will be used as Background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         //set the color to black
