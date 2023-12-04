@@ -31,7 +31,7 @@ public class TestBotMissTurn {
         System.out.println("testMissTurnThroughExecuteTurnException(): end");
     }
 
-    //@Test
+    @Test
     public void testMissTurnThroughInitTimeout() {
         System.out.println("testMissTurnThroughInitTimeout(): start");
         testBot(MissTurnThroughInitTimeout.class);
@@ -39,7 +39,7 @@ public class TestBotMissTurn {
         System.out.println("testMissTurnThroughInitTimeout(): end");
     }
 
-    //@Test
+    @Test
     public void testMissTurnThroughExecuteTurnTimeout() {
         System.out.println("testMissTurnThroughExecuteTurnTimeout(): start");
         testBot(MissTurnThroughExecuteTurnTimeout.class);
