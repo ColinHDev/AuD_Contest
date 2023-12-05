@@ -1,6 +1,7 @@
 package com.gatdsen.ui.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.*;
@@ -359,18 +360,25 @@ public class Hud implements Disposable {
     }
 
     private TextButton tileMapButton(int team, TileMap tileMap) {
-
         TextButton tileMapButton = new TextButton("", skin);
+
         tileMapButton.addListener(new ClickListener() {
-//inputHandler muss genutzt werden, da controller nach jeder runde neu, damit User nix zwischen den Runden machen kann
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 int posX = (int) ((x / tileMap.getTileSize()) * 10);
                 int posY = (int) ((y / tileMap.getTileSize()) * 10);
-                System.out.println("x: " + posX  + " y: " + posY + " Spieler: " + team);
-                inputHandler.playerFieldLeftClicked(team, posX, posY);
+                if (button == Input.Buttons.RIGHT) {
+                    System.out.println("Rechtsklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                    inputHandler.playerFieldRightClicked(team, posX, posY);
+                    return true; // true, um den Event zu konsumieren
+                } else if (button == Input.Buttons.LEFT) {
+                    System.out.println("Linksklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                    inputHandler.playerFieldLeftClicked(team, posX, posY);
+                }
+                return false; // false, um den Event weiterzuleiten
             }
         });
+
         return tileMapButton;
     }
 

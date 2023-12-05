@@ -117,6 +117,13 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         }
         currentPlayer.placeTower(x, y, Tower.TowerType.BASIC_TOWER);
     }
+    public void playerFieldRightClicked(int playerId, int x, int y){
+        HumanPlayer currentPlayer = currentPlayers.get(playerId);
+        if (currentPlayer == null) {
+            return;
+        }
+        currentPlayer.upgradeTower(x,y);
+    }
 
     /**
      * Allows the camera to be moved with the mouse by using the position of the new and old mouse positions, to calculate the distance
