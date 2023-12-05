@@ -185,6 +185,9 @@ public class Game extends Executable {
                 }
             }
             awaitFutures(futures);
+            if (inputGenerator != null) {
+                inputGenerator.endTurn();
+            }
             //Contains actions produced by ending the turn (after last command is executed)
             ActionLog finalLog = simulation.endTurn();
             if (saveReplay) {

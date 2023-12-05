@@ -103,9 +103,8 @@ public final class PlayerThread {
         Thread futureExecutor = switch (player.getType()) {
             case Human -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
-                inputGenerator.activateTurn((HumanPlayer) player);
+                inputGenerator.activateTurn((HumanPlayer) player, playerIndex);
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_TURN_TIMEOUT);
-                inputGenerator.endTurn();
             });
             case AI -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
