@@ -39,6 +39,10 @@ public abstract class PlayerHandler {
         return controller;
     }
 
+    public final PlayerInformation getPlayerInformation() {
+        return information;
+    }
+
     public final void setPlayerInformation(PlayerInformation information) {
         this.information = information;
     }

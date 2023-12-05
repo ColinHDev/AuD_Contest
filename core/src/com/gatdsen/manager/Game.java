@@ -4,6 +4,7 @@ import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
+import com.gatdsen.manager.player.data.PlayerInformation;
 import com.gatdsen.networking.ProcessPlayerHandler;
 import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.GameState;
@@ -219,15 +220,12 @@ public class Game extends Executable {
     }
 
     protected String[] getPlayerNames() {
-        // TODO
-        /*String[] names = new String[players.length];
-        int i = 0;
-        for (Player p : players) {
-            names[i] = p.getName();
-            i++;
+        String[] names = new String[playerHandlers.length];
+        for (int i = 0; i < playerHandlers.length; i++) {
+            PlayerInformation information = playerHandlers[i].getPlayerInformation();
+            names[i] = information != null ? information.getName() : "Player " + i;
         }
-        return names;*/
-        return new String[]{"Player 1", "Player 2"};
+        return names;
     }
 
     private void awaitFutures(Future<?>[] futures) {
