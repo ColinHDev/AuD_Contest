@@ -14,7 +14,7 @@ public class DisqualifyCommand extends EndTurnCommand {
 
     @Override
     protected ActionLog onExecute(PlayerHandler playerHandler) {
-        // TODO: playerHandler.getPlayerController().disqualify();
+        playerHandler.getPlayerController().disqualify();
         return super.onExecute(playerHandler);
     }
 }
