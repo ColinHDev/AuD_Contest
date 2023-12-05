@@ -72,7 +72,7 @@ public class Game extends Executable {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
-                playerHandler = new LocalPlayerHandler(playerClass, inputGenerator);
+                playerHandler = new LocalPlayerHandler(playerClass, playerIndex, inputGenerator);
             }
 
             playerHandlers[playerIndex] = playerHandler;
