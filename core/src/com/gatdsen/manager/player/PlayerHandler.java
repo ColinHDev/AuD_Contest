@@ -11,14 +11,16 @@ import java.util.concurrent.Future;
 public abstract class PlayerHandler {
 
     protected final Class<? extends Player> playerClass;
+    protected final int playerIndex;
     protected PlayerController controller;
     protected PlayerInformation information;
     protected long seedModifier;
 
     protected int turnsToMiss = 0;
 
-    public PlayerHandler(Class<? extends Player> playerClass) {
+    public PlayerHandler(Class<? extends Player> playerClass, int playerIndex) {
         this.playerClass = playerClass;
+        this.playerIndex = playerIndex;
     }
 
     public final boolean isHumanPlayer() {

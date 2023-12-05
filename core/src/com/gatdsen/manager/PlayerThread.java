@@ -33,6 +33,7 @@ public final class PlayerThread {
     private InputProcessor inputGenerator;
 
     private boolean isDebug;
+    private int playerIndex;
 
     private boolean isCreated = false;
     private boolean isInitialized = false;
@@ -67,11 +68,12 @@ public final class PlayerThread {
         return controller.commands;
     }
 
-    public BlockingQueue<Command> init(GameState state, boolean isDebug, long seed) {
+    public BlockingQueue<Command> init(GameState state, boolean isDebug, long seed, int playerIndex) {
         isInitialized = true;
         this.isDebug = isDebug;
+        this.playerIndex = playerIndex;
         Controller controller = createController();
-        StaticGameState staticState = new StaticGameState(state);
+        StaticGameState staticState = new StaticGameState(state, playerIndex);
         switch (player.getType()) {
             case Human ->{
                 Future<?> future = executor.execute(() -> {
@@ -96,7 +98,7 @@ public final class PlayerThread {
         Controller controller = createController();
         Future<?> future = executor.execute(() -> {
             Thread.currentThread().setName("Run_Thread_Player_" + player.getName());
-            player.executeTurn(new StaticGameState(state), controller);
+            player.executeTurn(new StaticGameState(state, playerIndex), controller);
         });
         Thread futureExecutor = switch (player.getType()) {
             case Human -> new Thread(() -> {

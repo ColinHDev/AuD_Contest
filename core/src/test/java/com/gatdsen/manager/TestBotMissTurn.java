@@ -37,7 +37,7 @@ public class TestBotMissTurn {
     }
 
     private void testBot(Class<? extends Bot> botClass) {
-        LocalPlayerHandler playerHandler = new LocalPlayerHandler(botClass, null);
+        LocalPlayerHandler playerHandler = new LocalPlayerHandler(botClass, 0, null);
         awaitFuture(playerHandler.create(command -> command.run(playerHandler)));
         awaitFuture(playerHandler.init(dummySimulation.getState(), false, 1337, command -> command.run(playerHandler)));
         awaitFuture(playerHandler.executeTurn(dummySimulation.getState(), command -> command.run(playerHandler)));

@@ -5,10 +5,12 @@ import com.gatdsen.simulation.GameState;
 public final class StaticGameState {
 
     private final GameState state;
+    private final int playerIndex;
     private final StaticPlayerState[] playerStates;
 
-    StaticGameState(GameState state) {
+    StaticGameState(GameState state, int playerIndex) {
         this.state = state;
+        this.playerIndex = playerIndex;
         this.playerStates = new StaticPlayerState[state.getPlayerCount()];
     }
 
