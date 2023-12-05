@@ -168,7 +168,7 @@ public class Hud implements Disposable {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //nextRoundButton.setTouchable(Touchable.disabled);
-                inputHandler.endPlayersTurn();
+                inputHandler.endTurn();
                 System.out.println("Neue Runde startet");
 
             }

@@ -75,13 +75,14 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
     public void endTurn() {
-        turnInProgress = false;
-        for (HumanPlayer player : currentPlayers.values()) {
-            player.endCurrentTurn();
-        }
-        currentPlayers.clear();
-        if (uiMessenger != null) {
-            uiMessenger.stopTurnTimer();
+        if (turnInProgress) {
+            for (HumanPlayer player : currentPlayers.values()) {
+                player.endCurrentTurn();
+            }
+            currentPlayers.clear();
+            if (uiMessenger != null) {
+                uiMessenger.stopTurnTimer();
+            }
         }
     }
 
@@ -135,17 +136,6 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
             return;
         }
         currentPlayer.upgradeTower(x,y);
-    }
-
-    /**
-     * Beendet die Runde für die menschlichen Spieler
-     */
-    public void endPlayersTurn() {
-        for (HumanPlayer player : currentPlayers.values()) {
-            player.endCurrentTurn();
-        }
-
-       currentPlayers.clear();
     }
 
     /**
