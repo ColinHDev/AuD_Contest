@@ -275,59 +275,65 @@ public class Animator implements Screen, AnimationLogProcessor {
             MessageUiTurnStartAction startTurn = new MessageUiTurnStartAction(startAction.getDelay(), animator.uiMessenger, animator.state);
 
             return new ExpandedAction(startTurn);
-    }
-
-
-    private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator animator) {
-        GameOverAction winAction = (GameOverAction) action;
-        MessageUiGameEndedAction gameEndedAction;
-        if (winAction.getTeam() < 0) {
-            gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true);
-        } else {
-            gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam());
         }
 
-        return new ExpandedAction(gameEndedAction);
-    }
+        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            UpdateCurrencyAction updateCurrency = (UpdateCurrencyAction) action;
 
-    private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator animator) {
-        DebugPointAction debugPointAction = (DebugPointAction) action;
 
-        DestroyAction<Entity> destroyAction = new DestroyAction<Entity>(debugPointAction.getDuration(), null, null, animator.root::remove);
+        }
 
-        SummonAction<Entity> summonAction = new SummonAction<Entity>(action.getDelay(), destroyAction::setTarget, () -> {
-            SpriteEntity entity;
-            if (debugPointAction.isCross()) {
-                entity = new SpriteEntity(IngameAssets.cross_marker);
-                entity.setSize(new Vector2(3, 3));
-                debugPointAction.getPos().sub(new IntVector2(1, 1));
+
+        private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            GameOverAction winAction = (GameOverAction) action;
+            MessageUiGameEndedAction gameEndedAction;
+            if (winAction.getTeam() < 0) {
+                gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true);
             } else {
-                entity = new SpriteEntity(IngameAssets.pixel);
+                gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam());
             }
-            entity.setRelPos(debugPointAction.getPos().toFloat());
-            entity.setColor(debugPointAction.getColor());
-            animator.root.add(entity);
-            return entity;
-        });
 
-        summonAction.setChildren(new Action[]{destroyAction});
+            return new ExpandedAction(gameEndedAction);
+        }
+
+        private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            DebugPointAction debugPointAction = (DebugPointAction) action;
+
+            DestroyAction<Entity> destroyAction = new DestroyAction<Entity>(debugPointAction.getDuration(), null, null, animator.root::remove);
+
+            SummonAction<Entity> summonAction = new SummonAction<Entity>(action.getDelay(), destroyAction::setTarget, () -> {
+                SpriteEntity entity;
+                if (debugPointAction.isCross()) {
+                    entity = new SpriteEntity(IngameAssets.cross_marker);
+                    entity.setSize(new Vector2(3, 3));
+                    debugPointAction.getPos().sub(new IntVector2(1, 1));
+                } else {
+                    entity = new SpriteEntity(IngameAssets.pixel);
+                }
+                entity.setRelPos(debugPointAction.getPos().toFloat());
+                entity.setColor(debugPointAction.getColor());
+                animator.root.add(entity);
+                return entity;
+            });
+
+            summonAction.setChildren(new Action[]{destroyAction});
 
 
-        return new ExpandedAction(summonAction, destroyAction);
+            return new ExpandedAction(summonAction, destroyAction);
+        }
+
+
+        private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            ScoreAction scoreAction = (ScoreAction) action;
+            //ui Action
+            MessageUiScoreAction indicateScoreChangeAction = new MessageUiScoreAction(0, animator.uiMessenger, scoreAction.getTeam(), scoreAction.getNewScore());
+
+            return new ExpandedAction(indicateScoreChangeAction);
+        }
+
+        //ToDo: Add game specific actions
+
     }
-
-
-    private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator animator) {
-        ScoreAction scoreAction = (ScoreAction) action;
-        //ui Action
-        MessageUiScoreAction indicateScoreChangeAction = new MessageUiScoreAction(0, animator.uiMessenger, scoreAction.getTeam(), scoreAction.getNewScore());
-
-        return new ExpandedAction(indicateScoreChangeAction);
-    }
-
-    //ToDo: Add game specific actions
-
-}
 
 
     /**
