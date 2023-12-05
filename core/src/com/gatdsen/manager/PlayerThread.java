@@ -71,11 +71,12 @@ public final class PlayerThread {
         isInitialized = true;
         this.isDebug = isDebug;
         Controller controller = createController();
+        StaticGameState staticState = new StaticGameState(state);
         switch (player.getType()) {
             case Human ->{
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
-                    player.init(new StaticGameState(state));
+                    player.init(staticState);
                 });
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_INIT_TIMEOUT);
             }
@@ -83,7 +84,7 @@ public final class PlayerThread {
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
                     ((Bot) player).setRnd(seed);
-                    player.init(new StaticGameState(state));
+                    player.init(staticState);
                 });
                 awaitBotFuture(future, controller, AI_EXECUTE_INIT_TIMEOUT);
             }
