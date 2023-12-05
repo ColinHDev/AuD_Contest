@@ -35,9 +35,9 @@ public final class ProcessPlayerHandler extends PlayerHandler {
     private ProcessCommunicator communicator;
     private Process process;
 
-    public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerId) {
-        super(playerClass);
-        remoteReferenceName = stubNamePrefix + gameId + "_" + playerId;
+    public ProcessPlayerHandler(Class<? extends Player> playerClass, int gameId, int playerIndex) {
+        super(playerClass, playerIndex);
+        remoteReferenceName = stubNamePrefix + gameId + "_" + playerIndex;
         createRegistry();
         createProcess();
     }
@@ -115,7 +115,7 @@ public final class ProcessPlayerHandler extends PlayerHandler {
     @Override
     public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
         try {
-            communicator.queueInformation(new GameInformation(gameState, isDebug, seed));
+            communicator.queueInformation(new GameInformation(gameState, isDebug, seed, playerIndex));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

@@ -8,6 +8,11 @@ import com.gatdsen.simulation.Tower;
 import com.gatdsen.ui.menu.Hud;
 import com.gatdsen.ui.menu.InGameScreen;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class InputHandler implements InputProcessor, com.gatdsen.manager.InputProcessor {
 
 
@@ -29,7 +34,8 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
 
     private final int KEY_TOGGLE_DEBUG = Input.Keys.F3;
 
-    private HumanPlayer currentPlayer;
+    /** Eine Liste aller HumanPlayer, die gerade am Zug sind, indexiert nach ihrer PlayerId */
+    private Map<Integer, HumanPlayer> currentPlayers = new HashMap<>();
     private Vector2 lastMousePosition;
     private Vector2 deltaMouseMove;
     private boolean leftMousePressed;
@@ -59,12 +65,11 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
 
-    public void activateTurn(HumanPlayer humanPlayer) {
-
-        currentPlayer = humanPlayer;
+    public void activateTurn(HumanPlayer player, int playerIndex) {
+        currentPlayers.put(playerIndex, player);
 
         if (uiMessenger != null) {
-            uiMessenger.startTurnTimer(humanPlayer.getTurnDuration(), true);
+            uiMessenger.startTurnTimer(player.getTurnDuration(), true);
         }
 
 //        System.out.printf("Activating turn for player %s\n", humanPlayer.toString());
@@ -74,15 +79,21 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
 
     public void endTurn() {
         turnInProgress = false;
-        currentPlayer.endCurrentTurn();
+        for (HumanPlayer player : currentPlayers.values()) {
+            player.endCurrentTurn();
+        }
+        currentPlayers.clear();
         if (uiMessenger != null) {
             uiMessenger.stopTurnTimer();
         }
     }
 
     public void tick(float delta) {
-        if (turnInProgress && currentPlayer != null) {
-            currentPlayer.tick(delta);
+        if (!turnInProgress) {
+            return;
+        }
+        for (HumanPlayer player : currentPlayers.values()) {
+            player.tick(delta);
         }
     }
 
@@ -94,13 +105,17 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
      */
     private void processMouseAim(int screenX, int screenY) {
         Vector2 worldCursorPos = ingameScreen.toWorldCoordinates(new Vector2(screenX, screenY));
-        if (currentPlayer != null) {
-            //ToDo do stuff
-        }
+        //ToDo do stuff
+        /*if (currentPlayer != null) {
+        }*/
     }
 
-    public void playerFieldLeftClicked(int team, int x, int y){
-        currentPlayer.getController().placeTower(x,y, Tower.TowerType.BASIC_TOWER);
+    public void playerFieldLeftClicked(int playerId, int x, int y) {
+        HumanPlayer currentPlayer = currentPlayers.get(playerId);
+        if (currentPlayer == null) {
+            return;
+        }
+        currentPlayer.placeTower(x, y, Tower.TowerType.BASIC_TOWER);
     }
 
     /**
@@ -172,9 +187,12 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
             case KEY_TOGGLE_SCORES:
                 hud.toggleScores();
             default:
-                if (turnInProgress && currentPlayer != null) {
-                    ingameScreen.skipTurnStart();
-                    currentPlayer.processKeyDown(keycode);
+                if (!turnInProgress) {
+                    break;
+                }
+                ingameScreen.skipTurnStart();
+                for (HumanPlayer player : currentPlayers.values()) {
+                    player.processKeyDown(keycode);
                 }
                 break;
         }
@@ -215,8 +233,11 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
                 cameraZoomPressed -= 1;
                 break;
             default:
-                if (turnInProgress && currentPlayer != null) {
-                    currentPlayer.processKeyUp(keycode);
+                if (!turnInProgress) {
+                    break;
+                }
+                for (HumanPlayer player : currentPlayers.values()) {
+                    player.processKeyUp(keycode);
                 }
                 break;
         }

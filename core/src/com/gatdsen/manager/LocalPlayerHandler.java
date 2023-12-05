@@ -17,8 +17,8 @@ public final class LocalPlayerHandler extends PlayerHandler {
     private final PlayerThread playerThread = new PlayerThread();
     private final InputProcessor inputGenerator;
 
-    public LocalPlayerHandler(Class<? extends Player> playerClass, InputProcessor inputGenerator) {
-        super(playerClass);
+    public LocalPlayerHandler(Class<? extends Player> playerClass, int playerIndex, InputProcessor inputGenerator) {
+        super(playerClass, playerIndex);
         this.inputGenerator = inputGenerator;
     }
 
@@ -41,7 +41,7 @@ public final class LocalPlayerHandler extends PlayerHandler {
     @Override
     public Future<?> init(GameState gameState, boolean isDebug, long seed, CommandHandler commandHandler) {
         return executor.execute(() -> {
-            BlockingQueue<Command> commands = playerThread.init(gameState, isDebug, seed);
+            BlockingQueue<Command> commands = playerThread.init(gameState, isDebug, seed, playerIndex);
             Command command;
             do {
                 try {

@@ -7,8 +7,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Provides an access-controlled interface to send commands to players
- * <p>
  * Ermöglicht die Kontrolle eines bestimmten Charakters.
  * Ist nur für einen einzelnen Zug gültig und deaktiviert sich nach Ende des aktuellen Zuges.
  */

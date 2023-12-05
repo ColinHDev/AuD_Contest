@@ -4,9 +4,11 @@ import com.gatdsen.manager.command.Command;
 import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.manager.player.PlayerHandler;
+import com.gatdsen.manager.player.data.PlayerInformation;
 import com.gatdsen.networking.ProcessPlayerHandler;
 import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.PlayerState;
 import com.gatdsen.simulation.Simulation;
 import com.gatdsen.simulation.action.ActionLog;
 import com.gatdsen.simulation.campaign.CampaignResources;
@@ -62,6 +64,7 @@ public class Game extends Executable {
             gameResults.setInitialState(state);
 
         playerHandlers = new PlayerHandler[config.teamCount];
+        Future<?>[] futures = new Future[playerHandlers.length];
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler playerHandler;
             Class<? extends Player> playerClass = config.players.get(playerIndex);
@@ -71,28 +74,22 @@ public class Game extends Executable {
                 if (!gui) {
                     throw new RuntimeException("HumanPlayers can't be used without GUI to capture inputs");
                 }
-                playerHandler = new LocalPlayerHandler(playerClass, inputGenerator);
+                playerHandler = new LocalPlayerHandler(playerClass, playerIndex, inputGenerator);
             }
 
             playerHandlers[playerIndex] = playerHandler;
             playerHandler.setPlayerController(simulation.getController(playerIndex));
-            Future<?> future = playerHandler.create(command -> command.run(playerHandler));
-            try {
-                future.get();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            futures[playerIndex] = playerHandler.create(command -> command.run(playerHandler));
+        }
+        awaitFutures(futures);
+        for (PlayerHandler playerHandler : playerHandlers) {
             seed += playerHandler.getSeedModifier();
         }
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler playerHandler = playerHandlers[playerIndex];
-            Future<?> future = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
-            try {
-                future.get();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            futures[playerIndex] = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
         }
+        awaitFutures(futures);
         gameResults.setPlayerNames(getPlayerNames());
         config = null;
     }
@@ -142,7 +139,15 @@ public class Game extends Executable {
                     }
             }
 
+            PlayerState[] playerStates = state.getPlayerStates();
+            Future<?>[] futures = new Future[playerHandlers.length];
             for (int playerIndex = 0; playerIndex < playerHandlers.length; playerIndex++) {
+                // Wenn der PlayerState des Spielers deaktiviert ist, da er bspw. keine Leben mehr hat oder
+                // disqualifiziert wurde, wird der Spieler übersprungen und dessen executeTurn() nicht aufgerufen.
+                if (playerStates[playerIndex].isDeactivated()) {
+                    continue;
+                }
+
                 ActionLog firstLog = simulation.clearAndReturnActionLog();
                 if (saveReplay)
                     gameResults.addActionLog(firstLog);
@@ -152,7 +157,7 @@ public class Game extends Executable {
 
                 PlayerHandler playerHandler = playerHandlers[playerIndex];
                 playerHandler.setPlayerController(simulation.getController(playerIndex));
-                Future<?> future = playerHandler.executeTurn(
+                futures[playerIndex] = playerHandler.executeTurn(
                         state,
                         (Command command) -> {
                             // Contains action produced by the commands execution
@@ -178,11 +183,10 @@ public class Game extends Executable {
                     //Contains Action produced by entering new turn
                     animationLogProcessor.animate(log);
                 }
-                try {
-                    future.get();
-                } catch (InterruptedException|ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
+            }
+            awaitFutures(futures);
+            if (inputGenerator != null) {
+                inputGenerator.endTurn();
             }
             //Contains actions produced by ending the turn (after last command is executed)
             ActionLog finalLog = simulation.endTurn();
@@ -219,15 +223,25 @@ public class Game extends Executable {
     }
 
     protected String[] getPlayerNames() {
-        // TODO
-        /*String[] names = new String[players.length];
-        int i = 0;
-        for (Player p : players) {
-            names[i] = p.getName();
-            i++;
+        String[] names = new String[playerHandlers.length];
+        for (int i = 0; i < playerHandlers.length; i++) {
+            PlayerInformation information = playerHandlers[i].getPlayerInformation();
+            names[i] = information != null ? information.getName() : "Player " + i;
         }
-        return names;*/
-        return new String[]{"Player 1", "Player 2"};
+        return names;
+    }
+
+    private void awaitFutures(Future<?>[] futures) {
+        for (Future<?> future : futures) {
+            if (future == null) {
+                continue;
+            }
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public float[] getScores() {

@@ -66,7 +66,7 @@ public class BotProcess {
                 if (!playerThread.isCreated()) {
                     throw new RuntimeException("Received GameInformation before CreatePlayerInformation.");
                 }
-                commands = playerThread.init(gameInformation.state(), gameInformation.isDebug(), gameInformation.seed());
+                commands = playerThread.init(gameInformation.state(), gameInformation.isDebug(), gameInformation.seed(), gameInformation.playerIndex());
             } else if (information instanceof TurnInformation turnInformation) {
                 if (!playerThread.isInitialized()) {
                     throw new RuntimeException("Received TurnInformation before GameInformation.");

@@ -6,11 +6,19 @@ import java.io.Serializable;
 
 public class PlayerInformation implements Serializable {
 
-    public final Player.PlayerType type;
-    public final String name;
+    protected final Player.PlayerType type;
+    protected final String name;
 
     public PlayerInformation(Player.PlayerType type, String name) {
         this.type = type;
         this.name = name;
+    }
+
+    public Player.PlayerType getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
     }
 }
