@@ -8,9 +8,7 @@ import com.gatdsen.simulation.Tower;
 import com.gatdsen.ui.menu.Hud;
 import com.gatdsen.ui.menu.InGameScreen;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InputHandler implements InputProcessor, com.gatdsen.manager.InputProcessor {
@@ -41,7 +39,6 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     private boolean leftMousePressed;
     private boolean rightMousePressed;
     private boolean turnInProgress = false;
-
     private UiMessenger uiMessenger;
 
     //Time between turns
@@ -110,6 +107,13 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         }*/
     }
 
+    /**
+     * Wird aufgerufen, wenn ein Spieler auf das Spielfeld links klickt, um einen Turm zu platzieren
+     *
+     * @param playerId Die ID des Spielers, der den Linksklick ausgeführt hat
+     * @param x Die x-Koordinate des Spielfelds
+     * @param y Die y-Koordinate des Spielfelds
+     */
     public void playerFieldLeftClicked(int playerId, int x, int y) {
         HumanPlayer currentPlayer = currentPlayers.get(playerId);
         if (currentPlayer == null) {
@@ -117,12 +121,31 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         }
         currentPlayer.placeTower(x, y, Tower.TowerType.BASIC_TOWER);
     }
+
+    /**
+     * Wird aufgerufen, wenn ein Spieler auf das Spielfeld rechts klickt, um einen Turm zu verbessern
+     *
+     * @param playerId Die ID des Spielers, der den Rechtsklick ausgeführt hat
+     * @param x Die x-Koordinate des Spielfelds
+     * @param y Die y-Koordinate des Spielfelds
+     */
     public void playerFieldRightClicked(int playerId, int x, int y){
         HumanPlayer currentPlayer = currentPlayers.get(playerId);
         if (currentPlayer == null) {
             return;
         }
         currentPlayer.upgradeTower(x,y);
+    }
+
+    /**
+     * Beendet die Runde für die menschlichen Spieler
+     */
+    public void endPlayersTurn() {
+        for (HumanPlayer player : currentPlayers.values()) {
+            player.endCurrentTurn();
+        }
+
+       currentPlayers.clear();
     }
 
     /**
