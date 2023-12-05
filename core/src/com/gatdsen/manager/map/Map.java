@@ -1,20 +1,20 @@
-package com.gatdsen.ui.menu;
+package com.gatdsen.manager.map;
 
-public class GameMap {
+public class Map {
 
 	private final String mapName;
 	private final int numberOfSpawnpoints;
 	private final int numberOfTeams;
 
 
-	public GameMap(String name, int spawnpoints,int numberOfTeams){
+	public Map(String name, int spawnpoints, int numberOfTeams){
 		this.mapName=name;
 		this.numberOfSpawnpoints=spawnpoints;
 		this.numberOfTeams = numberOfTeams;
 
 	}
 
-	public GameMap(String name,int spawnpoints){
+	public Map(String name, int spawnpoints){
 		this(name,spawnpoints,0);
 	}
 
