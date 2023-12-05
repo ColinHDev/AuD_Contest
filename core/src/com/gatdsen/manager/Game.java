@@ -63,6 +63,7 @@ public class Game extends Executable {
             gameResults.setInitialState(state);
 
         playerHandlers = new PlayerHandler[config.teamCount];
+        Future<?>[] futures = new Future[playerHandlers.length];
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler playerHandler;
             Class<? extends Player> playerClass = config.players.get(playerIndex);
@@ -77,23 +78,17 @@ public class Game extends Executable {
 
             playerHandlers[playerIndex] = playerHandler;
             playerHandler.setPlayerController(simulation.getController(playerIndex));
-            Future<?> future = playerHandler.create(command -> command.run(playerHandler));
-            try {
-                future.get();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            futures[playerIndex] = playerHandler.create(command -> command.run(playerHandler));
+        }
+        awaitFutures(futures);
+        for (PlayerHandler playerHandler : playerHandlers) {
             seed += playerHandler.getSeedModifier();
         }
         for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
             PlayerHandler playerHandler = playerHandlers[playerIndex];
-            Future<?> future = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
-            try {
-                future.get();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            futures[playerIndex] = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
         }
+        awaitFutures(futures);
         gameResults.setPlayerNames(getPlayerNames());
         config = null;
     }
@@ -144,6 +139,7 @@ public class Game extends Executable {
             }
 
             PlayerState[] playerStates = state.getPlayerStates();
+            Future<?>[] futures = new Future[playerHandlers.length];
             for (int playerIndex = 0; playerIndex < playerHandlers.length; playerIndex++) {
                 // Wenn der PlayerState des Spielers deaktiviert ist, da er bspw. keine Leben mehr hat oder
                 // disqualifiziert wurde, wird der Spieler übersprungen und dessen executeTurn() nicht aufgerufen.
@@ -160,7 +156,7 @@ public class Game extends Executable {
 
                 PlayerHandler playerHandler = playerHandlers[playerIndex];
                 playerHandler.setPlayerController(simulation.getController(playerIndex));
-                Future<?> future = playerHandler.executeTurn(
+                futures[playerIndex] = playerHandler.executeTurn(
                         state,
                         (Command command) -> {
                             // Contains action produced by the commands execution
@@ -186,12 +182,8 @@ public class Game extends Executable {
                     //Contains Action produced by entering new turn
                     animationLogProcessor.animate(log);
                 }
-                try {
-                    future.get();
-                } catch (InterruptedException|ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
             }
+            awaitFutures(futures);
             //Contains actions produced by ending the turn (after last command is executed)
             ActionLog finalLog = simulation.endTurn();
             if (saveReplay) {
@@ -236,6 +228,19 @@ public class Game extends Executable {
         }
         return names;*/
         return new String[]{"Player 1", "Player 2"};
+    }
+
+    private void awaitFutures(Future<?>[] futures) {
+        for (Future<?> future : futures) {
+            if (future == null) {
+                continue;
+            }
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public float[] getScores() {
