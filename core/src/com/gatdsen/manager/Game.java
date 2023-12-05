@@ -7,6 +7,7 @@ import com.gatdsen.manager.player.PlayerHandler;
 import com.gatdsen.networking.ProcessPlayerHandler;
 import com.gatdsen.simulation.PlayerController;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.PlayerState;
 import com.gatdsen.simulation.Simulation;
 import com.gatdsen.simulation.action.ActionLog;
 import com.gatdsen.simulation.campaign.CampaignResources;
@@ -142,7 +143,14 @@ public class Game extends Executable {
                     }
             }
 
+            PlayerState[] playerStates = state.getPlayerStates();
             for (int playerIndex = 0; playerIndex < playerHandlers.length; playerIndex++) {
+                // Wenn der PlayerState des Spielers deaktiviert ist, da er bspw. keine Leben mehr hat oder
+                // disqualifiziert wurde, wird der Spieler übersprungen und dessen executeTurn() nicht aufgerufen.
+                if (playerStates[playerIndex].isDeactivated()) {
+                    continue;
+                }
+
                 ActionLog firstLog = simulation.clearAndReturnActionLog();
                 if (saveReplay)
                     gameResults.addActionLog(firstLog);
