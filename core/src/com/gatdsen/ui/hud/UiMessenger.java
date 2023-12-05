@@ -74,4 +74,24 @@ public class UiMessenger {
 	public void teamScore(int team, float score) {
 		hud.adjustScores(team, score);
 	}
+
+	/**
+	 * Setzt das Guthaben der Bank für einen bestimmten Spieler
+	 *
+	 * @param playerID Die ID des Spielers, dessen Bankguthaben aktualisiert wird
+	 * @param balance   Der neue Kontostand für den Spieler
+	 */
+	public void setBankBalance (int playerID, int balance){
+		hud.setBankBalance(playerID,balance);
+	}
+
+	/**
+	 * Aktualisiert die Leben eines bestimmten Spielers im HUD
+	 *
+	 * @param playerID Die ID des Spielers, dessen Leben aktualisiert wird
+	 * @param health   Der neue Lebenswert für den Spieler
+	 */
+	public void setPlayerHealth(int playerID, int health){
+		hud.setPlayerHealth(playerID, health);
+	}
 }

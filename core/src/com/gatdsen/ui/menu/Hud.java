@@ -47,9 +47,14 @@ public class Hud implements Disposable {
     private TextButton nextRoundButton;
     private final Skin skin = AssetContainer.MainMenuAssets.skin;
     Viewport hudViewport;
+    private int player0Balance;
+    private int player1Balance;
+    private ProgressBar healthBarPlayer0;
+    private ProgressBar healthBarPlayer1;
 
     /**
      * Initialisiert das HUD-Objekt
+     *
      * @param ingameScreen Die Instanz der InGameScreen-Klasse
      * @param gameViewport Die Viewport-Instanz für das Spiel
      */
@@ -78,8 +83,9 @@ public class Hud implements Disposable {
 
     /**
      * Erstellt einen InputHandler und gibt ihn zurück
+     *
      * @param ingameScreen Die Instanz der InGameScreen-Klasse
-     * @param h Das Hud-Objekt
+     * @param h            Das Hud-Objekt
      * @return Ein neues InputHandler-Objekt
      */
     private InputHandler setupInputHandler(InGameScreen ingameScreen, Hud h) {
@@ -137,25 +143,22 @@ public class Hud implements Disposable {
     private void layoutHudElements() {
         float padding = 10;
 
-        int playerBalance = 100;
-        int remainingTime = 60;
-
-
-        ProgressBar healthBarPlayer1 = new ProgressBar(0, 100, 1, false, skin);
-        healthBarPlayer1.setValue(100);
-
-        Label player1BalanceLabel = new Label("$" + playerBalance, skin);
-        ProgressBar healthBarPlayer0 = new ProgressBar(0, 100, 1, false, skin);
+        healthBarPlayer0 = new ProgressBar(0, 100, 1, false, skin);
         healthBarPlayer0.setValue(100);
 
-        Label player0BalanceLabel = new Label("$" + playerBalance, skin);
+        Label player0BalanceLabel = new Label("$" + player0Balance, skin);
+
+        healthBarPlayer1 = new ProgressBar(0, 100, 1, false, skin);
+        healthBarPlayer1.setValue(100);
+
+        Label player1BalanceLabel = new Label("$" + player1Balance, skin);
+
 
         Label invisibleLabel = new Label("", skin);
         layoutTable.add(invisibleLabel);
         layoutTable.add(invisibleLabel);
         layoutTable.add(invisibleLabel);
-        Label timerLabel = new Label("Runden Zeit: " + remainingTime, skin);
-        layoutTable.add(timerLabel).pad(padding).center().row();
+        layoutTable.add(turnTimer).row();
 
         nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
@@ -168,7 +171,7 @@ public class Hud implements Disposable {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //nextRoundButton.setTouchable(Touchable.disabled);
-                inputHandler.endPlayersTurn();
+                inputHandler.endTurn();
                 System.out.println("Neue Runde startet");
 
             }
@@ -181,14 +184,13 @@ public class Hud implements Disposable {
         layoutTable.add(healthBarPlayer1).pad(padding);
         layoutTable.add(player1BalanceLabel).pad(padding);
 
-
     }
 
     /**
      * Erstellt einen FastForwardButton und gibt ihn zurück
      *
      * @param uiMessenger Der UiMessenger für die Kommunikation
-     * @param speedUp Die Geschwindigkeitssteigerung für die Schnellvorlauf-Funktion
+     * @param speedUp     Die Geschwindigkeitssteigerung für die Schnellvorlauf-Funktion
      * @return Ein neues FastForwardButton-Objekt
      */
     private FastForwardButton setupFastForwardButton(UiMessenger uiMessenger, float speedUp) {
@@ -252,7 +254,7 @@ public class Hud implements Disposable {
     /**
      * Zeichnet das gegebene Bildpopup und positioniert es entsprechend den Parametern
      *
-     * @param image Das zu zeichnende Bildpopup
+     * @param image  Das zu zeichnende Bildpopup
      * @param center Bestimmt, ob das Popup zentriert oder oben platziert wird
      */
     public void drawImagePopup(ImagePopup image, boolean center) {
@@ -273,7 +275,7 @@ public class Hud implements Disposable {
     /**
      * Ändert die Größe des Viewports basierend auf der angegebenen Breite und Höhe
      *
-     * @param width Die neue Breite des Viewports
+     * @param width  Die neue Breite des Viewports
      * @param height Die neue Höhe des Viewports
      */
     public void resizeViewport(int width, int height) {
@@ -370,7 +372,7 @@ public class Hud implements Disposable {
     /**
      * Passt die Punktzahl für das angegebene Team im HUD an
      *
-     * @param team Das Team, dessen Punktzahl angepasst wird
+     * @param team  Das Team, dessen Punktzahl angepasst wird
      * @param score Die neue Punktzahl für das Team
      */
     public void adjustScores(int team, float score) {
@@ -384,8 +386,8 @@ public class Hud implements Disposable {
     /**
      * Zeigt das Ergebnis des Spiels an, einschließlich eines Hintergrundbilds und Popup-Fensters
      *
-     * @param won Gibt an, ob das Team gewonnen hat
-     * @param team Das betroffene Team
+     * @param won    Gibt an, ob das Team gewonnen hat
+     * @param team   Das betroffene Team
      * @param isDraw Gibt an, ob das Spiel unentschieden endete
      */
     public void gameEnded(boolean won, int team, boolean isDraw) {
@@ -428,10 +430,10 @@ public class Hud implements Disposable {
     /**
      * Startet ein neues Spiel mit den gegebenen Parametern
      *
-     * @param gameState Der Zustand des neuen Spiels
+     * @param gameState             Der Zustand des neuen Spiels
      * @param arrayPositionTileMaps Die Positionen der TileMaps im Array
-     * @param tileSize Die Größe der Tiles
-     * @param tileMap Die TileMap des Spiels
+     * @param tileSize              Die Größe der Tiles
+     * @param tileMap               Die TileMap des Spiels
      */
     public void newGame(GameState gameState, Vector2[] arrayPositionTileMaps, int tileSize, TileMap tileMap) {
         Group group = new Group();
@@ -458,7 +460,7 @@ public class Hud implements Disposable {
     /**
      * Erstellt und gibt einen TextButton für die TileMap eines Teams zurück
      *
-     * @param team Das Team, zu dem der Button gehört
+     * @param team    Das Team, zu dem der Button gehört
      * @param tileMap Die TileMap des Spiels
      * @return Der erstellte TextButton
      */
@@ -500,5 +502,26 @@ public class Hud implements Disposable {
      */
     public void show() {
         Gdx.input.setInputProcessor(stage);
+    }
+
+    /**
+     * Setzt das Bankguthaben für den angegebenen Spieler
+     *
+     * @param playerID Die ID des Spielers (aktuell nur 0 oder 1)
+     * @param balance Das neue Bankguthaben
+     */
+    public void setBankBalance(int playerID, int balance) {
+        if (playerID == 0) {
+            player0Balance = balance;
+        } else if (playerID == 1) {
+            player1Balance = balance;
+        }
+    }
+    public void setPlayerHealth(int playerID, int health){
+        if (playerID == 0) {
+            healthBarPlayer0.setValue(health);
+        } else if (playerID == 1) {
+            healthBarPlayer1.setValue(health);
+        }
     }
 }

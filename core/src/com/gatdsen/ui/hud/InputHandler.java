@@ -138,17 +138,6 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
     /**
-     * Beendet die Runde für die menschlichen Spieler
-     */
-    public void endPlayersTurn() {
-        for (HumanPlayer player : currentPlayers.values()) {
-            player.endCurrentTurn();
-        }
-
-       currentPlayers.clear();
-    }
-
-    /**
      * Allows the camera to be moved with the mouse by using the position of the new and old mouse positions, to calculate the distance
      * to move.
      *
