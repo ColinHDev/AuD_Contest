@@ -1,10 +1,8 @@
 package com.gatdsen.manager;
 
-import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.ui.hud.UiMessenger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Executable {
 
@@ -31,8 +29,6 @@ public abstract class Executable {
     protected final AnimationLogProcessor animationLogProcessor;
 
     protected final boolean gui;
-
-    private final List<HumanPlayer> humanList = new ArrayList<>();
 
     private Thread simulationThread;
     protected final UiMessenger uiMessenger;
@@ -67,10 +63,6 @@ public abstract class Executable {
 
     public void dispose() {
         pendingShutdown = true;
-    }
-
-    public List<HumanPlayer> getHumanList() {
-        return humanList;
     }
 
     public Status getStatus() {
@@ -128,7 +120,6 @@ public abstract class Executable {
                 ", inputGenerator=" + inputGenerator +
                 ", animationLogProcessor=" + animationLogProcessor +
                 ", gui=" + gui +
-                ", humanList=" + humanList +
                 ", simulationThread=" + simulationThread +
                 ", uiMessenger=" + uiMessenger +
                 ", pendingShutdown=" + pendingShutdown +
