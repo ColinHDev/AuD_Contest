@@ -95,7 +95,14 @@ public class Hud implements Disposable {
         Table table = new Table(AssetContainer.MainMenuAssets.skin);
 
         table.setFillParent(true);
-        table.center();
+        table.columnDefaults(0).width(100);
+        table.columnDefaults(1).width(100);
+        table.columnDefaults(2).width(100);
+        table.columnDefaults(3).width(100);
+        table.columnDefaults(4).width(100);
+        table.columnDefaults(5).width(100);
+        table.columnDefaults(6).width(100);
+        table.center().top();
         return table;
     }
 
@@ -130,7 +137,27 @@ public class Hud implements Disposable {
     private void layoutHudElements() {
         float padding = 10;
 
-        nextRoundButton = new TextButton("Runde beenden", skin);
+        int playerBalance = 100;
+        int remainingTime = 60;
+
+
+        ProgressBar healthBarPlayer1 = new ProgressBar(0, 100, 1, false, skin);
+        healthBarPlayer1.setValue(100);
+
+        Label player1BalanceLabel = new Label("$" + playerBalance, skin);
+        ProgressBar healthBarPlayer0 = new ProgressBar(0, 100, 1, false, skin);
+        healthBarPlayer0.setValue(100);
+
+        Label player0BalanceLabel = new Label("$" + playerBalance, skin);
+
+        Label invisibleLabel = new Label("", skin);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(invisibleLabel);
+        Label timerLabel = new Label("Runden Zeit: " + remainingTime, skin);
+        layoutTable.add(timerLabel).pad(padding).center().row();
+
+        nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
             /**
              * Wird aufgerufen, wenn der Button geklickt wird
@@ -146,11 +173,15 @@ public class Hud implements Disposable {
 
             }
         });
-        //set a fixed size for the turnPopupContainer, so it will not change the layout, once the turn Sprite is added
-        //layoutTable.row();
-        layoutTable.add(nextRoundButton).pad(padding).left().bottom().width(100);
+        layoutTable.add(healthBarPlayer0).pad(padding);
+        layoutTable.add(player0BalanceLabel).pad(padding);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(nextRoundButton);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(healthBarPlayer1).pad(padding);
+        layoutTable.add(player1BalanceLabel).pad(padding);
 
-        //layoutTable.add(turnTimer).pad(padding).right().bottom();
+
     }
 
     /**
@@ -191,7 +222,6 @@ public class Hud implements Disposable {
      * Zeichnet das HUD und die ScoreView
      */
     public void draw() {
-        //apply the viewport, so the glViewport is using the correct settings for drawing
 
         stage.getViewport().apply(true);
         stage.draw();
@@ -201,7 +231,7 @@ public class Hud implements Disposable {
     }
 
     /**
-     * Aktualisiert den InputHandler und die Stage basierend auf der Zeitdelta
+     * Aktualisiert den InputHandler und die Stage basierend auf dem Zeitdelta
      *
      * @param delta Das Zeitdelta seit dem letzten Frame
      */
