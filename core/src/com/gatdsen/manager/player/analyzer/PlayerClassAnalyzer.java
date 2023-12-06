@@ -32,7 +32,10 @@ public final class PlayerClassAnalyzer {
      */
     private static final String[] ILLEGAL_PACKAGES = {
             // gaTDsen Pakete, die nicht von Bots importiert werden sollten
-            "com.gatdsen.networking", "com.gatdsen.animation", "com.gatdsen.ui",
+            "com.gatdsen.networking",
+            "com.gatdsen.manager.command", "com.gatdsen.manager.concurrent", "com.gatdsen.manager.map",
+            "com.gatdsen.animation",
+            "com.gatdsen.ui",
             // Threading-Pakete
             "java.util.concurrent",
             // Reflection-Pakete

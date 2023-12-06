@@ -69,13 +69,14 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
     public void endTurn() {
-        turnInProgress = false;
-        for (HumanPlayer player : currentPlayers.values()) {
-            player.endCurrentTurn();
-        }
-        currentPlayers.clear();
-        if (uiMessenger != null) {
-            uiMessenger.stopTurnTimer();
+        if (turnInProgress) {
+            for (HumanPlayer player : currentPlayers.values()) {
+                player.endCurrentTurn();
+            }
+            currentPlayers.clear();
+            if (uiMessenger != null) {
+                uiMessenger.stopTurnTimer();
+            }
         }
     }
 
