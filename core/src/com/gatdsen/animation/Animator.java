@@ -268,7 +268,8 @@ public class Animator implements Screen, AnimationLogProcessor {
 
         private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             ProjectileAction projectileAction = (ProjectileAction) action;
-            Path path = projectileAction.getPath();
+            TileMap board = animator.playerMaps[projectileAction.getTeam()];
+            Path path = new AnimatorPath(projectileAction.getPath(), board.getPos(), board.getTileSize());
 
             // Target muss null sein, da das Projektil dem converter nicht bekannt ist. Es wird erst in summonProjectile erstellt.
             MoveAction moveProjectile = new MoveAction(0, null, path.getDuration(), path);
@@ -283,6 +284,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                 destroyProjectile.setTarget(projectile);
             }, () -> {
                 Entity projectile = Projectiles.summon(projectileAction.getType());
+                projectile.setRelPos(projectileAction.getPath().getPos(0));
                 animator.root.add(projectile);
                 return projectile;
             });
