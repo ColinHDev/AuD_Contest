@@ -478,12 +478,10 @@ public class Hud implements Disposable {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 int posX = (int) ((x / tileMap.getTileSize()) * 10);
                 int posY = (int) ((y / tileMap.getTileSize()) * 10);
-                if (button == Input.Buttons.RIGHT) {
-                    System.out.println("Rechtsklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                if (button == Input.Buttons.RIGHT && tileMap.getTile(posX, posY) == 0) {
                     inputHandler.playerFieldRightClicked(team, posX, posY);
                     return true;
-                } else if (button == Input.Buttons.LEFT) {
-                    System.out.println("Linksklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                } else if (button == Input.Buttons.LEFT && tileMap.getTile(posX, posY) == 0) {
                     inputHandler.playerFieldLeftClicked(team, posX, posY);
                     return true;
                 }
