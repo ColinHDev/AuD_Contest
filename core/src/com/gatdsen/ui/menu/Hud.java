@@ -166,7 +166,6 @@ public class Hud implements Disposable {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 inputHandler.endTurn();
-                System.out.println("Neue Runde startet");
             }
         });
 
