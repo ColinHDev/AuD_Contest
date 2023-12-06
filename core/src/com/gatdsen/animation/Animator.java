@@ -2,15 +2,16 @@ package com.gatdsen.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.action.Action;
 import com.gatdsen.animation.action.*;
+import com.gatdsen.animation.action.uiActions.MessageUiCurrencyAction;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
+import com.gatdsen.animation.action.uiActions.MessageUiUpdateHealthAction;
 import com.gatdsen.animation.entity.Entity;
 import com.gatdsen.animation.entity.ParticleEntity;
 import com.gatdsen.animation.entity.SpriteEntity;
@@ -113,10 +114,10 @@ public class Animator implements Screen, AnimationLogProcessor {
                 new HashMap<Class<?>, ActionConverter>() {
                     {
                         put(InitAction.class, ((simAction, animator) -> new ExpandedAction(new IdleAction(0, 0))));
-                        put(TurnStartAction.class, ActionConverters::convertTurnStartAction);
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+                        put(UpdateCurrencyAction.class, ActionConverters::convertUpdateCurrencyAction);
 
                         // Gegner Actions
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
@@ -341,14 +342,28 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(destroyTower);
         }
 
-        private static ExpandedAction convertTurnStartAction(com.gatdsen.simulation.action.Action action, Animator animator) {
-            TurnStartAction startAction = (TurnStartAction) action;
+        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            UpdateCurrencyAction updateCurrency = (UpdateCurrencyAction) action;
 
-            //ToDo: make necessary changes on Turnstart
+            MessageUiCurrencyAction currencyAction = new MessageUiCurrencyAction(
+                    updateCurrency.getDelay(),
+                    animator.uiMessenger,
+                    updateCurrency.getTeam(),
+                    updateCurrency.getNewCurrency());
 
-            //ui Action
+            return new ExpandedAction(currencyAction);
+        }
 
-            return new ExpandedAction(new IdleAction(0, 0));
+        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            UpdateHealthAction updateHealth = (UpdateHealthAction) action;
+
+            MessageUiUpdateHealthAction setHealth = new MessageUiUpdateHealthAction(
+                    updateHealth.getDelay(),
+                    animator.uiMessenger,
+                    updateHealth.getTeam(),
+                    updateHealth.getNewHealth());
+
+            return new ExpandedAction(setHealth);
         }
 
 
@@ -358,7 +373,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             if (winAction.getTeam() < 0) {
                 gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true);
             } else {
-                gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam(), Color.CYAN);
+                gameEndedAction = new MessageUiGameEndedAction(0, animator.uiMessenger, true, winAction.getTeam());
             }
 
             return new ExpandedAction(gameEndedAction);

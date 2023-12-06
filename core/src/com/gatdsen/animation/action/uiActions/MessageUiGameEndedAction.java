@@ -13,24 +13,21 @@ public class MessageUiGameEndedAction extends MessageUiAction{
 	boolean draw;
 	int team;
 
-	Color color;
-	public MessageUiGameEndedAction(float start, UiMessenger uiMessenger, boolean won, int team,Color color) {
+	public MessageUiGameEndedAction(float start, UiMessenger uiMessenger, boolean won, int team) {
 		super(start, uiMessenger);
 		this.won = won;
 		this.team = team;
-		this.color = color;
 
 	}
 	public MessageUiGameEndedAction(float start,UiMessenger uiMessenger,boolean isDraw){
 		super(start, uiMessenger);
 		draw = isDraw;
-		this.color = null;
 
 	}
 
 	@Override
 	protected void runAction(float oldTime, float current) {
-		uiMessenger.gameEnded(won,team,draw,color);
+		uiMessenger.gameEnded(won,team,draw);
 		endAction(oldTime);
 	}
 }
