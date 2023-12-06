@@ -4,7 +4,6 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.Simulation;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -133,7 +132,7 @@ public class TestBotMissTurn {
             executedTurns++;
             if (executedTurns == 1) {
                 long startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < PlayerThread.AI_EXECUTE_TURN_TIMEOUT * 1.5);
+                while (System.currentTimeMillis() - startTime < PlayerThread.BOT_EXECUTE_TURN_TIMEOUT * 1.5);
             }
         }
     }

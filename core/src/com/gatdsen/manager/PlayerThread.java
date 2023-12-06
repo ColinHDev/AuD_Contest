@@ -17,10 +17,10 @@ import java.util.concurrent.*;
  */
 public final class PlayerThread {
 
-    private static final int AI_EXECUTE_GRACE_PERIODE = 100;
-    public static final int AI_EXECUTE_INIT_TIMEOUT = 1000;
-    public static final int AI_EXECUTE_TURN_TIMEOUT = 500 + AI_EXECUTE_GRACE_PERIODE;
-    private static final int AI_CONTROLLER_USES = 200;
+    private static final int BOT_EXECUTE_GRACE_PERIODE = 100;
+    public static final int BOT_EXECUTE_INIT_TIMEOUT = 1000;
+    public static final int BOT_EXECUTE_TURN_TIMEOUT = 500 + BOT_EXECUTE_GRACE_PERIODE;
+    private static final int BOT_CONTROLLER_USES = 200;
 
     public static final int HUMAN_EXECUTE_INIT_TIMEOUT = 30000;
     public static final int HUMAN_EXECUTE_TURN_TIMEOUT = 60000;
@@ -87,7 +87,7 @@ public final class PlayerThread {
                     ((Bot) player).setRandomSeed(seed);
                     player.init(staticState);
                 });
-                awaitBotFuture(future, controller, AI_EXECUTE_INIT_TIMEOUT);
+                awaitBotFuture(future, controller, BOT_EXECUTE_INIT_TIMEOUT);
             }
         }
         return controller.commands;
@@ -107,7 +107,7 @@ public final class PlayerThread {
             });
             case BOT -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
-                awaitBotFuture(future, controller, AI_EXECUTE_TURN_TIMEOUT);
+                awaitBotFuture(future, controller, BOT_EXECUTE_TURN_TIMEOUT);
             });
         };
         futureExecutor.start();
@@ -180,7 +180,7 @@ public final class PlayerThread {
 
     private Controller createController() {
         return new Controller(
-                player.getType() == Player.PlayerType.HUMAN ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
+                player.getType() == Player.PlayerType.HUMAN ? HUMAN_CONTROLLER_USES : BOT_CONTROLLER_USES
         );
     }
 
