@@ -15,6 +15,7 @@ public class GameEnemy extends AnimatedEntity {
         super(gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_IDLE.ordinal()]);
         this.level = level;
         healthbar = new Healthbar(100);
+        this.add(healthbar);
 
     }
 }
