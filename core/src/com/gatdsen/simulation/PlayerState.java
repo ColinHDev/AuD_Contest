@@ -310,7 +310,6 @@ public class PlayerState implements Serializable {
         while (actual.getPrev() != null) {
             List<Enemy> enemiesCopy = new ArrayList<>(actual.getEnemies());
             for (Enemy enemy : enemiesCopy) {
-                System.out.println("Test");
                 head = enemy.move(head);
             }
             actual = actual.getPrev();
