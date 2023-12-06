@@ -156,9 +156,10 @@ public class GADSAssetManager {
 
         IngameAssets.gameCharacterAnimations = new AtlasAnimation[GameCharacterAnimationType.values().length];
 
-        //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catIdle"), Animation.PlayMode.LOOP);
+        //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
+        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
 
-       // IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catWalking"), Animation.PlayMode.LOOP);
+        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("enemy/bigMouse_idle_left"), Animation.PlayMode.LOOP);
 
         // Provisorium ToDo: entfernen
         IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");

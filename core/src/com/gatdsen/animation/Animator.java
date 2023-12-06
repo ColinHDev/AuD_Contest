@@ -130,9 +130,8 @@ public class Animator implements Screen, AnimationLogProcessor {
                     }
                 };
 
-
         public static Action convert(com.gatdsen.simulation.action.Action simAction, Animator animator) {
-//            System.out.println("Converting " + simAction.getClass());
+            System.out.println("Converting " + simAction.getClass());
             ExpandedAction expandedAction = map.getOrDefault(simAction.getClass(), (v, w) -> {
                         System.err.println("Missing Converter for Action of type " + simAction.getClass());
                         return new ExpandedAction(new IdleAction(simAction.getDelay(), 0));
@@ -339,6 +338,8 @@ public class Animator implements Screen, AnimationLogProcessor {
         this.batch = new SpriteBatch();
         this.root = new Entity();
 
+        towers = new GameTower[2][100][100];
+        enemies = new GameEnemy[2][100][100];
         setupView(viewport);
 
         setup();

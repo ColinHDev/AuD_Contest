@@ -142,17 +142,16 @@ public class Hud implements Disposable {
      */
     private void layoutHudElements() {
         float padding = 10;
-
-        healthBarPlayer0 = new ProgressBar(0, 100, 1, false, skin);
-        healthBarPlayer0.setValue(100);
+        int health = 300;
 
         Label player0BalanceLabel = new Label("$" + player0Balance, skin);
 
-        healthBarPlayer1 = new ProgressBar(0, 100, 1, false, skin);
-        healthBarPlayer1.setValue(100);
-
         Label player1BalanceLabel = new Label("$" + player1Balance, skin);
 
+        healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
+        healthBarPlayer0.setValue(health);
+        healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
+        healthBarPlayer1.setValue(health);
 
         Label invisibleLabel = new Label("", skin);
         layoutTable.add(invisibleLabel);
@@ -170,10 +169,8 @@ public class Hud implements Disposable {
              */
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //nextRoundButton.setTouchable(Touchable.disabled);
                 inputHandler.endTurn();
                 System.out.println("Neue Runde startet");
-
             }
         });
         layoutTable.add(healthBarPlayer0).pad(padding);
@@ -183,7 +180,6 @@ public class Hud implements Disposable {
         layoutTable.add(invisibleLabel);
         layoutTable.add(healthBarPlayer1).pad(padding);
         layoutTable.add(player1BalanceLabel).pad(padding);
-
     }
 
     /**
@@ -508,7 +504,7 @@ public class Hud implements Disposable {
      * Setzt das Bankguthaben für den angegebenen Spieler
      *
      * @param playerID Die ID des Spielers (aktuell nur 0 oder 1)
-     * @param balance Das neue Bankguthaben
+     * @param balance  Das neue Bankguthaben
      */
     public void setBankBalance(int playerID, int balance) {
         if (playerID == 0) {
@@ -517,11 +513,28 @@ public class Hud implements Disposable {
             player1Balance = balance;
         }
     }
-    public void setPlayerHealth(int playerID, int health){
+
+    public void setPlayerHealth(int playerID, int health) {
         if (playerID == 0) {
             healthBarPlayer0.setValue(health);
         } else if (playerID == 1) {
             healthBarPlayer1.setValue(health);
         }
     }
+
+    /*
+    //ToDo implementieren!
+    public void initPlayerHealth(int playerID, int health) {
+        if (health <= 0){
+            health = 100;
+        }
+            if (playerID == 0) {
+                healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
+                healthBarPlayer0.setValue(health);
+            } else if (playerID == 1) {
+                healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
+                healthBarPlayer1.setValue(health);
+            }
+    }
+     */
 }

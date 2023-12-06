@@ -39,8 +39,6 @@ public class TurnTimer extends Table {
 		this.countdown = new CountdownTask();
 	}
 
-
-
 	public void setCurrentTime(int seconds){
 		timeDisplay.setText(seconds);
 		time=seconds;
@@ -76,7 +74,6 @@ public class TurnTimer extends Table {
 		timer.start();
 	}
 
-
 	public void stopTimer(){
 
 		timer.stop();
@@ -87,7 +84,6 @@ public class TurnTimer extends Table {
 		time--;
 		timeDisplay.setText(Math.max(0,time));
 	}
-
 
 	/**
 	 * changes the speed at wich the timer counts down
@@ -112,9 +108,6 @@ public class TurnTimer extends Table {
 	//			interval = 1;
 	//		}
 	//	}
-
-
-
 	//}
 
 	private class CountdownTask extends Timer.Task{
@@ -123,6 +116,4 @@ public class TurnTimer extends Table {
 			tick();
 		}
 	}
-
-
 }
