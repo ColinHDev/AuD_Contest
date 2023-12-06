@@ -98,7 +98,7 @@ public class Simulation {
 
         gameState.nextTurn();
         ActionLog temp = actionLog;
-        actionLog = new ActionLog(new TurnStartAction(gameState.getTurn()));
+        actionLog = new ActionLog(new InitAction());
 
         return temp;
     }
