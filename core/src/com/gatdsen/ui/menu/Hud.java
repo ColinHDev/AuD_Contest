@@ -147,18 +147,14 @@ public class Hud implements Disposable {
         Label player0BalanceLabel = new Label("$" + player0Balance, skin);
 
         Label player1BalanceLabel = new Label("$" + player1Balance, skin);
+        Label currentPlayer0 = new Label("Spieler 0", skin);
+        Label currentPlayer1 = new Label("Spieler 1", skin);
 
         healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer0.setValue(health);
         healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer1.setValue(health);
-
         Label invisibleLabel = new Label("", skin);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(turnTimer).row();
-
         nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
             /**
@@ -173,13 +169,20 @@ public class Hud implements Disposable {
                 System.out.println("Neue Runde startet");
             }
         });
+
+        layoutTable.add(currentPlayer0);
         layoutTable.add(healthBarPlayer0).pad(padding);
         layoutTable.add(player0BalanceLabel).pad(padding);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(nextRoundButton);
-        layoutTable.add(invisibleLabel);
+        layoutTable.add(turnTimer);
         layoutTable.add(healthBarPlayer1).pad(padding);
         layoutTable.add(player1BalanceLabel).pad(padding);
+        layoutTable.add(currentPlayer1).row();
+
+        layoutTable.add(invisibleLabel).row();
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(nextRoundButton);
     }
 
     /**
