@@ -279,6 +279,7 @@ public class PlayerState implements Serializable {
      */
     Action spawnEnemies(Action head, int wave) {
         for (int i = 0; i < enemyTypeCount; i++) {
+            if (wave > 99) wave = 80;
             Enemy actual = enemiesToBeSpawned[wave][i];
             spawnTile.getEnemies().add(actual);
             head.addChild(new EnemySpawnAction(0, spawnTile.getPosition(), actual.getLevel(), index));

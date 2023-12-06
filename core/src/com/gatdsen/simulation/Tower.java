@@ -262,6 +262,7 @@ public class Tower extends Tile {
             return head;
         }
         setPathList();
+
         if (pathInRange.isEmpty()) {
             return head;
         }
@@ -276,10 +277,9 @@ public class Tower extends Tile {
             }
         }
         if(target != null) {
-
             head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
             Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
-            head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path));
+            head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path, playerState.getIndex()));
 
             head = target.updateHealth(getDamage(), head);
             cooldown = getRechargeTime();

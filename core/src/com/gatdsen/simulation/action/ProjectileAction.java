@@ -25,8 +25,8 @@ public class ProjectileAction extends Action {
      * @param type  Type des Projektils
      * @param path  Ein {@link Path}, der die Position des Projektils für jeden Zeitstempel zwischen 0 und Dauer zurückgibt
      */
-    public ProjectileAction(float delay, ProjectileType type, Path path) {
-        super(delay);
+    public ProjectileAction(float delay, ProjectileType type, Path path, int team) {
+        super(delay, team);
         this.type = type;
         this.path = path;
     }
