@@ -2,7 +2,6 @@ package com.gatdsen.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -11,7 +10,6 @@ import com.gatdsen.animation.action.Action;
 import com.gatdsen.animation.action.*;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
-import com.gatdsen.animation.action.uiActions.MessageUiTurnStartAction;
 import com.gatdsen.animation.entity.Entity;
 import com.gatdsen.animation.entity.ParticleEntity;
 import com.gatdsen.animation.entity.SpriteEntity;
@@ -114,7 +112,6 @@ public class Animator implements Screen, AnimationLogProcessor {
                 new HashMap<Class<?>, ActionConverter>() {
                     {
                         put(InitAction.class, ((simAction, animator) -> new ExpandedAction(new IdleAction(0, 0))));
-                        put(TurnStartAction.class, ActionConverters::convertTurnStartAction);
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
@@ -336,16 +333,6 @@ public class Animator implements Screen, AnimationLogProcessor {
             );
 
             return new ExpandedAction(destroyTower);
-        }
-
-        private static ExpandedAction convertTurnStartAction(com.gatdsen.simulation.action.Action action, Animator animator) {
-            TurnStartAction startAction = (TurnStartAction) action;
-
-
-            //ui Action
-            MessageUiTurnStartAction startTurn = new MessageUiTurnStartAction(startAction.getDelay(), animator.uiMessenger, animator.state);
-
-            return new ExpandedAction(startTurn);
         }
 
         private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {

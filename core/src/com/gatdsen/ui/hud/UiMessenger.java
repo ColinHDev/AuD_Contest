@@ -18,15 +18,6 @@ public class UiMessenger {
     }
 
     /**
-     * Applies the necessary changes to the Hud for a new turn.
-     *
-     * @param team
-     */
-    public void turnChanged(GameState state, int team) {
-        //Todo update/notify every element so it sets its status to that of the current player
-    }
-
-    /**
      * Will call {@link Hud#createTurnChangePopup(Color)} to temporarily draw it to the Hud.
      *
      * @param outlinecolor Teamcolor of the current/new Player -> could be implemented
