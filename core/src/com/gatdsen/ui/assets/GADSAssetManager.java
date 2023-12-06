@@ -163,8 +163,8 @@ public class GADSAssetManager {
         //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
 
         // Tower Animationen
-        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
-        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/10f, atlas.findRegions("mageCat_attack_down/mageCat_attack_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 5f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/20f, atlas.findRegions("mageCat_attack_down/mageCat_attack_down"), Animation.PlayMode.LOOP);
 
         // Gegner Animationen
         IngameAssets.gameEnemyAnimations = new AtlasAnimation[GameEnemyAnimationType.values().length];
