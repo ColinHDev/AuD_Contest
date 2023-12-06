@@ -1,8 +1,8 @@
 package bots;
 
-import com.example.manager.Bot;
-import com.example.manager.Controller;
-import com.example.simulation.GameState;
+import com.gatdsen.manager.StaticGameState;
+import com.gatdsen.manager.player.Bot;
+import com.gatdsen.manager.Controller;
 
 public class CampaignTestBot extends Bot {
     @Override
@@ -21,12 +21,12 @@ public class CampaignTestBot extends Bot {
     }
 
     @Override
-    protected void init(GameState state) {
+    public void init(StaticGameState state) {
 
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
-        controller.foo(1);
+    public void executeTurn(StaticGameState state, Controller controller) {
+        controller.getRemainingUses();
     }
 }

@@ -2,7 +2,7 @@
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "com.example.DesktopLauncher"
+project.ext.mainClassName = "com.gatdsen.DesktopLauncher"
 
 import org.gradle.internal.os.OperatingSystem
 
@@ -32,6 +32,8 @@ task dist(type: Jar) {
         attributes 'Main-Class': project.mainClassName
     }
     archiveVersion.set "1.0.0"
+    archiveBaseName = "gaTDsen"
+    destinationDirectory = file("$rootDir/build")
     dependsOn configurations.runtimeClasspath
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

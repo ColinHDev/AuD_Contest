@@ -1,0 +1,60 @@
+name: Build and Test with Java 17
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build Pipeline
+        run: gradle --build-cache pipeline:build
+      - name: Build Core
+        run: gradle --build-cache core:build
+      - name: Build Desktop
+        run: gradle --build-cache desktop:build
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-results
+          path: core/build/reports/tests/test/
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Test Pipeline
+        run: gradle pipeline:check
+      - name: Test Core
+        run: gradle core:check
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: core/build/reports/tests/test/

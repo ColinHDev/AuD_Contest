@@ -1,17 +1,17 @@
 package bots;
 
-import com.example.manager.Bot;
-import com.example.manager.Controller;
-import com.example.manager.Manager;
-import com.example.simulation.GameState;
+import com.gatdsen.manager.Controller;
+import com.gatdsen.manager.Manager;
+import com.gatdsen.manager.StaticGameState;
+import com.gatdsen.manager.player.Bot;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * MalBot is Part of a test that validates the SecurityPolicy:
@@ -24,7 +24,11 @@ public class MalBot extends Bot {
 
     private boolean first = true;
 
-    public static ArrayList<String> failedExperiments = new ArrayList<>();
+    public static final String[] ILLEGAL_IMPORTS = {
+            Manager.class.getName(),
+            "java.lang.reflect",
+            "java.net",
+    };
 
 
     @Override
@@ -43,82 +47,54 @@ public class MalBot extends Bot {
     }
 
     @Override
-    protected void init(GameState state) {
-        runExperiment(false, state);
+    public void init(StaticGameState state) {
+        runExperiment();
     }
 
     @Override
-    protected void executeTurn(GameState state, Controller controller) {
+    public void executeTurn(StaticGameState state, Controller controller) {
         if (first) {
             first = false;
-            runExperiment(true, state);
+            runExperiment();
         }
     }
 
-    private void runExperiment(boolean inTurn, GameState state) {
-        boolean caught = false;
-
+    private void runExperiment() {
         try {
-            Object instance = Manager.class.newInstance();
-        } catch (SecurityException | IllegalAccessException e) {
-            caught = true;
-        } catch (InstantiationException e) {
+            Object instance = Manager.class.getDeclaredConstructors()[0].newInstance();
+        } catch (SecurityException | IllegalAccessException ignored) {
+        } catch (InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        if (!caught) failedExperiments.add(failureMessage(1, inTurn, state));
 
-
-        caught = false;
         try {
             Field privateField = Manager.class.getDeclaredField("threadPoolExecutor");
             privateField.setAccessible(true);
 
-        } catch (SecurityException e) {
-            caught = true;
+        } catch (SecurityException ignored) {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        if (!caught) failedExperiments.add(failureMessage(2, inTurn, state));
 
-
-        caught = false;
         try {
             File file = new File("");
             file.exists();
 
-        } catch (SecurityException e) {
-            caught = true;
+        } catch (SecurityException ignored) {
         }
-        if (!caught) failedExperiments.add(failureMessage(3, inTurn, state));
 
-        caught = false;
         Socket socket;
         try {
             socket = new Socket();
             socket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), 1085));
             socket.close();
-        } catch (SecurityException e) {
-            caught = true;
+        } catch (SecurityException ignored) {
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        if (!caught) failedExperiments.add(failureMessage(4, inTurn, state));
-
-        caught = false;
         try {
-            Manager.getManager();
+            Object instance = Manager.getManager();
         } catch (SecurityException e) {
-            caught = true;
         }
-        if (!caught) failedExperiments.add(failureMessage(5, inTurn, state));
-
-    }
-
-    private String failureMessage(int id, boolean inTurn, GameState state) {
-        return "Failure{" +
-                "id=" + id +
-                "inTurn=" + inTurn +
-                ", state=" + state +
-                '}';
     }
 }
