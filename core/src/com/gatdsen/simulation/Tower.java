@@ -31,7 +31,7 @@ public class Tower extends Tile {
     static final int[] PRICE_VALUES = new int[TowerType.values().length];
 
     static {
-        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 1;
+        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 35;
         DAMAGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 2;
         DAMAGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
 

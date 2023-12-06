@@ -25,6 +25,7 @@ public class Simulation {
         gameState = new GameState(gameMode, mapName, playerCount, this);
         playerStates = gameState.getPlayerStates();
         actionLog = new ActionLog(new InitAction());
+
     }
 
     /**
