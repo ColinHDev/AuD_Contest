@@ -14,7 +14,7 @@ public class GameTower extends AnimatedEntity {
 
     private int level = 1;
     private int type = 1;
-    private Animation<TextureRegion> idleAnimation = gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()];
+    private Animation<TextureRegion> idleAnimation = gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()];
     public Animation<TextureRegion> attackAnimation;
 
     private boolean attacking = false;
@@ -23,7 +23,7 @@ public class GameTower extends AnimatedEntity {
     public GameTower(int level, int type) {
         super(gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()]);
 
-        attackAnimation = gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()];
+        attackAnimation = gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()];
         this.level = level;
         this.type = type;
 

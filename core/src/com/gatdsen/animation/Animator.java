@@ -188,8 +188,10 @@ public class Animator implements Screen, AnimationLogProcessor {
             int tileSize = animator.playerMaps[0].getTileSize();
             GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
 
-            Vector2 start = new Vector2(moveAction.getPos().x * tileSize, moveAction.getPos().y * tileSize);
-            Vector2 end = new Vector2(moveAction.getDes().x * tileSize, moveAction.getDes().y * tileSize);
+            Vector2 mapPos = animator.playerMaps[moveAction.getTeam()].getPos();
+
+            Vector2 start = new Vector2(moveAction.getPos().x * tileSize + mapPos.x, moveAction.getPos().y * tileSize + mapPos.y);
+            Vector2 end = new Vector2(moveAction.getDes().x * tileSize + mapPos.x, moveAction.getDes().y * tileSize + mapPos.y);
 
             Path enemyPath = new LinearPath(start, end, 100);
 
