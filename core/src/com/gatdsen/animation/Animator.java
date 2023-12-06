@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.action.Action;
 import com.gatdsen.animation.action.*;
+import com.gatdsen.animation.action.uiActions.MessageUiCurrencyAction;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
 import com.gatdsen.animation.entity.Entity;
@@ -115,6 +116,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
+                        put(UpdateCurrencyAction.class, ActionConverters::convertUpdateCurrencyAction);
 
                         // Gegner Actions
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
@@ -338,7 +340,13 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             UpdateCurrencyAction updateCurrency = (UpdateCurrencyAction) action;
 
+            MessageUiCurrencyAction currencyAction = new MessageUiCurrencyAction(
+                    updateCurrency.getDelay(),
+                    animator.uiMessenger,
+                    updateCurrency.getTeam(),
+                    updateCurrency.getNewCurrency());
 
+            return new ExpandedAction(currencyAction);
         }
 
 
