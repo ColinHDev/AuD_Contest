@@ -5,7 +5,7 @@ import com.gatdsen.manager.player.data.BotInformation;
 import java.util.Random;
 
 /**
- * Superklasse für alle Bot-Implementationen.
+ * Die Basisklasse für alle Bot-Implementationen.
  * Erbt von dieser Klasse, wenn ihr einen Bot implementieren wollt.
  */
 public abstract class Bot extends Player{
