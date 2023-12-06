@@ -37,6 +37,9 @@ public class TurnTimer extends Table {
 		this.turnTime = 0;
 		currInterval = 1;
 		this.countdown = new CountdownTask();
+		timer.scheduleTask(countdown,1,1);
+		setCurrentTime(time);
+		timer.start();
 	}
 
 	public void setCurrentTime(int seconds){
@@ -66,18 +69,10 @@ public class TurnTimer extends Table {
 	}
 
 	public void startTimer(int turnTime){
-		stopTimer();
-		timer.clear();
-		//schedule the countdown task to count down the turn time
-		timer.scheduleTask(countdown,1,1);
-		this.turnTime = turnTime;
 		setCurrentTime(turnTime);
-		timer.start();
 	}
 
 	public void stopTimer(){
-
-		timer.stop();
 		setCurrentTime(0);
 	}
 
