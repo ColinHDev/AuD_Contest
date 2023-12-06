@@ -8,7 +8,6 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.simulation.GameState;
-import org.lwjgl.Sys;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
@@ -85,7 +84,7 @@ public final class PlayerThread {
             case AI -> {
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
-                    ((Bot) player).setRnd(seed);
+                    ((Bot) player).setRandomSeed(seed);
                     player.init(staticState);
                 });
                 awaitBotFuture(future, controller, AI_EXECUTE_INIT_TIMEOUT);

@@ -25,10 +25,12 @@ public abstract class Bot extends Player{
         return PlayerType.AI;
     }
 
-    protected Random rnd;
+    protected Random random;
 
-    public final void setRnd(long seed){
-        if (rnd == null) rnd = new Random(seed);
+    public final void setRandomSeed(long seed){
+        if (random == null) {
+            random = new Random(seed);
+        }
     }
 
     /**
