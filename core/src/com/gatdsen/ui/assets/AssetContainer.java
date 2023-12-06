@@ -56,7 +56,8 @@ public class AssetContainer {
         public static TextureRegion aimingIndicatorSprite;
         public static TextureRegion aimCircle;
         public static ProgressBar.ProgressBarStyle healthbarStyle;
-        public static Animation<TextureRegion>[] gameCharacterAnimations;
+        public static Animation<TextureRegion>[] gameTowerAnimations;
+        public static Animation<TextureRegion>[] gameEnemyAnimations;
         public static TextureRegion pixel;
         public static Texture compressedBaseSkin;
         public static Texture uncompressedBaseSkin;
@@ -134,12 +135,14 @@ public class AssetContainer {
 
         public static TextureRegion turnTimer;
         public static NinePatchDrawable healthBarBackground;
-        public enum GameCharacterAnimationType {
+        public enum GameTowerAnimationType {
             ANIMATION_TYPE_IDLE,
-            ANIMATION_TYPE_WALKING,
-            ANIMATION_TYPE_FALLING,
-            ANIMATION_TYPE_HIT,
-            ANIMATION_TYPE_DEATH
+            ANIMATION_TYPE_ATTACK
+        }
+
+        public enum GameEnemyAnimationType {
+            ANIMATION_TYPE_IDLE,
+            ANIMATION_TYPE_WALKING
         }
     }
 

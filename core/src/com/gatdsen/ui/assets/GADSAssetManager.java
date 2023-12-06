@@ -14,7 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
-import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameCharacterAnimationType;
+import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameTowerAnimationType;
+import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameEnemyAnimationType;
 import com.gatdsen.ui.assets.AssetContainer.MainMenuAssets;
 
 import java.io.File;
@@ -154,12 +155,15 @@ public class GADSAssetManager {
                 atlas.findRegion("Tileset/water_tile")
         };
 
-        IngameAssets.gameCharacterAnimations = new AtlasAnimation[GameCharacterAnimationType.values().length];
+        IngameAssets.gameTowerAnimations = new AtlasAnimation[GameTowerAnimationType.values().length];
 
         //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
-        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/10f, atlas.findRegions("mageCat_attack_down/mageCat_attack_down"), Animation.PlayMode.LOOP);
 
-        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("enemy/bigMouse_idle_left"), Animation.PlayMode.LOOP);
+        IngameAssets.gameEnemyAnimations = new AtlasAnimation[GameEnemyAnimationType.values().length];
+        IngameAssets.gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1/10f, atlas.findRegions("enemy/bigMouse_idle_left"), Animation.PlayMode.LOOP);
+        IngameAssets.gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("bigMouse_running_left/bigMouse_running_left"), Animation.PlayMode.LOOP);
 
         // Provisorium ToDo: entfernen
         IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");
