@@ -29,19 +29,15 @@ public class TurnTimer extends Table {
 		time = 0;
 
 		this.timerImage = new Image(timerTexture);
-		timeDisplay = new ColoredLabelWithBackground("", AssetContainer.MainMenuAssets.skin, Color.WHITE, new TextureRegionDrawable(AssetContainer.IngameAssets.pixel));
-
+		timeDisplay = new ColoredLabelWithBackground("", AssetContainer.MainMenuAssets.skin, Color.RED, new TextureRegionDrawable(AssetContainer.IngameAssets.pixel));
 
 		//add both to the horizontal group for drawing them next to each other
 		add(timeDisplay).width(44);
 		timeDisplay.setFontScale(3);
-		add(timerImage).width(64).height(64).fill();
 		this.turnTime = 0;
 		currInterval = 1;
 		this.countdown = new CountdownTask();
 	}
-
-
 
 	public void setCurrentTime(int seconds){
 		timeDisplay.setText(seconds);
@@ -78,7 +74,6 @@ public class TurnTimer extends Table {
 		timer.start();
 	}
 
-
 	public void stopTimer(){
 
 		timer.stop();
@@ -89,7 +84,6 @@ public class TurnTimer extends Table {
 		time--;
 		timeDisplay.setText(Math.max(0,time));
 	}
-
 
 	/**
 	 * changes the speed at wich the timer counts down
@@ -114,9 +108,6 @@ public class TurnTimer extends Table {
 	//			interval = 1;
 	//		}
 	//	}
-
-
-
 	//}
 
 	private class CountdownTask extends Timer.Task{
@@ -125,6 +116,4 @@ public class TurnTimer extends Table {
 			tick();
 		}
 	}
-
-
 }

@@ -12,11 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputHandler implements InputProcessor, com.gatdsen.manager.InputProcessor {
-
-
     InGameScreen ingameScreen;
-
-
     private final int KEY_CAMERA_UP = Input.Keys.UP;
     private final int KEY_CAMERA_DOWN = Input.Keys.DOWN;
     private final int KEY_CAMERA_LEFT = Input.Keys.LEFT;
@@ -25,14 +21,13 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     private final int KEY_CAMERA_ZOOM_OUT = Input.Keys.O;
     private final int KEY_CAMERA_ZOOM_RESET = Input.Keys.R;
     private final int KEY_TOGGLE_SCORES = Input.Keys.P;
-
     private final int KEY_CAMERA_TOGGLE_PLAYER_FOCUS = Input.Keys.F;
-
     private final int KEY_EXIT_TO_MENU = Input.Keys.ESCAPE;
-
     private final int KEY_TOGGLE_DEBUG = Input.Keys.F3;
 
-    /** Eine Liste aller HumanPlayer, die gerade am Zug sind, indexiert nach ihrer PlayerId */
+    /**
+     * Eine Liste aller HumanPlayer, die gerade am Zug sind, indexiert nach ihrer PlayerId
+     */
     private Map<Integer, HumanPlayer> currentPlayers = new HashMap<>();
     private Vector2 lastMousePosition;
     private Vector2 deltaMouseMove;
@@ -64,8 +59,7 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
 
     public void activateTurn(HumanPlayer player, int playerIndex) {
         currentPlayers.put(playerIndex, player);
-
-        if (uiMessenger != null) {
+        if (currentPlayers.size() == 1 && uiMessenger != null) {
             uiMessenger.startTurnTimer(player.getTurnDuration(), true);
         }
 
@@ -112,8 +106,8 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
      * Wird aufgerufen, wenn ein Spieler auf das Spielfeld links klickt, um einen Turm zu platzieren
      *
      * @param playerId Die ID des Spielers, der den Linksklick ausgeführt hat
-     * @param x Die x-Koordinate des Spielfelds
-     * @param y Die y-Koordinate des Spielfelds
+     * @param x        Die x-Koordinate des Spielfelds
+     * @param y        Die y-Koordinate des Spielfelds
      */
     public void playerFieldLeftClicked(int playerId, int x, int y) {
         HumanPlayer currentPlayer = currentPlayers.get(playerId);
@@ -127,15 +121,15 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
      * Wird aufgerufen, wenn ein Spieler auf das Spielfeld rechts klickt, um einen Turm zu verbessern
      *
      * @param playerId Die ID des Spielers, der den Rechtsklick ausgeführt hat
-     * @param x Die x-Koordinate des Spielfelds
-     * @param y Die y-Koordinate des Spielfelds
+     * @param x        Die x-Koordinate des Spielfelds
+     * @param y        Die y-Koordinate des Spielfelds
      */
-    public void playerFieldRightClicked(int playerId, int x, int y){
+    public void playerFieldRightClicked(int playerId, int x, int y) {
         HumanPlayer currentPlayer = currentPlayers.get(playerId);
         if (currentPlayer == null) {
             return;
         }
-        currentPlayer.upgradeTower(x,y);
+        currentPlayer.upgradeTower(x, y);
     }
 
     /**

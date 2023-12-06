@@ -10,7 +10,7 @@ public class Healthbar extends Entity{
     public Healthbar(int maxHealth) {
 
 
-        this.healthProgress = new ProgressBar(0, maxHealth, 1, false, AssetContainer.IngameAssets.healthbarStyle);
+        this.healthProgress = new ProgressBar(0, maxHealth, 1, false, AssetContainer.MainMenuAssets.skin);
     }
 
     public void changeHealth(int curHealth) {
