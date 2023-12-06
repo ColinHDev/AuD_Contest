@@ -194,7 +194,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             Vector2 start = new Vector2(moveAction.getPos().x * tileSize + mapPos.x, moveAction.getPos().y * tileSize + mapPos.y);
             Vector2 end = new Vector2(moveAction.getDes().x * tileSize + mapPos.x, moveAction.getDes().y * tileSize + mapPos.y);
 
-            Path enemyPath = new LinearPath(start, end, 100);
+            Path enemyPath = new LinearPath(start, end, 500);
 
             MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
             ExecutorAction changeArray = new ExecutorAction(0, () -> {
