@@ -12,14 +12,14 @@
     blue: {r:0.302,g:0.608,b:0.902, a:1 },
     lightblue: {r:0.561,g:0.973,b:0.886}
 
-    up: {r: 0.62, g: 0.27, b: 0.22, a: 1},
-    over: { r: 0.804, g: 0.408, b: 0.239, a: 1 },
-    down: { r: 0.765, g: 0.141, b: 0.329, a: 1 },
-    checked: { r: 0.271, g: 0.161, b: 0.247, a: 1 },
-    checkedOver: { r: 0.42, g: 0.243, b: 0.459, a: 1 },
-    disabled: { r: 0.412, g: 0.31, b: 0.384, a: 1 },
-    background: {r: 0.4, g: 0.24, b: 0.45, a: 1},
-    selection: { r: 0.196, g: 0.2, b: 0.325, a: 1 },
+    up: {r: 1, g: 0, b: 0, a: 1},
+    over:{r: 1, g: 0, b: 0, a: 1},
+    down:{r: 1, g: 0, b: 0, a: 1},
+    checked:{r: 1, g: 0, b: 0, a: 1},
+    checkedOver:{r: 1, g: 0, b: 0, a: 1},
+    disabled: {r: 1, g: 0, b: 0, a: 1},
+    background: {r: 1, g: 0, b: 0, a: 1},
+    selection: {r: 1, g: 0, b: 0, a: 1},
     semiTransparent: { r: 0, g: 0, b: 0, a: 0.6 },
 
     fontColor: lightsilver,
