@@ -17,7 +17,6 @@ public class AnimatorPath implements Path {
 
     @Override
     public Vector2 getPos(float t) {
-        System.out.println(simPath.getPos(t).scl(tileSize).add(boardPos));
         return simPath.getPos(t).scl(tileSize).add(boardPos);
     }
 
