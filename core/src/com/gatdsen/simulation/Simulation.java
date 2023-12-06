@@ -24,7 +24,7 @@ public class Simulation {
     public Simulation(GameMode gameMode, String mapName, int playerCount) {
         gameState = new GameState(gameMode, mapName, playerCount, this);
         playerStates = gameState.getPlayerStates();
-        actionLog = new ActionLog(new TurnStartAction(0));
+        actionLog = new ActionLog(new InitAction());
     }
 
     /**
