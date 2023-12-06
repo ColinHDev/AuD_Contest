@@ -55,6 +55,6 @@ public class GamemodeNormalScreen extends AttributeScreen {
      */
     @Override
     String getTitelString() {
-        return "Spielmodus Normal";
+        return "Weihnachtsaufgabe";
     }
 }

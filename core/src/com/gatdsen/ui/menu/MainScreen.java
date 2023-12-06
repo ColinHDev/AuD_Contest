@@ -26,7 +26,7 @@ public class MainScreen extends BaseMenuScreen {
     @Override
     Table getContent(Skin skin) {
         Table mainMenuTable = new Table(skin);
-        TextButton normalGameModeButton = new TextButton("Normal", skin);
+        TextButton normalGameModeButton = new TextButton("Weihnachtsaufgabe", skin);
         normalGameModeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
