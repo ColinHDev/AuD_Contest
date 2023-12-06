@@ -11,6 +11,7 @@ import com.gatdsen.animation.action.*;
 import com.gatdsen.animation.action.uiActions.MessageUiCurrencyAction;
 import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
+import com.gatdsen.animation.action.uiActions.MessageUiUpdateHealthAction;
 import com.gatdsen.animation.entity.Entity;
 import com.gatdsen.animation.entity.ParticleEntity;
 import com.gatdsen.animation.entity.SpriteEntity;
@@ -347,6 +348,18 @@ public class Animator implements Screen, AnimationLogProcessor {
                     updateCurrency.getNewCurrency());
 
             return new ExpandedAction(currencyAction);
+        }
+
+        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            UpdateHealthAction updateHealth = (UpdateHealthAction) action;
+
+            MessageUiUpdateHealthAction setHealth = new MessageUiUpdateHealthAction(
+                    updateHealth.getDelay(),
+                    animator.uiMessenger,
+                    updateHealth.getTeam(),
+                    updateHealth.getNewHealth());
+
+            return new ExpandedAction(setHealth);
         }
 
 
