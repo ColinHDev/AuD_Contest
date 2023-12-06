@@ -104,6 +104,25 @@ public class HumanPlayer extends Player {
     }
 
     /**
+     * Ruft den {@link Controller} des {@link HumanPlayer} auf, um einen Turm auf dem Spielfeld zu platzieren.
+     * @param x x-Koordinate, an der der Turm platziert werden soll
+     * @param y y-Koordinate, an der der Turm platziert werden soll
+     * @param type Typ des Turms, der platziert werden soll
+     */
+    public void placeTower(int x, int y, Tower.TowerType type) {
+        controller.placeTower(x, y, type);
+    }
+
+    /**
+     * Ruft den {@link Controller} des {@link HumanPlayer} auf, um einen Turm auf dem Spielfeld zu verbessern.
+     * @param x x-Koordinate, an der sich der Turm befindet
+     * @param y y-Koordinate, an der sich der Turm befindet
+     */
+    public void upgradeTower(int x, int y) {
+        controller.upgradeTower(x, y);
+    }
+
+    /**
      * Endet den aktuellen Zug des {@link HumanPlayer} vorzeitig.
      * Wird aufgerufen, wenn {@link HumanPlayer#KEY_CHARACTER_END_TURN} gedrückt wird.
      */
@@ -155,13 +174,13 @@ public class HumanPlayer extends Player {
                 selectedTile.x = Math.min(selectedTile.x + 1, state.getBoardSizeX() - 1);
                 break;
             case KEY_CHARACTER_TOWER_PLACE:
-                controller.placeTower(selectedTile.x, selectedTile.y, Tower.TowerType.BASIC_TOWER);
+                placeTower(selectedTile.x, selectedTile.y, Tower.TowerType.BASIC_TOWER);
                 break;
             case KEY_CHARACTER_TOWER_UPGRADE:
-                controller.upgradeTower(selectedTile.x, selectedTile.y);
+                upgradeTower(selectedTile.x, selectedTile.y);
                 break;
             case KEY_CHARACTER_END_TURN:
-                this.endCurrentTurn();
+                endCurrentTurn();
                 break;
         }
     }

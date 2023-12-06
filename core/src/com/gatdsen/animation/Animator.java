@@ -3,8 +3,7 @@ package com.gatdsen.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -14,6 +13,7 @@ import com.gatdsen.animation.action.uiActions.MessageUiGameEndedAction;
 import com.gatdsen.animation.action.uiActions.MessageUiScoreAction;
 import com.gatdsen.animation.action.uiActions.MessageUiTurnStartAction;
 import com.gatdsen.animation.entity.Entity;
+import com.gatdsen.animation.entity.ParticleEntity;
 import com.gatdsen.animation.entity.SpriteEntity;
 import com.gatdsen.animation.entity.TileMap;
 import com.gatdsen.manager.AnimationLogProcessor;
@@ -127,13 +127,14 @@ public class Animator implements Screen, AnimationLogProcessor {
 
                         // Tower Actions
                         put(TowerPlaceAction.class, ActionConverters::convertTowerPlaceAction);
+                        put(TowerAttackAction.class, ActionConverters::convertTowerAttackAction);
+                        put(ProjectileAction.class, ActionConverters::convertProjectileAction);
                         put(TowerDestroyAction.class, ActionConverters::convertTowerDestroyAction);
                     }
                 };
 
-
         public static Action convert(com.gatdsen.simulation.action.Action simAction, Animator animator) {
-//            System.out.println("Converting " + simAction.getClass());
+            //System.out.println("Converting " + simAction.getClass());
             ExpandedAction expandedAction = map.getOrDefault(simAction.getClass(), (v, w) -> {
                         System.err.println("Missing Converter for Action of type " + simAction.getClass());
                         return new ExpandedAction(new IdleAction(simAction.getDelay(), 0));
@@ -167,12 +168,12 @@ public class Animator implements Screen, AnimationLogProcessor {
             SummonAction<GameEnemy> spawnEnemy = new SummonAction<>(
                     spawnAction.getDelay(),
                     (GameEnemy enemy) -> {
-                        enemies[spawnAction.getTeam()][spawnAction.getPosition().x][spawnAction.getPosition().y] = enemy;
+                        enemies[spawnAction.getTeam()][spawnAction.getPos().x][spawnAction.getPos().y] = enemy;
                     },
                     () -> {
                         GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
-                        enemy.setRelPos(spawnAction.getPosition().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
-                                spawnAction.getPosition().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
+                        enemy.setRelPos(spawnAction.getPos().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
+                                spawnAction.getPos().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
 
                         animator.root.add(enemy);
                         return enemy;
@@ -186,9 +187,9 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertEnemyMoveAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyMoveAction moveAction = (EnemyMoveAction) action;
             int tileSize = animator.playerMaps[0].getTileSize();
-            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
+            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
 
-            Vector2 start = new Vector2(moveAction.getPosition().x * tileSize, moveAction.getPosition().y * tileSize);
+            Vector2 start = new Vector2(moveAction.getPos().x * tileSize, moveAction.getPos().y * tileSize);
             Vector2 end = new Vector2(moveAction.getDes().x * tileSize, moveAction.getDes().y * tileSize);
 
             Path enemyPath = new LinearPath(start, end, 100);
@@ -196,8 +197,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
             ExecutorAction changeArray = new ExecutorAction(0, () -> {
                 Animator.enemies[moveAction.getTeam()][moveAction.getDes().x][moveAction.getDes().y] =
-                        Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y];
-                Animator.enemies[moveAction.getTeam()][moveAction.getPosition().x][moveAction.getPosition().y] = null;
+                        Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
+                Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y] = null;
                 return 0;
             });
 
@@ -210,7 +211,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             EnemyUpdateHealthAction updateHealth = (EnemyUpdateHealthAction) action;
 
             ExecutorAction changeHealth = new ExecutorAction(updateHealth.getDelay(), () -> {
-                enemies[updateHealth.getTeam()][updateHealth.getPosition().x][updateHealth.getPosition().y].healthbar.changeHealth(updateHealth.getNewHealth());
+                enemies[updateHealth.getTeam()][updateHealth.getPos().x][updateHealth.getPos().y].healthbar.changeHealth(updateHealth.getNewHealth());
                 return 0;
             });
 
@@ -223,11 +224,11 @@ public class Animator implements Screen, AnimationLogProcessor {
 
             DestroyAction<GameEnemy> killEnemy = new DestroyAction<>(
                     defeatAction.getDelay(),
-                    enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y],
+                    enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
                     null,
                     (GameEnemy enemy) -> {
-                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y]);
-                        enemies[defeatAction.getTeam()][defeatAction.getPosition().x][defeatAction.getPosition().y] = null;
+                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
                     }
             );
 
@@ -249,6 +250,76 @@ public class Animator implements Screen, AnimationLogProcessor {
             });
 
             return new ExpandedAction(summonTower);
+        }
+
+        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            TowerAttackAction towerAttack = (TowerAttackAction) action;
+            GameTower tower = towers[towerAttack.getTeam()][towerAttack.getPos().x][towerAttack.getPos().y];
+
+            ExecutorAction attack = new ExecutorAction(towerAttack.getDelay(), () -> {
+                tower.attack();
+                Animation<TextureRegion> animation = tower.attackAnimation;
+                return animation != null ? animation.getAnimationDuration() : 0;
+            });
+
+            return new ExpandedAction(attack);
+        }
+
+        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            ProjectileAction projectileAction = (ProjectileAction) action;
+            Path path = projectileAction.getPath();
+
+            // Target muss null sein, da das Projektil dem converter nicht bekannt ist. Es wird erst in summonProjectile erstellt.
+            MoveAction moveProjectile = new MoveAction(0, null, path.getDuration(), path);
+            RotateAction rotateProjectile = new RotateAction(0, null, path.getDuration(), path);
+
+            DestroyAction<Entity> destroyProjectile = new DestroyAction<>(0, null, null, animator.root::remove);
+
+            // Hier können jetzt die Targets für die anderen Actions gesetzt werden
+            SummonAction<Entity> summonProjectile = new SummonAction<>(action.getDelay(), projectile -> {
+                moveProjectile.setTarget(projectile);
+                rotateProjectile.setTarget(projectile);
+                destroyProjectile.setTarget(projectile);
+            }, () -> {
+                Entity projectile = Projectiles.summon(projectileAction.getType());
+                animator.root.add(projectile);
+                return projectile;
+            });
+
+            summonProjectile.setChildren(new Action[]{moveProjectile, rotateProjectile});
+
+            // Effekt bei Treffer
+            ExpandedAction effects;
+            switch (projectileAction.getType()) {
+                case STANDARD_TYPE:
+                    effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                    moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                    break;
+                default:
+                    moveProjectile.setChildren(new Action[]{destroyProjectile});
+            }
+
+            // Die Action ist unterteilt in: Projektil erzeugen, dann bewegen & rotieren und anschließend mit effekt zerstören
+            return new ExpandedAction(summonProjectile, destroyProjectile);
+        }
+
+        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator animator) {
+            DestroyAction<ParticleEntity> destroyParticle = new DestroyAction<>(dur, null, null, (particle) -> {
+                animator.root.remove(particle);
+                particle.free();
+            });
+
+            SummonAction<ParticleEntity> summonParticle = new SummonAction<>(0, destroyParticle::setTarget, () -> {
+                ParticleEntity particle = ParticleEntity.getParticleEntity(effect);
+                particle.setLoop(false);
+                particle.setRelPos(pos);
+                animator.root.add(particle);
+
+                return particle;
+            });
+
+            summonParticle.setChildren(new Action[]{destroyParticle});
+            return new ExpandedAction(summonParticle, destroyParticle);
         }
 
         private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
@@ -346,6 +417,8 @@ public class Animator implements Screen, AnimationLogProcessor {
         this.batch = new SpriteBatch();
         this.root = new Entity();
 
+        towers = new GameTower[2][100][100];
+        enemies = new GameEnemy[2][100][100];
         setupView(viewport);
 
         setup();

@@ -28,7 +28,7 @@ public class EnemyAction extends TeamAction {
      *
      * @return Die Position, an der die Action ausgeführt werden soll.
      */
-    public IntVector2 getPosition() {
+    public IntVector2 getPos() {
         return pos;
     }
 

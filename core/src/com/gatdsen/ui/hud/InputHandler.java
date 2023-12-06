@@ -4,15 +4,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.gatdsen.manager.player.HumanPlayer;
+import com.gatdsen.simulation.Tower;
 import com.gatdsen.ui.menu.Hud;
 import com.gatdsen.ui.menu.InGameScreen;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class InputHandler implements InputProcessor, com.gatdsen.manager.InputProcessor {
-
-
     InGameScreen ingameScreen;
-
-
     private final int KEY_CAMERA_UP = Input.Keys.UP;
     private final int KEY_CAMERA_DOWN = Input.Keys.DOWN;
     private final int KEY_CAMERA_LEFT = Input.Keys.LEFT;
@@ -21,20 +21,19 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     private final int KEY_CAMERA_ZOOM_OUT = Input.Keys.O;
     private final int KEY_CAMERA_ZOOM_RESET = Input.Keys.R;
     private final int KEY_TOGGLE_SCORES = Input.Keys.P;
-
     private final int KEY_CAMERA_TOGGLE_PLAYER_FOCUS = Input.Keys.F;
-
     private final int KEY_EXIT_TO_MENU = Input.Keys.ESCAPE;
-
     private final int KEY_TOGGLE_DEBUG = Input.Keys.F3;
 
-    private HumanPlayer currentPlayer;
+    /**
+     * Eine Liste aller HumanPlayer, die gerade am Zug sind, indexiert nach ihrer PlayerId
+     */
+    private Map<Integer, HumanPlayer> currentPlayers = new HashMap<>();
     private Vector2 lastMousePosition;
     private Vector2 deltaMouseMove;
     private boolean leftMousePressed;
     private boolean rightMousePressed;
     private boolean turnInProgress = false;
-
     private UiMessenger uiMessenger;
 
     //Time between turns
@@ -58,12 +57,10 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
 
-    public void activateTurn(HumanPlayer humanPlayer) {
-
-        currentPlayer = humanPlayer;
-
-        if (uiMessenger != null) {
-            uiMessenger.startTurnTimer(humanPlayer.getTurnDuration(), true);
+    public void activateTurn(HumanPlayer player, int playerIndex) {
+        currentPlayers.put(playerIndex, player);
+        if (currentPlayers.size() == 1 && uiMessenger != null) {
+            uiMessenger.startTurnTimer(player.getTurnDuration(), true);
         }
 
 //        System.out.printf("Activating turn for player %s\n", humanPlayer.toString());
@@ -72,16 +69,23 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     }
 
     public void endTurn() {
-        turnInProgress = false;
-        currentPlayer.endCurrentTurn();
-        if (uiMessenger != null) {
-            uiMessenger.stopTurnTimer();
+        if (turnInProgress) {
+            for (HumanPlayer player : currentPlayers.values()) {
+                player.endCurrentTurn();
+            }
+            currentPlayers.clear();
+            if (uiMessenger != null) {
+                uiMessenger.stopTurnTimer();
+            }
         }
     }
 
     public void tick(float delta) {
-        if (turnInProgress && currentPlayer != null) {
-            currentPlayer.tick(delta);
+        if (!turnInProgress) {
+            return;
+        }
+        for (HumanPlayer player : currentPlayers.values()) {
+            player.tick(delta);
         }
     }
 
@@ -93,9 +97,39 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
      */
     private void processMouseAim(int screenX, int screenY) {
         Vector2 worldCursorPos = ingameScreen.toWorldCoordinates(new Vector2(screenX, screenY));
-        if (currentPlayer != null) {
-            //ToDo do stuff
+        //ToDo do stuff
+        /*if (currentPlayer != null) {
+        }*/
+    }
+
+    /**
+     * Wird aufgerufen, wenn ein Spieler auf das Spielfeld links klickt, um einen Turm zu platzieren
+     *
+     * @param playerId Die ID des Spielers, der den Linksklick ausgeführt hat
+     * @param x        Die x-Koordinate des Spielfelds
+     * @param y        Die y-Koordinate des Spielfelds
+     */
+    public void playerFieldLeftClicked(int playerId, int x, int y) {
+        HumanPlayer currentPlayer = currentPlayers.get(playerId);
+        if (currentPlayer == null) {
+            return;
         }
+        currentPlayer.placeTower(x, y, Tower.TowerType.BASIC_TOWER);
+    }
+
+    /**
+     * Wird aufgerufen, wenn ein Spieler auf das Spielfeld rechts klickt, um einen Turm zu verbessern
+     *
+     * @param playerId Die ID des Spielers, der den Rechtsklick ausgeführt hat
+     * @param x        Die x-Koordinate des Spielfelds
+     * @param y        Die y-Koordinate des Spielfelds
+     */
+    public void playerFieldRightClicked(int playerId, int x, int y) {
+        HumanPlayer currentPlayer = currentPlayers.get(playerId);
+        if (currentPlayer == null) {
+            return;
+        }
+        currentPlayer.upgradeTower(x, y);
     }
 
     /**
@@ -167,9 +201,12 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
             case KEY_TOGGLE_SCORES:
                 hud.toggleScores();
             default:
-                if (turnInProgress && currentPlayer != null) {
-                    ingameScreen.skipTurnStart();
-                    currentPlayer.processKeyDown(keycode);
+                if (!turnInProgress) {
+                    break;
+                }
+                ingameScreen.skipTurnStart();
+                for (HumanPlayer player : currentPlayers.values()) {
+                    player.processKeyDown(keycode);
                 }
                 break;
         }
@@ -210,8 +247,11 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
                 cameraZoomPressed -= 1;
                 break;
             default:
-                if (turnInProgress && currentPlayer != null) {
-                    currentPlayer.processKeyUp(keycode);
+                if (!turnInProgress) {
+                    break;
+                }
+                for (HumanPlayer player : currentPlayers.values()) {
+                    player.processKeyUp(keycode);
                 }
                 break;
         }
@@ -230,7 +270,6 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
         if (button == Input.Buttons.RIGHT) {
             lastMousePosition = new Vector2(screenX, screenY);
             rightMousePressed = true;
-
         }
         if (button == Input.Buttons.LEFT) {
             leftMousePressed = true;

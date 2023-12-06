@@ -106,7 +106,7 @@ public class DesktopLauncher {
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setForegroundFPS(60);
             config.setTitle("Gadsen: Tower Defense");
-            config.setWindowIcon(Files.FileType.Classpath, "icon/icon.png");
+            config.setWindowIcon(Files.FileType.Classpath, "icon/new_icon.png");
             new Lwjgl3Application(new GADS(runConfig), config);
         } else {
             Manager.setSystemReservedProcessorCount(1);
@@ -213,7 +213,6 @@ public class DesktopLauncher {
         if (key != null && key.length() > 0) builder.append("<").append(key).append(">");
         System.out.println(builder.toString());
     }
-
 
     private static void printHelp() {
         String header = "\n\n";

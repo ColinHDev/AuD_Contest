@@ -111,56 +111,55 @@ public class GADSAssetManager {
         TextureAtlas atlas = manager.get(this.atlas, TextureAtlas.class);
 
         //Main Menu
-        MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground");
-        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground");
+        MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground_new");
+        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground_new");
         MainMenuAssets.skin = manager.get(skin, Skin.class);
 
         //Ingame
 
-        IngameAssets.background = atlas.findRegion("background/GADSBG");
+        IngameAssets.background = atlas.findRegion("background/WeihnachtsBG");
 
         IngameAssets.tileTextures = new TextureRegion[]{
-                atlas.findRegion("Tileset/GrassTile"),
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/grass_tile"),
+                atlas.findRegion("Tileset/water_tile"),
 
                 // Path Tiles siehe TileMap
                 //0: Spawn nach oben
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //1: Spawn nach rechts
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //2: Spawn nach unten
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //3: Spawn nach rechts
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //4: Ziel nach unten
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //5: Ecke rechts Oben
-                atlas.findRegion("Tileset/WegTile_Rechts-Oben"),
+                atlas.findRegion("Tileset/path_right_up_tile"),
                 //6: vertikale Gerade
-                atlas.findRegion("Tileset/WegTile_Vertical"),
+                atlas.findRegion("Tileset/path_vertical_tile"),
                 //7: Ecke links Oben
-                atlas.findRegion("Tileset/WegTile_Links-Oben"),
+                atlas.findRegion("Tileset/path_left_up_tile"),
                 //8: Ziel nach links
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //9: Ecke rechts Unten
-                atlas.findRegion("Tileset/WegTile_Rechts-Unten"),
+                atlas.findRegion("Tileset/path_right_down_tile"),
                 //10: horizontale Gerade
-                atlas.findRegion("Tileset/WegTile_Horizontal"),
+                atlas.findRegion("Tileset/path_horizontal_tile"),
                 //11: Ziel nach oben
-                atlas.findRegion("Tileset/WasserTile"),
+                atlas.findRegion("Tileset/water_tile"),
                 //12: Ecke links Unten
-                atlas.findRegion("Tileset/WegTile_Links-Unten"),
+                atlas.findRegion("Tileset/path_left_down_tile"),
                 //13: Ziel nach rechts
-                atlas.findRegion("Tileset/WegTile_WasserTile")
+                atlas.findRegion("Tileset/water_tile")
         };
 
         IngameAssets.gameCharacterAnimations = new AtlasAnimation[GameCharacterAnimationType.values().length];
 
-//        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] =
-//                new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catIdle"), Animation.PlayMode.LOOP);
-//
-//        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] =
-//                new AtlasAnimation(1 / 10f, atlas.findRegions("cat/catWalking"), Animation.PlayMode.LOOP);
+        //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
+        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
+
+        IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("enemy/bigMouse_idle_left"), Animation.PlayMode.LOOP);
 
         // Provisorium ToDo: entfernen
         IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");

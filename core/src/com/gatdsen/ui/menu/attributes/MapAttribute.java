@@ -1,15 +1,13 @@
 package com.gatdsen.ui.menu.attributes;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.map.MapRetriever;
 
 public class MapAttribute extends Attribute {
 
@@ -27,8 +25,7 @@ public class MapAttribute extends Attribute {
         Label textLabelMap = new Label("Karte:", skin);
         textLabelMap.setAlignment(Align.center);
         mapSelectBox = new SelectBox<>(skin);
-        Array<String> mapNames = loadFileNames("assets/res/maps", "json");
-        mapSelectBox.setItems(mapNames);
+        mapSelectBox.setItems(MapRetriever.getInstance().getMapNames());
         mapTable.columnDefaults(0).width(100);
         mapTable.columnDefaults(1).width(100);
         mapTable.add(textLabelMap).colspan(4).pad(10).center();
@@ -56,27 +53,5 @@ public class MapAttribute extends Attribute {
     @Override
     public void setConfig(RunConfiguration runConfiguration) {
         mapSelectBox.setSelected(runConfiguration.mapName);
-    }
-
-    /**
-     * Liest die Namen der gesuchten Dateien aus dem angegebenen Ordner, die die gesuchte Erweiterung haben, in ein Array.
-     *
-     * @param folderPath Der Pfad zum Ordner, aus dem die Karten geladen werden sollen.
-     * @param fileExtension Die Erweiterung der gesuchten Dateien.
-     * @return Eine Array-Liste von Karten-Namen ohne Dateierweiterung.
-     */
-    private Array<String> loadFileNames(String folderPath, String fileExtension) {
-        Array<String> mapNames = new Array<>();
-        FileHandle folder = Gdx.files.internal(folderPath);
-
-        if (folder.isDirectory()) {
-            for (FileHandle file : folder.list()) {
-                if (file.extension().equals(fileExtension)) {
-                    String mapName = file.nameWithoutExtension();
-                    mapNames.add(mapName);
-                }
-            }
-        }
-        return mapNames;
     }
 }
