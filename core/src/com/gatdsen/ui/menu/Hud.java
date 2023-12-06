@@ -47,8 +47,8 @@ public class Hud implements Disposable {
     private TextButton nextRoundButton;
     private final Skin skin = AssetContainer.MainMenuAssets.skin;
     Viewport hudViewport;
-    private int player0Balance;
-    private int player1Balance;
+    private int player0Balance = 100;
+    private int player1Balance = 100;
     private ProgressBar healthBarPlayer0;
     private ProgressBar healthBarPlayer1;
 
@@ -166,6 +166,8 @@ public class Hud implements Disposable {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 inputHandler.endTurn();
+                layoutTable.clear();
+                layoutHudElements();
             }
         });
 
@@ -510,6 +512,7 @@ public class Hud implements Disposable {
     public void setBankBalance(int playerID, int balance) {
         if (playerID == 0) {
             player0Balance = balance;
+
         } else if (playerID == 1) {
             player1Balance = balance;
         }
