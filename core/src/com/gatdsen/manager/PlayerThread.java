@@ -122,6 +122,9 @@ public final class PlayerThread {
             } else {
                 future.get(timeout, TimeUnit.MILLISECONDS);
             }
+        } catch(CancellationException e) {
+            System.out.println("HumanPlayer turn execution was cancelled");
+            e.printStackTrace(System.err);
         } catch (InterruptedException e) {
             future.cancel(true);
             System.out.println("HumanPlayer was interrupted");
@@ -145,6 +148,9 @@ public final class PlayerThread {
             } else {
                 future.get(2 * timeout, TimeUnit.MILLISECONDS);
             }
+        } catch(CancellationException e) {
+            System.out.println("Bot \"" + player.getName() + "\" turn execution was cancelled");
+            e.printStackTrace(System.err);
         } catch (InterruptedException e) {
             future.cancel(true);
             System.out.println("Bot \"" + player.getName() + "\" was interrupted");
