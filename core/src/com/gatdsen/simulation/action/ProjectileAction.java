@@ -5,7 +5,7 @@ import com.gatdsen.simulation.Path;
 /**
  * Spezialisierte Klasse von {@link Action} die ein Projektil während seiner Lebenszeit beschreibt
  */
-public class ProjectileAction extends Action {
+public class ProjectileAction extends TeamAction {
 
     /**
      * Typen von Projektilen
