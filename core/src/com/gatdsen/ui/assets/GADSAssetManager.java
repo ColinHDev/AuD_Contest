@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.simulation.action.ProjectileAction;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameTowerAnimationType;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameEnemyAnimationType;
@@ -32,6 +33,7 @@ public class GADSAssetManager {
     public final String font = resourceDirectory + "uiUtility/lsans-15.fnt";
 
     public static final String particleGroup = "particle/";
+    public static final String explosionParticle = "idle/mage_Cat_idle_down";
 
     public static final String outlineShader = resourceDirectory + "shader/outline.frag";
     public static final String lookupShader = resourceDirectory + "shader/lookup.frag";
@@ -101,6 +103,7 @@ public class GADSAssetManager {
         particleEffectParameter.atlasPrefix = particleGroup;
 
         //manager.load(slimeParticle, ParticleEffect.class, particleEffectParameter);
+        //manager.load(explosionParticle, ParticleEffect.class, particleEffectParameter);
     }
 
 
@@ -158,12 +161,21 @@ public class GADSAssetManager {
         IngameAssets.gameTowerAnimations = new AtlasAnimation[GameTowerAnimationType.values().length];
 
         //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
+
+        // Tower Animationen
         IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
         IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/10f, atlas.findRegions("mageCat_attack_down/mageCat_attack_down"), Animation.PlayMode.LOOP);
 
+        // Gegner Animationen
         IngameAssets.gameEnemyAnimations = new AtlasAnimation[GameEnemyAnimationType.values().length];
         IngameAssets.gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1/10f, atlas.findRegions("enemy/bigMouse_idle_left"), Animation.PlayMode.LOOP);
         IngameAssets.gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("bigMouse_running_left/bigMouse_running_left"), Animation.PlayMode.LOOP);
+
+        // Projektile
+        IngameAssets.projectiles.put(ProjectileAction.ProjectileType.STANDARD_TYPE, new AtlasAnimation(1/8f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP));
+
+        // Effekte
+        // IngameAssets.explosionParticle = new ParticleEffectPool(manager.get(explosionParticle, ParticleEffect.class), 1, 10);
 
         // Provisorium ToDo: entfernen
         IngameAssets.turnTimer = atlas.findRegion("background/mainTitleBackground");

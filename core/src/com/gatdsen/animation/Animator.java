@@ -292,10 +292,10 @@ public class Animator implements Screen, AnimationLogProcessor {
             // Effekt bei Treffer
             ExpandedAction effects;
             switch (projectileAction.getType()) {
-                case STANDARD_TYPE:
-                    effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
-                    moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
-                    break;
+                //case STANDARD_TYPE:
+                    //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                    //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                    //break;
                 default:
                     moveProjectile.setChildren(new Action[]{destroyProjectile});
             }
