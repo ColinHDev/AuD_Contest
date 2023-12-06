@@ -3,6 +3,8 @@ package com.gatdsen.simulation;
 import com.gatdsen.simulation.action.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Speichert den Zustand eines Spielers.
@@ -36,7 +38,7 @@ public class PlayerState implements Serializable {
         board = new Tile[width][height];
         this.health = health;
         this.money = money;
-        initEnemiesToBeSpawned();
+
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -76,6 +78,7 @@ public class PlayerState implements Serializable {
         }
         spawnTile = endTile.getFirstPathTile();
         spawnTile.indexPathTiles();
+        initEnemiesToBeSpawned();
     }
 
     /**
@@ -290,15 +293,37 @@ public class PlayerState implements Serializable {
      * @return der neue Action Head
      */
     Action moveEnemies(Action head) {
+        /*System.out.println("MoveEnemies");
         PathTile actual = endTile;
         while (actual.getPrev() != null) {
-            for (Enemy enemy : actual.getEnemies()) {
+            if (!actual.getEnemies().isEmpty()) {
+                for (Enemy enemy : actual.getEnemies()) {
+                    head = enemy.move(head);
+                }
+            }
+            actual = actual.getPrev();
+        }
+
+        if (!actual.getEnemies().isEmpty()) for(Enemy enemy : actual.getEnemies()) head = enemy.move(head);
+        return head;*/
+        PathTile actual = endTile;
+        while (actual.getPrev() != null) {
+            List<Enemy> enemiesCopy = new ArrayList<>(actual.getEnemies());
+            for (Enemy enemy : enemiesCopy) {
+                System.out.println("Test");
                 head = enemy.move(head);
             }
             actual = actual.getPrev();
         }
+
+        List<Enemy> lastEnemiesCopy = new ArrayList<>(actual.getEnemies());
+        for (Enemy enemy : lastEnemiesCopy) {
+            head = enemy.move(head);
+        }
         return head;
     }
+
+
 
     /**
      * Setzt die Lebenspunkte des Spielers

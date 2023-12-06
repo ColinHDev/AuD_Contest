@@ -75,7 +75,7 @@ public class Enemy implements Serializable {
      */
     Action move(Action head) {
         if (posTile.getNext() != null) {
-            System.out.println("Test Test");
+            System.out.println(posTile.pos.x + " " + posTile.pos.y);
             posTile.getEnemies().remove(this);
             posTile = posTile.getNext();
             posTile.getEnemies().add(this);
