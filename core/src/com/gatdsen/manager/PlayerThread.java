@@ -57,7 +57,7 @@ public final class PlayerThread {
         PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(playerClass);
         Controller controller = createController();
         controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation(), analyzer.getSeedModifier()));
-        if (player.getType().equals(Player.PlayerType.AI)) {
+        if (player.getType().equals(Player.PlayerType.BOT)) {
             String[] illegalImports = analyzer.getIllegalImports();
             if (illegalImports.length > 0) {
                 controller.disqualify();
@@ -74,14 +74,14 @@ public final class PlayerThread {
         Controller controller = createController();
         StaticGameState staticState = new StaticGameState(state, playerIndex);
         switch (player.getType()) {
-            case Human ->{
+            case HUMAN ->{
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
                     player.init(staticState);
                 });
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_INIT_TIMEOUT);
             }
-            case AI -> {
+            case BOT -> {
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
                     ((Bot) player).setRandomSeed(seed);
@@ -100,12 +100,12 @@ public final class PlayerThread {
             player.executeTurn(new StaticGameState(state, playerIndex), controller);
         });
         Thread futureExecutor = switch (player.getType()) {
-            case Human -> new Thread(() -> {
+            case HUMAN -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
                 inputGenerator.activateTurn((HumanPlayer) player, playerIndex);
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_TURN_TIMEOUT);
             });
-            case AI -> new Thread(() -> {
+            case BOT -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
                 awaitBotFuture(future, controller, AI_EXECUTE_TURN_TIMEOUT);
             });
@@ -180,7 +180,7 @@ public final class PlayerThread {
 
     private Controller createController() {
         return new Controller(
-                player.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
+                player.getType() == Player.PlayerType.HUMAN ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
         );
     }
 

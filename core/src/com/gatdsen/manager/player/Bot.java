@@ -35,7 +35,7 @@ public abstract class Bot extends Player {
      */
     @Override
     public final PlayerType getType() {
-        return PlayerType.AI;
+        return PlayerType.BOT;
     }
 
     /**

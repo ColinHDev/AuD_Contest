@@ -3,7 +3,6 @@ package com.gatdsen.manager.player;
 import com.gatdsen.manager.Controller;
 import com.gatdsen.manager.StaticGameState;
 import com.gatdsen.manager.player.data.PlayerInformation;
-import com.gatdsen.simulation.GameState;
 
 /**
  * Die Basisklasse für alle Implementierungen von Spielern.
@@ -39,8 +38,8 @@ public abstract class Player {
     public abstract void executeTurn(StaticGameState state, Controller controller);
 
     public enum PlayerType {
-        Human,
-        AI
+        HUMAN,
+        BOT
     }
 
     /**
