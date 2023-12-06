@@ -110,7 +110,7 @@ public class TestBotMissTurn {
         @Override
         public void init(StaticGameState state) {
             long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < PlayerThread.AI_EXECUTE_INIT_TIMEOUT * 1.5);
+            while (System.currentTimeMillis() - startTime < PlayerThread.BOT_EXECUTE_INIT_TIMEOUT * 1.5);
         }
 
         @Override
