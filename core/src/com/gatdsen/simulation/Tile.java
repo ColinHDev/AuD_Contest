@@ -44,12 +44,13 @@ public abstract class Tile implements Serializable {
     List<Tile> getNeighbours(int range, Tile[][] board) {
         int diameter = (range * 2) + 1;
         List<Tile> neighbours = new ArrayList<>(diameter * diameter - 1);
+        IntRectangle rec = new IntRectangle(0,0, board.length-1, board[0].length-1);
         for (int i = 0; i < diameter; i++) {
             for (int j = 0; j < diameter; j++) {
-                if (pos.x + range >= board.length || pos.x - range < 0 || pos.y - range < 0 || pos.y + range >= board[0].length) {
-                    continue;
+                if (rec.contains(pos.x - range + i, pos.y -range + j)) {
+                    neighbours.add(board[pos.x - range + i][pos.y - range + j]);
                 }
-                neighbours.add(board[pos.x - range + i][pos.y - range + j]);
+
             }
         }
         return neighbours;
