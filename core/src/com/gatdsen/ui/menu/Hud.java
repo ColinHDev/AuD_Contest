@@ -514,9 +514,18 @@ public class Hud implements Disposable {
         }
     }
 
+    public void initPlayerHealth(int playerID, int maxHealth){
+        if (playerID == 0) {
+            healthBarPlayer0.setRange(0,maxHealth);
+        } else if (playerID == 1) {
+            healthBarPlayer0.setRange(0,maxHealth);
+        }
+    }
+
     public void setPlayerHealth(int playerID, int health) {
         if (playerID == 0) {
             healthBarPlayer0.setValue(health);
+            healthBarPlayer0.setColor(Color.RED);
         } else if (playerID == 1) {
             healthBarPlayer1.setValue(health);
         }
