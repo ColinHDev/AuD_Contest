@@ -66,6 +66,7 @@ public class TurnTimer extends Table {
 	}
 
 	public void startTimer(int turnTime){
+		stopTimer();
 		timer.clear();
 		//schedule the countdown task to count down the turn time
 		timer.scheduleTask(countdown,1,1);
