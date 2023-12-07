@@ -3,6 +3,7 @@ package com.gatdsen.manager;
 
 import com.gatdsen.manager.player.IdleBot;
 import com.gatdsen.manager.player.Player;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 
 import java.util.*;
@@ -31,7 +32,6 @@ public class ParallelMultiGameRun extends Run {
             }
 
             runConfig.players.add(IdleBot.class);
-            runConfig.teamCount = runConfig.players.size();
             getPlayers().clear();
             getPlayers().addAll(runConfig.players);
             runConfig.mapName = "MangoMap";
@@ -41,7 +41,7 @@ public class ParallelMultiGameRun extends Run {
             indices.add(i);
         }
         scores = new float[runConfig.players.size()];
-        List<List<Integer>> listOfMatchUps = subsetK(indices, runConfig.teamCount);
+        List<List<Integer>> listOfMatchUps = subsetK(indices, runConfig.players.size());
         List<List<Integer>> permListOfMatchUps = new ArrayList<>();
         for (List<Integer> matchUp : listOfMatchUps) {
             permListOfMatchUps.addAll(permutations(matchUp));
@@ -52,13 +52,13 @@ public class ParallelMultiGameRun extends Run {
         Game firstGame = null;
         for (List<Integer> matchUp : permListOfMatchUps
         ) {
-            GameConfig cur = new GameConfig(runConfig);
+            RunConfiguration curConfig = runConfig.copy();
             List<Class<? extends Player>> players = new ArrayList<>();
             for (Integer index : matchUp) {
                 players.add(runConfig.players.get(index));
             }
-            cur.players = players;
-            Game curGame = new Game(cur);
+            curConfig.players = players;
+            Game curGame = new Game(curConfig.asGameConfig());
             curGame.addCompletionListener(this::onGameCompletion);
             if (runConfig.gui) {
                 if (lastGame != null) {

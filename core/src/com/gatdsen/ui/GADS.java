@@ -4,7 +4,7 @@ package com.gatdsen.ui;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.ui.assets.GADSAssetManager;
 import com.gatdsen.ui.menu.GamemodeNormalScreen;
 import com.gatdsen.ui.menu.InGameScreen;

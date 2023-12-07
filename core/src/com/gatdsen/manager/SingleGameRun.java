@@ -1,5 +1,6 @@
 package com.gatdsen.manager;
 
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 
 import java.util.Arrays;
@@ -11,7 +12,8 @@ public class SingleGameRun extends Run {
 
     public SingleGameRun(Manager manager, RunConfiguration runConfig) {
         super(manager, runConfig);
-        Executable game = runConfig.gameMode == GameState.GameMode.Replay ? new ReplayGame(new GameConfig(runConfig)) : new Game(new GameConfig(runConfig));
+        GameConfig gameConfig = runConfig.asGameConfig();
+        Executable game = runConfig.gameMode == GameState.GameMode.Replay ? new ReplayGame(gameConfig) : new Game(gameConfig);
         game.addCompletionListener(this::onGameCompletion);
         addGame(game);
     }

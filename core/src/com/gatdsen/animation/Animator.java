@@ -118,6 +118,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
                         put(UpdateCurrencyAction.class, ActionConverters::convertUpdateCurrencyAction);
+                        put(UpdateHealthAction.class, ActionConverters::convertUpdateHealthAction);
 
                         // Gegner Actions
                         put(EnemySpawnAction.class, ActionConverters::convertEnemySpawnAction);
@@ -189,10 +190,12 @@ public class Animator implements Screen, AnimationLogProcessor {
             int tileSize = animator.playerMaps[0].getTileSize();
             GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
 
-            Vector2 start = new Vector2(moveAction.getPos().x * tileSize, moveAction.getPos().y * tileSize);
-            Vector2 end = new Vector2(moveAction.getDes().x * tileSize, moveAction.getDes().y * tileSize);
+            Vector2 mapPos = animator.playerMaps[moveAction.getTeam()].getPos();
 
-            Path enemyPath = new LinearPath(start, end, 100);
+            Vector2 start = new Vector2(moveAction.getPos().x * tileSize + mapPos.x, moveAction.getPos().y * tileSize + mapPos.y);
+            Vector2 end = new Vector2(moveAction.getDes().x * tileSize + mapPos.x, moveAction.getDes().y * tileSize + mapPos.y);
+
+            Path enemyPath = new LinearPath(start, end, 500);
 
             MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
             ExecutorAction changeArray = new ExecutorAction(0, () -> {
@@ -267,7 +270,8 @@ public class Animator implements Screen, AnimationLogProcessor {
 
         private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             ProjectileAction projectileAction = (ProjectileAction) action;
-            Path path = projectileAction.getPath();
+            TileMap board = animator.playerMaps[projectileAction.getTeam()];
+            Path path = new AnimatorPath(projectileAction.getPath(), board.getPos(), board.getTileSize());
 
             // Target muss null sein, da das Projektil dem converter nicht bekannt ist. Es wird erst in summonProjectile erstellt.
             MoveAction moveProjectile = new MoveAction(0, null, path.getDuration(), path);
@@ -282,6 +286,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                 destroyProjectile.setTarget(projectile);
             }, () -> {
                 Entity projectile = Projectiles.summon(projectileAction.getType());
+                projectile.setRelPos(projectileAction.getPath().getPos(0));
                 animator.root.add(projectile);
                 return projectile;
             });
@@ -291,10 +296,10 @@ public class Animator implements Screen, AnimationLogProcessor {
             // Effekt bei Treffer
             ExpandedAction effects;
             switch (projectileAction.getType()) {
-                case STANDARD_TYPE:
-                    effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
-                    moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
-                    break;
+                //case STANDARD_TYPE:
+                    //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                    //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                    //break;
                 default:
                     moveProjectile.setChildren(new Action[]{destroyProjectile});
             }

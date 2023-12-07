@@ -97,6 +97,6 @@ public class UiMessenger {
      * @param health   Der Ausgangswert für die Gesundheit des Spielers
      */
     public void initPlayerHealth(int playerID, int health) {
-       // hud.initPlayerHealth(playerID, health);
+       hud.initPlayerHealth(playerID, health);
     }
 }

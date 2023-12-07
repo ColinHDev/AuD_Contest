@@ -31,7 +31,7 @@ public class Tower extends Tile {
     static final int[] PRICE_VALUES = new int[TowerType.values().length];
 
     static {
-        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 1;
+        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 35;
         // DAMAGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 2;
         // DAMAGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
 
@@ -262,6 +262,7 @@ public class Tower extends Tile {
             return head;
         }
         setPathList();
+
         if (pathInRange.isEmpty()) {
             return head;
         }
@@ -275,14 +276,14 @@ public class Tower extends Tile {
                 break;
             }
         }
-        assert target != null;
+        if(target != null) {
+            head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
+            Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
+            head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path, playerState.getIndex()));
 
-        head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
-        Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
-        head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path));
-
-        head = target.updateHealth(getDamage(), head);
-        cooldown = getRechargeTime();
+            head = target.updateHealth(getDamage(), head);
+            cooldown = getRechargeTime();
+        }
         return head;
     }
 
@@ -293,7 +294,6 @@ public class Tower extends Tile {
      * @return neuer Kopf der Action-Liste
      */
     Action tick(Action head) {
-        head.addChild(attack(head));
-        return head;
+        return attack(head);
     }
 }

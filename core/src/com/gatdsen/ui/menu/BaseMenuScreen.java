@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.ui.ConfigScreen;
 import com.gatdsen.ui.GADS;
 import com.gatdsen.ui.assets.AssetContainer;

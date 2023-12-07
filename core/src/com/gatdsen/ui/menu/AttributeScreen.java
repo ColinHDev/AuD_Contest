@@ -3,7 +3,7 @@ package com.gatdsen.ui.menu;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.ui.GADS;
 import com.gatdsen.ui.menu.attributes.Attribute;
 

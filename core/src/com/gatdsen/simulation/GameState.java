@@ -17,7 +17,8 @@ public class GameState implements Serializable {
         Exam_Admission,
         Tournament_Phase_1,
         Tournament_Phase_2,
-        Replay
+        Replay,
+        Christmas_Task
     }
 
     /**
@@ -59,6 +60,9 @@ public class GameState implements Serializable {
         this.sim = sim;
         playerStates = new PlayerState[playerCount];
         Arrays.setAll(playerStates, index -> new PlayerState(this, index, 300, 100));
+        if (gameMode == GameMode.Christmas_Task) {
+            playerStates[1] = new PlayerState(this, 0, 300000, 0);
+        }
     }
 
     /**
