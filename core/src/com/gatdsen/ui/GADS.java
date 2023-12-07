@@ -9,6 +9,7 @@ import com.gatdsen.ui.assets.GADSAssetManager;
 import com.gatdsen.ui.menu.GamemodeNormalScreen;
 import com.gatdsen.ui.menu.InGameScreen;
 import com.gatdsen.ui.menu.MainScreen;
+import com.gatdsen.ui.menu.ChristmasTaskScreen;
 
 /**
  * GADS ist die verantwortliche Klasse im LifeCycle der Anwendung.
@@ -29,6 +30,7 @@ public class GADS extends Game {
     public enum ScreenState {
         MAINSCREEN,
         NORMALMODESCREEN,
+        CHRISTMASTASKSCREEN,
         INGAMESCREEN,
         LOADSCREEN
     }
@@ -76,6 +78,8 @@ public class GADS extends Game {
                 return new InGameScreen(this);
             case NORMALMODESCREEN:
                 return new GamemodeNormalScreen(this);
+            case CHRISTMASTASKSCREEN:
+                return new ChristmasTaskScreen(this);
             default:
                 return null;
         }
