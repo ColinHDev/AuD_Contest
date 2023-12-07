@@ -53,6 +53,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
     private static GameTower[][][] towers;
     public static GameEnemy[][][] enemies;
+    public static GameEnemy[][][] temp_enemies;
 
     // TODO: BlockingQueue<ActionLog> muss BlockingQueue<Action> sein - gez. Corny
     private final BlockingQueue<com.gatdsen.simulation.action.Action> pendingLogs = new LinkedBlockingQueue<>();
@@ -114,6 +115,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                 new HashMap<Class<?>, ActionConverter>() {
                     {
                         put(InitAction.class, ((simAction, animator) -> new ExpandedAction(new IdleAction(0, 0))));
+                        put(TurnStartAction.class, ActionConverters::convertTurnStartAction);
                         put(GameOverAction.class, ActionConverters::convertGameOverAction);
                         put(DebugPointAction.class, ActionConverters::convertDebugPointAction);
                         put(ScoreAction.class, ActionConverters::convertScoreAction);
@@ -163,6 +165,17 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
+        private static ExpandedAction convertTurnStartAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+            for (int i = 0; i < enemies.length; i++) {
+                for (int j = 0; j < enemies[i].length; j++) {
+                    temp_enemies[i][j] = enemies[i][j].clone();
+                }
+            }
+            enemies = new GameEnemy[2][100][100];
+
+            return new ExpandedAction(new IdleAction(0,0));
+        }
+
         private static ExpandedAction convertEnemySpawnAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemySpawnAction spawnAction = (EnemySpawnAction) action;
 
@@ -188,7 +201,7 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertEnemyMoveAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyMoveAction moveAction = (EnemyMoveAction) action;
             int tileSize = animator.playerMaps[0].getTileSize();
-            GameEnemy enemy = enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
+            GameEnemy enemy = temp_enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
 
             Vector2 mapPos = animator.playerMaps[moveAction.getTeam()].getPos();
 
@@ -199,9 +212,10 @@ public class Animator implements Screen, AnimationLogProcessor {
 
             MoveAction moveEnemy = new MoveAction(moveAction.getDelay(), enemy, enemyPath.getDuration(), enemyPath);
             ExecutorAction changeArray = new ExecutorAction(0, () -> {
-                Animator.enemies[moveAction.getTeam()][moveAction.getDes().x][moveAction.getDes().y] =
-                        Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
-                Animator.enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y] = null;
+                synchronized (Animator.enemies) {
+                    Animator.enemies[moveAction.getTeam()][moveAction.getDes().x][moveAction.getDes().y] =
+                            Animator.temp_enemies[moveAction.getTeam()][moveAction.getPos().x][moveAction.getPos().y];
+                }
                 return 0;
             });
 
@@ -432,6 +446,7 @@ public class Animator implements Screen, AnimationLogProcessor {
 
         towers = new GameTower[2][100][100];
         enemies = new GameEnemy[2][100][100];
+        temp_enemies = new GameEnemy[2][100][100];
         setupView(viewport);
 
         setup();
