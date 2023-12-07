@@ -129,15 +129,15 @@ public class GADSAssetManager {
 
                 // Path Tiles siehe TileMap
                 //0: Spawn nach oben
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/start_tile"),
                 //1: Spawn nach rechts
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/start_tile"),
                 //2: Spawn nach unten
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/start_tile"),
                 //3: Spawn nach rechts
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/start_tile"),
                 //4: Ziel nach unten
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/end_tile"),
                 //5: Ecke rechts Oben
                 atlas.findRegion("Tileset/path_right_up_tile"),
                 //6: vertikale Gerade
@@ -145,17 +145,17 @@ public class GADSAssetManager {
                 //7: Ecke links Oben
                 atlas.findRegion("Tileset/path_left_up_tile"),
                 //8: Ziel nach links
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/end_tile"),
                 //9: Ecke rechts Unten
                 atlas.findRegion("Tileset/path_right_down_tile"),
                 //10: horizontale Gerade
                 atlas.findRegion("Tileset/path_horizontal_tile"),
                 //11: Ziel nach oben
-                atlas.findRegion("Tileset/water_tile"),
+                atlas.findRegion("Tileset/end_tile"),
                 //12: Ecke links Unten
                 atlas.findRegion("Tileset/path_left_down_tile"),
                 //13: Ziel nach rechts
-                atlas.findRegion("Tileset/water_tile")
+                atlas.findRegion("Tileset/end_tile")
         };
 
         IngameAssets.gameTowerAnimations = new AtlasAnimation[GameTowerAnimationType.values().length];
@@ -163,8 +163,8 @@ public class GADSAssetManager {
         //IngameAssets.gameCharacterAnimations[GameCharacterAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("mageCat_idle_down/mageCat_idle_down_0"), Animation.PlayMode.LOOP);
 
         // Tower Animationen
-        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 5f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP);
-        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/20f, atlas.findRegions("mageCat_attack_down/mageCat_attack_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_IDLE.ordinal()] = new AtlasAnimation(1 / 5f, atlas.findRegions("mageCat_idle_down/mageCatWeinachten_idle_down"), Animation.PlayMode.LOOP);
+        IngameAssets.gameTowerAnimations[GameTowerAnimationType.ANIMATION_TYPE_ATTACK.ordinal()] = new AtlasAnimation(1/20f, atlas.findRegions("mageCat_attack_down/mageCatWeinachten_attack_down"), Animation.PlayMode.LOOP);
 
         // Gegner Animationen
         IngameAssets.gameEnemyAnimations = new AtlasAnimation[GameEnemyAnimationType.values().length];
@@ -172,7 +172,7 @@ public class GADSAssetManager {
         IngameAssets.gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_WALKING.ordinal()] = new AtlasAnimation(1 / 10f, atlas.findRegions("bigMouse_running_left/bigMouse_running_left"), Animation.PlayMode.LOOP);
 
         // Projektile
-        IngameAssets.projectiles.put(ProjectileAction.ProjectileType.STANDARD_TYPE, new AtlasAnimation(1/8f, atlas.findRegions("idle/mage_Cat_idle_down"), Animation.PlayMode.LOOP));
+        IngameAssets.projectiles.put(ProjectileAction.ProjectileType.STANDARD_TYPE, new AtlasAnimation(1/8f, atlas.findRegions("projectiles/magicBullet"), Animation.PlayMode.LOOP));
 
         // Effekte
         // IngameAssets.explosionParticle = new ParticleEffectPool(manager.get(explosionParticle, ParticleEffect.class), 1, 10);
