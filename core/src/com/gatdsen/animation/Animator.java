@@ -173,7 +173,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             }
             enemies = new GameEnemy[2][100][100];
 
-            return new ExpandedAction(new IdleAction(0,0));
+            return new ExpandedAction(new IdleAction(0, 0));
         }
 
         private static ExpandedAction convertEnemySpawnAction(com.gatdsen.simulation.action.Action action, Animator animator) {
@@ -185,7 +185,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         enemies[spawnAction.getTeam()][spawnAction.getPos().x][spawnAction.getPos().y] = enemy;
                     },
                     () -> {
-                        GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
+                        GameEnemy enemy = new GameEnemy(spawnAction.getLevel(), spawnAction.getMaxHealth());
                         enemy.setRelPos(spawnAction.getPos().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
                                 spawnAction.getPos().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
 
@@ -239,16 +239,29 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertEnemyDefeatAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
 
-            DestroyAction<GameEnemy> killEnemy = new DestroyAction<>(
-                    defeatAction.getDelay(),
-                    enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
-                    null,
-                    (GameEnemy enemy) -> {
-                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
-                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
-                    }
-            );
+            DestroyAction<GameEnemy> killEnemy;
 
+            if (enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] != null) {
+                killEnemy = new DestroyAction<>(
+                        defeatAction.getDelay(),
+                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
+                        null,
+                        (GameEnemy enemy) -> {
+                            animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                            enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
+                        }
+                );
+            } else {
+                killEnemy = new DestroyAction<>(
+                        defeatAction.getDelay(),
+                        temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
+                        null,
+                        (GameEnemy enemy) -> {
+                            animator.root.remove(temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                            temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
+                        }
+                );
+            }
             return new ExpandedAction(killEnemy);
         }
 
@@ -269,7 +282,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonTower);
         }
 
-        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action
+                                                                       action, Animator animator) {
             TowerAttackAction towerAttack = (TowerAttackAction) action;
             GameTower tower = towers[towerAttack.getTeam()][towerAttack.getPos().x][towerAttack.getPos().y];
 
@@ -282,7 +296,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(attack);
         }
 
-        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator
+                animator) {
             ProjectileAction projectileAction = (ProjectileAction) action;
             TileMap board = animator.playerMaps[projectileAction.getTeam()];
             Path path = new AnimatorPath(projectileAction.getPath(), board.getPos(), board.getTileSize());
@@ -311,9 +326,9 @@ public class Animator implements Screen, AnimationLogProcessor {
             ExpandedAction effects;
             switch (projectileAction.getType()) {
                 //case STANDARD_TYPE:
-                    //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
-                    //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
-                    //break;
+                //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                //break;
                 default:
                     moveProjectile.setChildren(new Action[]{destroyProjectile});
             }
@@ -322,7 +337,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonProjectile, destroyProjectile);
         }
 
-        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator animator) {
+        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator
+                animator) {
             DestroyAction<ParticleEntity> destroyParticle = new DestroyAction<>(dur, null, null, (particle) -> {
                 animator.root.remove(particle);
                 particle.free();
@@ -341,7 +357,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonParticle, destroyParticle);
         }
 
-        private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action
+                                                                        action, Animator animator) {
             TowerDestroyAction destroyAction = (TowerDestroyAction) action;
 
             DestroyAction<GameTower> destroyTower = new DestroyAction<GameTower>(
@@ -357,7 +374,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(destroyTower);
         }
 
-        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action
+                                                                          action, Animator animator) {
             UpdateCurrencyAction updateCurrency = (UpdateCurrencyAction) action;
 
             MessageUiCurrencyAction currencyAction = new MessageUiCurrencyAction(
@@ -369,7 +387,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(currencyAction);
         }
 
-        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action
+                                                                        action, Animator animator) {
             UpdateHealthAction updateHealth = (UpdateHealthAction) action;
 
             MessageUiUpdateHealthAction setHealth = new MessageUiUpdateHealthAction(
@@ -382,7 +401,8 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
-        private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator
+                animator) {
             GameOverAction winAction = (GameOverAction) action;
             MessageUiGameEndedAction gameEndedAction;
             if (winAction.getTeam() < 0) {
@@ -394,7 +414,8 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(gameEndedAction);
         }
 
-        private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator
+                animator) {
             DebugPointAction debugPointAction = (DebugPointAction) action;
 
             DestroyAction<Entity> destroyAction = new DestroyAction<Entity>(debugPointAction.getDuration(), null, null, animator.root::remove);
@@ -421,7 +442,8 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
-        private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator animator) {
+        private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator
+                animator) {
             ScoreAction scoreAction = (ScoreAction) action;
             //ui Action
             MessageUiScoreAction indicateScoreChangeAction = new MessageUiScoreAction(0, animator.uiMessenger, scoreAction.getTeam(), scoreAction.getNewScore());
@@ -567,7 +589,8 @@ public class Animator implements Screen, AnimationLogProcessor {
                 if (remainder >= 0) {
                     //Schedule children to run for the time that's not consumed by their parent
                     Action[] children = cur.getChildren();
-                    if (children != null && children.length > 0) remainders.push(new Remainder(remainder, children));
+                    if (children != null && children.length > 0)
+                        remainders.push(new Remainder(remainder, children));
                 } else {
                     //Add the child to the list of running actions if not completed in the remaining time
                     actionList.add(cur);

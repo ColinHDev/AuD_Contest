@@ -11,10 +11,10 @@ public class GameEnemy extends AnimatedEntity {
     private int level;
     public Healthbar healthbar;
 
-    public GameEnemy(int level) {
+    public GameEnemy(int level, int maxHealth) {
         super(gameEnemyAnimations[GameEnemyAnimationType.ANIMATION_TYPE_IDLE.ordinal()]);
         this.level = level;
-        healthbar = new Healthbar(100);
+        healthbar = new Healthbar(maxHealth);
         this.add(healthbar);
 
     }
