@@ -119,6 +119,9 @@ public class GADSAssetManager {
         MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground_new");
         MainMenuAssets.skin = manager.get(skin, Skin.class);
 
+        IngameAssets.victoryDisplay = atlas.findRegion("background/mainTitleBackground_new");
+        IngameAssets.drawDisplay = atlas.findRegion("background/mainTitleBackground_new");
+        IngameAssets.lossDisplay = atlas.findRegion("background/mainTitleBackground_new");
         //Ingame
 
         IngameAssets.background = atlas.findRegion("background/WeihnachtsBG");
