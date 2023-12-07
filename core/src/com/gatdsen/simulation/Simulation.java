@@ -24,7 +24,8 @@ public class Simulation {
     public Simulation(GameMode gameMode, String mapName, int playerCount) {
         gameState = new GameState(gameMode, mapName, playerCount, this);
         playerStates = gameState.getPlayerStates();
-        actionLog = new ActionLog(new TurnStartAction(0));
+        actionLog = new ActionLog(new InitAction());
+
     }
 
     /**
@@ -98,7 +99,7 @@ public class Simulation {
 
         gameState.nextTurn();
         ActionLog temp = actionLog;
-        actionLog = new ActionLog(new TurnStartAction(gameState.getTurn()));
+        actionLog = new ActionLog(new InitAction());
 
         return temp;
     }

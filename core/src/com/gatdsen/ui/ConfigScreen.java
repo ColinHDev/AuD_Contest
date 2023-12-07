@@ -1,7 +1,7 @@
 package com.gatdsen.ui;
 
 import com.badlogic.gdx.Screen;
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 
 abstract public class ConfigScreen implements Screen {
    protected RunConfiguration runConfiguration;

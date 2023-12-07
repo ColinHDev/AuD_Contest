@@ -200,7 +200,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public PlayerType getType() {
-        return PlayerType.Human;
+        return PlayerType.HUMAN;
     }
 
     public int getTurnDuration() {

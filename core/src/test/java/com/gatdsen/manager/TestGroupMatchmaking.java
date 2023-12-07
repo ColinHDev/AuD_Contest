@@ -1,5 +1,6 @@
 package com.gatdsen.manager;
 
+import com.gatdsen.manager.run.config.RunConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

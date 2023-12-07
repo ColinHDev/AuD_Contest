@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -47,8 +48,8 @@ public class Hud implements Disposable {
     private TextButton nextRoundButton;
     private final Skin skin = AssetContainer.MainMenuAssets.skin;
     Viewport hudViewport;
-    private int player0Balance;
-    private int player1Balance;
+    private int player0Balance = 100;
+    private int player1Balance = 100;
     private ProgressBar healthBarPlayer0;
     private ProgressBar healthBarPlayer1;
 
@@ -70,7 +71,7 @@ public class Hud implements Disposable {
         inputHandler = setupInputHandler(ingameScreen, this);
         inputHandler.setUiMessenger(uiMessenger);
         turnTimer = new TurnTimer(AssetContainer.IngameAssets.turnTimer);
-        turnTimer.setCurrentTime(0);
+        //turnTimer.setCurrentTime(0);
         turnPopupContainer = new Container<ImagePopup>();
         layoutHudElements();
         // Kombination von Eingaben von beiden Prozessoren (Spiel und UI)
@@ -145,20 +146,21 @@ public class Hud implements Disposable {
         int health = 300;
 
         Label player0BalanceLabel = new Label("$" + player0Balance, skin);
-
+        player0BalanceLabel.setAlignment(Align.center);
         Label player1BalanceLabel = new Label("$" + player1Balance, skin);
+        player1BalanceLabel.setAlignment(Align.center);
+        Label currentPlayer0 = new Label("Spieler 0", skin);
+        currentPlayer0.setAlignment(Align.center);
+        Label currentPlayer1 = new Label("Spieler 1", skin);
+        currentPlayer1.setAlignment(Align.center);
 
         healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer0.setValue(health);
+        healthBarPlayer0.setAnimateDuration(0.25f);
         healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer1.setValue(health);
-
+        healthBarPlayer1.setAnimateDuration(0.25f);
         Label invisibleLabel = new Label("", skin);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(invisibleLabel);
-        layoutTable.add(turnTimer).row();
-
         nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
             /**
@@ -170,25 +172,34 @@ public class Hud implements Disposable {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 inputHandler.endTurn();
-                System.out.println("Neue Runde startet");
+                layoutTable.clear();
+                layoutHudElements();
             }
         });
-        layoutTable.add(healthBarPlayer0).pad(padding);
-        layoutTable.add(player0BalanceLabel).pad(padding);
+
+        layoutTable.add(currentPlayer0).expandX();
+        layoutTable.add(player0BalanceLabel).pad(padding).expandX();
+        layoutTable.add(healthBarPlayer0).pad(padding).expandX();
+        layoutTable.add(turnTimer);
+        layoutTable.add(healthBarPlayer1).pad(padding).expandX();
+        layoutTable.add(player1BalanceLabel).pad(padding).expandX();
+        layoutTable.add(currentPlayer1).pad(padding).expandX().row();
+        layoutTable.add(invisibleLabel).row();
         layoutTable.add(invisibleLabel);
-        layoutTable.add(nextRoundButton);
         layoutTable.add(invisibleLabel);
-        layoutTable.add(healthBarPlayer1).pad(padding);
-        layoutTable.add(player1BalanceLabel).pad(padding);
+        layoutTable.add(invisibleLabel);
+        layoutTable.add(nextRoundButton).pad(padding).expandX().row();
+        layoutTable.add(invisibleLabel);
     }
 
+    /*
     /**
      * Erstellt einen FastForwardButton und gibt ihn zurück
      *
      * @param uiMessenger Der UiMessenger für die Kommunikation
      * @param speedUp     Die Geschwindigkeitssteigerung für die Schnellvorlauf-Funktion
      * @return Ein neues FastForwardButton-Objekt
-     */
+
     private FastForwardButton setupFastForwardButton(UiMessenger uiMessenger, float speedUp) {
 
         FastForwardButton button = new FastForwardButton(new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButton),
@@ -197,6 +208,7 @@ public class Hud implements Disposable {
                 uiMessenger, speedUp);
         return button;
     }
+    */
 
     /**
      * Gibt den InputHandler zurück
@@ -356,7 +368,7 @@ public class Hud implements Disposable {
      * Passt die Punktzahlen im HUD basierend auf dem gegebenen Array an
      *
      * @param scores Ein Array mit den neuen Punktzahlen
-     */
+
     public void adjustScores(float[] scores) {
         this.scores = scores;
 
@@ -364,6 +376,7 @@ public class Hud implements Disposable {
             scoreView.adjustScores(scores);
         }
     }
+     */
 
     /**
      * Passt die Punktzahl für das angegebene Team im HUD an
@@ -388,6 +401,7 @@ public class Hud implements Disposable {
      */
     public void gameEnded(boolean won, int team, boolean isDraw) {
 
+        // ToDo: Remove color
         //create a pixel with a set color that will be used as Background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         //set the color to black
@@ -478,12 +492,10 @@ public class Hud implements Disposable {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 int posX = (int) ((x / tileMap.getTileSize()) * 10);
                 int posY = (int) ((y / tileMap.getTileSize()) * 10);
-                if (button == Input.Buttons.RIGHT) {
-                    System.out.println("Rechtsklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                if (button == Input.Buttons.RIGHT && tileMap.getTile(posX, posY) == 0) {
                     inputHandler.playerFieldRightClicked(team, posX, posY);
                     return true;
-                } else if (button == Input.Buttons.LEFT) {
-                    System.out.println("Linksklick - x: " + posX + " y: " + posY + " Spieler: " + team);
+                } else if (button == Input.Buttons.LEFT && tileMap.getTile(posX, posY) == 0) {
                     inputHandler.playerFieldLeftClicked(team, posX, posY);
                     return true;
                 }
@@ -509,32 +521,28 @@ public class Hud implements Disposable {
     public void setBankBalance(int playerID, int balance) {
         if (playerID == 0) {
             player0Balance = balance;
+
         } else if (playerID == 1) {
             player1Balance = balance;
+        }
+    }
+
+    public void initPlayerHealth(int playerID, int maxHealth){
+        if (playerID == 0) {
+            healthBarPlayer0.setRange(0,maxHealth);
+            healthBarPlayer0.setValue(maxHealth);
+        } else if (playerID == 1) {
+            healthBarPlayer1.setRange(0,maxHealth);
+            healthBarPlayer1.setValue(maxHealth);
         }
     }
 
     public void setPlayerHealth(int playerID, int health) {
         if (playerID == 0) {
             healthBarPlayer0.setValue(health);
+            healthBarPlayer0.setColor(Color.RED);
         } else if (playerID == 1) {
             healthBarPlayer1.setValue(health);
         }
     }
-
-    /*
-    //ToDo implementieren!
-    public void initPlayerHealth(int playerID, int health) {
-        if (health <= 0){
-            health = 100;
-        }
-            if (playerID == 0) {
-                healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
-                healthBarPlayer0.setValue(health);
-            } else if (playerID == 1) {
-                healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
-                healthBarPlayer1.setValue(health);
-            }
-    }
-     */
 }

@@ -20,8 +20,8 @@ public class Tower extends Tile {
      */
     public enum TowerType {
         BASIC_TOWER,
-        AOE_TOWER,
-        SNIPER_TOWER;
+        // AOE_TOWER,
+        // SNIPER_TOWER;
     }
 
     static final int MAX_LEVEL = 3;
@@ -31,21 +31,21 @@ public class Tower extends Tile {
     static final int[] PRICE_VALUES = new int[TowerType.values().length];
 
     static {
-        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 1;
-        DAMAGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 2;
-        DAMAGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
+        DAMAGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 35;
+        // DAMAGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 2;
+        // DAMAGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
 
         RANGE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 2;
-        RANGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 1;
-        RANGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
+        // RANGE_VALUES[TowerType.AOE_TOWER.ordinal()] = 1;
+        // RANGE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 3;
 
         RECHARGE_TIME_VALUES[TowerType.BASIC_TOWER.ordinal()] = 0;
-        RECHARGE_TIME_VALUES[TowerType.AOE_TOWER.ordinal()] = 1;
-        RECHARGE_TIME_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 2;
+        // RECHARGE_TIME_VALUES[TowerType.AOE_TOWER.ordinal()] = 1;
+        // RECHARGE_TIME_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 2;
 
         PRICE_VALUES[TowerType.BASIC_TOWER.ordinal()] = 80;
-        PRICE_VALUES[TowerType.AOE_TOWER.ordinal()] = 9999;
-        PRICE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 9999;
+        // PRICE_VALUES[TowerType.AOE_TOWER.ordinal()] = 9999;
+        // PRICE_VALUES[TowerType.SNIPER_TOWER.ordinal()] = 9999;
     }
 
     private final PlayerState playerState;
@@ -262,6 +262,7 @@ public class Tower extends Tile {
             return head;
         }
         setPathList();
+
         if (pathInRange.isEmpty()) {
             return head;
         }
@@ -275,14 +276,14 @@ public class Tower extends Tile {
                 break;
             }
         }
-        assert target != null;
+        if(target != null) {
+            head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
+            Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
+            head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path, playerState.getIndex()));
 
-        head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
-        Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
-        head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path));
-
-        head = target.updateHealth(getDamage(), head);
-        cooldown = getRechargeTime();
+            head = target.updateHealth(getDamage(), head);
+            cooldown = getRechargeTime();
+        }
         return head;
     }
 
@@ -293,7 +294,6 @@ public class Tower extends Tile {
      * @return neuer Kopf der Action-Liste
      */
     Action tick(Action head) {
-        head.addChild(attack(head));
-        return head;
+        return attack(head);
     }
 }

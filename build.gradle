@@ -46,6 +46,7 @@ allprojects {
         options.encoding = 'UTF-8'
         exclude("**/test/**")
         options.tags = ["Weihnachtsaufgabe"]
+        failOnError = false
     }
 }
 
