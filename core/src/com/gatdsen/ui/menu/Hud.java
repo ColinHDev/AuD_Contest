@@ -50,8 +50,10 @@ public class Hud implements Disposable {
     Viewport hudViewport;
     private int player0Balance = 100;
     private int player1Balance = 100;
-    private ProgressBar healthBarPlayer0;
-    private ProgressBar healthBarPlayer1;
+
+    private int health = 300;
+    private ProgressBar healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
+    private ProgressBar healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
 
     /**
      * Initialisiert das HUD-Objekt
@@ -60,7 +62,7 @@ public class Hud implements Disposable {
      * @param gameViewport Die Viewport-Instanz für das Spiel
      */
     public Hud(InGameScreen ingameScreen, Viewport gameViewport) {
-        int health = 300;
+
         this.inGameScreen = ingameScreen;
         hudViewport = new FitViewport(gameViewport.getWorldWidth() / 10, gameViewport.getWorldHeight() / 10);
         this.uiMessenger = new UiMessenger(this);
@@ -81,10 +83,8 @@ public class Hud implements Disposable {
         stage.addActor(layoutTable);
         scoreView = new ScoreView(null);
 
-        healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer0.setValue(health);
         healthBarPlayer0.setAnimateDuration(0.25f);
-        healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer1.setValue(health);
         healthBarPlayer1.setAnimateDuration(0.25f);
     }
