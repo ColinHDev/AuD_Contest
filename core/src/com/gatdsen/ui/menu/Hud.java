@@ -522,20 +522,4 @@ public class Hud implements Disposable {
             healthBarPlayer1.setValue(health);
         }
     }
-
-    /*
-    //ToDo implementieren!
-    public void initPlayerHealth(int playerID, int health) {
-        if (health <= 0){
-            health = 100;
-        }
-            if (playerID == 0) {
-                healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
-                healthBarPlayer0.setValue(health);
-            } else if (playerID == 1) {
-                healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
-                healthBarPlayer1.setValue(health);
-            }
-    }
-     */
 }
