@@ -552,7 +552,6 @@ public class Hud implements Disposable {
             healthBarPlayer1.updateVisualValue();
         }
 
-        Gdx.app.log("Hud", "setPlayerHealth - Player ID: " + playerID + ", Health: " + health);
         layoutTable.clear();
         layoutHudElements();
     }
