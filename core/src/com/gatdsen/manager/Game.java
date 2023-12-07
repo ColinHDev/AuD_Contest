@@ -44,30 +44,21 @@ public class Game extends Executable {
 
     protected Game(GameConfig config) {
         super(config);
-        if (config.gameMode == GameState.GameMode.Campaign) {
-            if (config.players.size() != 1) {
-                System.err.println("Campaign only accepts exactly 1 player");
-                setStatus(Status.ABORTED);
-            }
-            config.players.addAll(CampaignResources.getEnemies(config.mapName));
-            config.teamCount = config.players.size();
-        }
         gameResults = new GameResults(config);
         gameResults.setStatus(getStatus());
     }
 
     private void create() {
-
-        simulation = new Simulation(config.gameMode, config.mapName, config.teamCount);
+        simulation = new Simulation(config.gameMode, config.mapName, config.playerCount);
         state = simulation.getState();
         if (saveReplay)
             gameResults.setInitialState(state);
 
-        playerHandlers = new PlayerHandler[config.teamCount];
+        playerHandlers = new PlayerHandler[config.playerCount];
         Future<?>[] futures = new Future[playerHandlers.length];
-        for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
+        for (int playerIndex = 0; playerIndex < config.playerCount; playerIndex++) {
             PlayerHandler playerHandler;
-            Class<? extends Player> playerClass = config.players.get(playerIndex);
+            Class<? extends Player> playerClass = config.players[playerIndex];
             if (Bot.class.isAssignableFrom(playerClass)) {
                 playerHandler = new ProcessPlayerHandler(playerClass, gameNumber.get(), playerIndex);
             } else {
@@ -85,8 +76,15 @@ public class Game extends Executable {
         for (PlayerHandler playerHandler : playerHandlers) {
             seed += playerHandler.getSeedModifier();
         }
-        for (int playerIndex = 0; playerIndex < config.teamCount; playerIndex++) {
+        PlayerState[] playerStates = state.getPlayerStates();
+        for (int playerIndex = 0; playerIndex < config.playerCount; playerIndex++) {
+            // Wenn der PlayerState des Spielers deaktiviert ist, da er bspw. disqualifiziert wurde, wird der Spieler
+            // übersprungen und dessen executeTurn() nicht aufgerufen.
+            if (playerStates[playerIndex].isDeactivated()) {
+                continue;
+            }
             PlayerHandler playerHandler = playerHandlers[playerIndex];
+            playerHandler.setPlayerController(simulation.getController(playerIndex));
             futures[playerIndex] = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
         }
         awaitFutures(futures);
@@ -217,8 +215,11 @@ public class Game extends Executable {
         state = null;
         simulationThread = null;
         gameResults = null;
-        for (PlayerHandler playerHandler : playerHandlers) {
-            playerHandler.dispose();
+        if (playerHandlers != null) {
+            for (PlayerHandler playerHandler : playerHandlers) {
+                playerHandler.dispose();
+            }
+            playerHandlers = null;
         }
     }
 

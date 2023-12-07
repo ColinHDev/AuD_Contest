@@ -3,9 +3,11 @@ package com.gatdsen.manager.player;
 import com.gatdsen.manager.Controller;
 import com.gatdsen.manager.StaticGameState;
 
-import java.util.Random;
+/**
+ * Dieser Bot repräsentiert einen Spieler, der keine Aktionen ausführt.
+ */
+public class IdleBot extends Bot {
 
-public class IdleBot extends Bot{
     @Override
     public String getName() {
         return "IdleBot";
@@ -13,26 +15,19 @@ public class IdleBot extends Bot{
 
     @Override
     public int getMatrikel() {
-        return 133769;
+        return 1337;
     }
 
     @Override
     public String getStudentName() {
-        return "Santa";
+        return "Gadsen: 2023";
     }
-
-    private static Random random;
 
     @Override
     public void init(StaticGameState state) {
-        long seed = 420L;
-        random = new Random(seed);
     }
 
     @Override
     public void executeTurn(StaticGameState state, Controller controller) {
-
     }
-
-
 }

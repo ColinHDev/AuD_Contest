@@ -1,6 +1,7 @@
 package com.gatdsen.manager;
 
 import com.gatdsen.manager.player.Player;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public abstract class Run {
             case Campaign:
             case Replay:
             case Normal:
+            case Christmas_Task:
                 return new SingleGameRun(manager, runConfig);
             case Exam_Admission:
             case Tournament_Phase_1:

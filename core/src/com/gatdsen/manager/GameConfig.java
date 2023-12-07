@@ -1,58 +1,51 @@
 package com.gatdsen.manager;
 
 import com.gatdsen.manager.player.Player;
-import com.gatdsen.simulation.GameState;
+import com.gatdsen.manager.run.config.RunConfiguration;
+import com.gatdsen.simulation.GameState.GameMode;
 import com.gatdsen.ui.hud.UiMessenger;
 
 import java.io.Serializable;
 import java.util.*;
 
-class GameConfig implements Serializable {
+public final class GameConfig implements Serializable {
 
-    public GameConfig() {
+    public final GameMode gameMode;
+    public final boolean gui;
+    public final transient AnimationLogProcessor animationLogProcessor;
+    public final transient InputProcessor inputProcessor;
+    public final transient UiMessenger uiMessenger;
+    public final String mapName;
+    public final boolean replay;
+    public final Class<? extends Player>[] players;
+    public final int playerCount;
+
+    @SuppressWarnings("unchecked")
+    public GameConfig(RunConfiguration runConfig) {
+        this.gameMode = runConfig.gameMode;
+        this.gui = runConfig.gui;
+        this.animationLogProcessor = runConfig.animationLogProcessor;
+        this.inputProcessor = runConfig.inputProcessor;
+        this.uiMessenger = runConfig.uiMessenger;
+        this.mapName = runConfig.mapName;
+        this.replay = runConfig.replay;
+        this.players = runConfig.players.toArray(new Class[0]);
+        this.playerCount = runConfig.players.size();
     }
 
-    public GameConfig(RunConfiguration runConfiguration) {
-        gui = runConfiguration.gui;
-        animationLogProcessor = runConfiguration.animationLogProcessor;
-        inputProcessor = runConfiguration.inputProcessor;
-        uiMessenger = runConfiguration.uiMessenger;
-        gameMode = runConfiguration.gameMode;
-        players = runConfiguration.players;
-        mapName = runConfiguration.mapName;
-        teamCount = runConfiguration.teamCount;
-        replay = runConfiguration.replay;
+    private GameConfig(GameConfig original) {
+        gameMode = original.gameMode;
+        gui = original.gui;
+        animationLogProcessor = original.animationLogProcessor;
+        inputProcessor = original.inputProcessor;
+        uiMessenger = original.uiMessenger;
+        mapName = original.mapName;
+        replay = original.replay;
+        players = original.players;
+        playerCount = original.playerCount;
     }
-
-    //Todo add default values
-    public GameState.GameMode gameMode = null;
-
-    public boolean gui = false;
-
-    public transient AnimationLogProcessor animationLogProcessor = null;
-    public transient InputProcessor inputProcessor = null;
-    public transient UiMessenger uiMessenger = null;
-
-    public String mapName;
-
-    public int teamCount;
-
-    public boolean replay = false;
-
-    public List<Class<? extends Player>> players;
 
     public GameConfig copy() {
-        GameConfig copy = new GameConfig();
-        copy.gui = gui;
-        copy.animationLogProcessor = animationLogProcessor;
-        copy.inputProcessor = inputProcessor;
-        copy.uiMessenger = uiMessenger;
-        copy.gameMode = gameMode;
-        copy.players = new ArrayList<>(players);
-        copy.mapName = mapName;
-        copy.teamCount = teamCount;
-        copy.replay = replay;
-        return copy;
+        return new GameConfig(this);
     }
-
 }

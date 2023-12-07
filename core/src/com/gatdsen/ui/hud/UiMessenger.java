@@ -18,15 +18,6 @@ public class UiMessenger {
     }
 
     /**
-     * Applies the necessary changes to the Hud for a new turn.
-     *
-     * @param team
-     */
-    public void turnChanged(GameState state, int team) {
-        //Todo update/notify every element so it sets its status to that of the current player
-    }
-
-    /**
      * Will call {@link Hud#createTurnChangePopup(Color)} to temporarily draw it to the Hud.
      *
      * @param outlinecolor Teamcolor of the current/new Player -> could be implemented
@@ -70,7 +61,7 @@ public class UiMessenger {
         hud.stopTurnTimer();
     }
 
-    public void gameEnded(boolean won, int team, boolean isDraw, Color color) {
+    public void gameEnded(boolean won, int team, boolean isDraw) {
         hud.gameEnded(won, team, isDraw);
 
     }
@@ -106,6 +97,6 @@ public class UiMessenger {
      * @param health   Der Ausgangswert für die Gesundheit des Spielers
      */
     public void initPlayerHealth(int playerID, int health) {
-       // hud.initPlayerHealth(playerID, health);
+       hud.initPlayerHealth(playerID, health);
     }
 }
