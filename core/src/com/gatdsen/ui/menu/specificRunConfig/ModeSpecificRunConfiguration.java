@@ -1,6 +1,6 @@
 package com.gatdsen.ui.menu.specificRunConfig;
 
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 
 /**
  * Creates a RunConfig from another, but only replaces null values;

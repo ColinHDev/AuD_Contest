@@ -1,6 +1,6 @@
 package com.gatdsen.ui.menu.specificRunConfig;
 
-import com.gatdsen.manager.RunConfiguration;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 
 public class ExamAdmissionConfig extends ModeSpecificRunConfiguration{

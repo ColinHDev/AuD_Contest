@@ -1,5 +1,6 @@
 package com.gatdsen.manager;
 
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 
 import java.util.Arrays;

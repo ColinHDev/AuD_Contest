@@ -4,10 +4,10 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.IdleBot;
 import com.gatdsen.manager.player.Player;
+import com.gatdsen.manager.run.config.RunConfiguration;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;

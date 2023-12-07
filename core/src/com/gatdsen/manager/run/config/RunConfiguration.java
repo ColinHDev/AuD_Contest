@@ -1,5 +1,7 @@
-package com.gatdsen.manager;
+package com.gatdsen.manager.run.config;
 
+import com.gatdsen.manager.AnimationLogProcessor;
+import com.gatdsen.manager.InputProcessor;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.ui.hud.UiMessenger;
