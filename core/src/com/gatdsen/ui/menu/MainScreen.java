@@ -36,7 +36,7 @@ public class MainScreen extends BaseMenuScreen {
                 gameInstance.setScreen(GADS.ScreenState.NORMALMODESCREEN,runConfiguration);
             }
         });
-        mainMenuTable.add(normalGameModeButton).colspan(4).pad(10).width(200);
+        mainMenuTable.add(normalGameModeButton).colspan(4).pad(10).width(200).row();
         TextButton christmasTaskButton = new TextButton("Weihnachtsaufgabe", skin);
         christmasTaskButton.addListener(new ChangeListener() {
             @Override
@@ -45,7 +45,7 @@ public class MainScreen extends BaseMenuScreen {
                 gameInstance.setScreen(GADS.ScreenState.CHRISTMASTASKSCREEN,runConfiguration);
             }
         });
-        mainMenuTable.add(christmasTaskButton).colspan(4).pad(10).width(200).row();
+        mainMenuTable.add(christmasTaskButton).colspan(4).pad(10).width(200);
         return mainMenuTable;
     }
 
