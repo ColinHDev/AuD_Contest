@@ -60,6 +60,7 @@ public class Hud implements Disposable {
      * @param gameViewport Die Viewport-Instanz für das Spiel
      */
     public Hud(InGameScreen ingameScreen, Viewport gameViewport) {
+        int health = 300;
         this.inGameScreen = ingameScreen;
         hudViewport = new FitViewport(gameViewport.getWorldWidth() / 10, gameViewport.getWorldHeight() / 10);
         this.uiMessenger = new UiMessenger(this);
@@ -79,6 +80,13 @@ public class Hud implements Disposable {
         inputMultiplexer.addProcessor(stage); // für die UI-Buttons benötigt
         stage.addActor(layoutTable);
         scoreView = new ScoreView(null);
+
+        healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
+        healthBarPlayer0.setValue(health);
+        healthBarPlayer0.setAnimateDuration(0.25f);
+        healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
+        healthBarPlayer1.setValue(health);
+        healthBarPlayer1.setAnimateDuration(0.25f);
     }
 
     /**
@@ -142,7 +150,6 @@ public class Hud implements Disposable {
      */
     private void layoutHudElements() {
         float padding = 10;
-        int health = 300;
 
         Label player0BalanceLabel = new Label("$" + player0Balance, skin);
         player0BalanceLabel.setAlignment(Align.center);
@@ -153,12 +160,6 @@ public class Hud implements Disposable {
         Label currentPlayer1 = new Label("Spieler 1", skin);
         currentPlayer1.setAlignment(Align.center);
 
-        healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
-        healthBarPlayer0.setValue(health);
-        healthBarPlayer0.setAnimateDuration(0.25f);
-        healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
-        healthBarPlayer1.setValue(health);
-        healthBarPlayer1.setAnimateDuration(0.25f);
         Label invisibleLabel = new Label("", skin);
         nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
@@ -532,9 +533,11 @@ public class Hud implements Disposable {
         if (playerID == 0) {
             healthBarPlayer0.setRange(0,maxHealth);
             healthBarPlayer0.setValue(maxHealth);
+            healthBarPlayer0.updateVisualValue();
         } else if (playerID == 1) {
             healthBarPlayer1.setRange(0,maxHealth);
             healthBarPlayer1.setValue(maxHealth);
+            healthBarPlayer1.updateVisualValue();
         }
         layoutTable.clear();
         layoutHudElements();
@@ -543,10 +546,13 @@ public class Hud implements Disposable {
     public void setPlayerHealth(int playerID, int health) {
         if (playerID == 0) {
             healthBarPlayer0.setValue(health);
-            healthBarPlayer0.setColor(Color.RED);
+            healthBarPlayer0.updateVisualValue();
         } else if (playerID == 1) {
             healthBarPlayer1.setValue(health);
+            healthBarPlayer1.updateVisualValue();
         }
+
+        Gdx.app.log("Hud", "setPlayerHealth - Player ID: " + playerID + ", Health: " + health);
         layoutTable.clear();
         layoutHudElements();
     }
