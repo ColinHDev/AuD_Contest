@@ -473,9 +473,9 @@ public class Animator implements Screen, AnimationLogProcessor {
             this.state = state;
             playerMaps = new TileMap[state.getPlayerCount()];
             playerMaps[0] = new TileMap(state, 0);
-            playerMaps[0].setRelPos(2.5f * 200, 0);
+            playerMaps[0].setRelPos(0, 0);
             playerMaps[1] = new TileMap(state, 1);
-            playerMaps[1].setRelPos(27.5f * 200, 0);
+            playerMaps[1].setRelPos(viewport.getWorldWidth() - playerMaps[1].getSizeX()*200, 0);
             root.clear();
             root.add(playerMaps[0]);
             root.add(playerMaps[1]);
