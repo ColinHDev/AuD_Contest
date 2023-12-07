@@ -59,7 +59,6 @@ com_crashlytics_export_strings.xml
 /html/nbproject/private/
 /ios/nbproject/private/
 
-/build/
 /android/build/
 /core/build/
 /desktop/build/
@@ -95,7 +94,6 @@ nb-configuration.xml
 /local.properties
 .gradle/
 gradle-app.setting
-/build/
 /android/build/
 /core/build/
 /desktop/build/
@@ -124,6 +122,8 @@ Thumbs.db
 /util/src/test/tmp/
 /util/build/
 /results/*.replay
+
+/build/*.jar
 
 ### Exclude tiled tmp files
 *.tiled-session
