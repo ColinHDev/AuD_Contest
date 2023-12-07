@@ -28,7 +28,7 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
     /**
      * Eine Liste aller HumanPlayer, die gerade am Zug sind, indexiert nach ihrer PlayerId
      */
-    private Map<Integer, HumanPlayer> currentPlayers = new HashMap<>();
+    private final Map<Integer, HumanPlayer> currentPlayers = new HashMap<>();
     private Vector2 lastMousePosition;
     private Vector2 deltaMouseMove;
     private boolean leftMousePressed;
@@ -58,24 +58,32 @@ public class InputHandler implements InputProcessor, com.gatdsen.manager.InputPr
 
 
     public void activateTurn(HumanPlayer player, int playerIndex) {
-        currentPlayers.put(playerIndex, player);
-        if (currentPlayers.size() == 1 && uiMessenger != null) {
+        boolean wasEmpty;
+        // activateTurn() wird bei min. zwei HumanPlayern in einem Spiel von mehreren Threads aufgerufen, sodass der
+        // Zugriff auf currentPlayers synchronisiert werden muss
+        synchronized(currentPlayers) {
+            wasEmpty = currentPlayers.isEmpty();
+            currentPlayers.put(playerIndex, player);
+        }
+        if (wasEmpty && uiMessenger != null) {
             uiMessenger.startTurnTimer(player.getTurnDuration(), true);
         }
-
-//        System.out.printf("Activating turn for player %s\n", humanPlayer.toString());
-
         turnInProgress = true;
     }
 
     public void endTurn() {
-        if (turnInProgress) {
-            for (HumanPlayer player : currentPlayers.values()) {
-                player.endCurrentTurn();
-            }
-            currentPlayers.clear();
-            if (uiMessenger != null) {
-                uiMessenger.stopTurnTimer();
+        // endTurn() kann einmal von der UI, durch den Klick auf den "Nächste Runde"-Button und einmal vom Manager beim
+        // regulären Ende einer Runde aufgerufen werden, sodass der Zugriff auf currentPlayers synchronisiert werden muss
+        synchronized (currentPlayers) {
+            if (turnInProgress) {
+                for (HumanPlayer player : currentPlayers.values()) {
+                    player.endCurrentTurn();
+                }
+                currentPlayers.clear();
+                if (uiMessenger != null) {
+                    uiMessenger.stopTurnTimer();
+                }
+                turnInProgress = false;
             }
         }
     }
