@@ -61,6 +61,7 @@ public final class PlayerThread {
             String[] illegalImports = analyzer.getIllegalImports();
             if (illegalImports.length > 0) {
                 controller.disqualify();
+                System.err.println("Bot \"" + player.getName() + "\" has been disqualified for using illegal package or class imports: \"" + String.join("\", \"", illegalImports) + "\"");
             }
         }
         controller.endTurn();
