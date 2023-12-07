@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -145,15 +146,20 @@ public class Hud implements Disposable {
         int health = 300;
 
         Label player0BalanceLabel = new Label("$" + player0Balance, skin);
-
+        player0BalanceLabel.setAlignment(Align.center);
         Label player1BalanceLabel = new Label("$" + player1Balance, skin);
+        player1BalanceLabel.setAlignment(Align.center);
         Label currentPlayer0 = new Label("Spieler 0", skin);
+        currentPlayer0.setAlignment(Align.center);
         Label currentPlayer1 = new Label("Spieler 1", skin);
+        currentPlayer1.setAlignment(Align.center);
 
         healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer0.setValue(health);
+        healthBarPlayer0.setAnimateDuration(0.25f);
         healthBarPlayer1 = new ProgressBar(0, health, 1, false, skin);
         healthBarPlayer1.setValue(health);
+        healthBarPlayer1.setAnimateDuration(0.25f);
         Label invisibleLabel = new Label("", skin);
         nextRoundButton = new TextButton("Zug beenden", skin);
         nextRoundButton.addListener(new ChangeListener() {
@@ -171,28 +177,29 @@ public class Hud implements Disposable {
             }
         });
 
-        layoutTable.add(currentPlayer0);
-        layoutTable.add(healthBarPlayer0).pad(padding);
-        layoutTable.add(player0BalanceLabel).pad(padding);
+        layoutTable.add(currentPlayer0).expandX();
+        layoutTable.add(player0BalanceLabel).pad(padding).expandX();
+        layoutTable.add(healthBarPlayer0).pad(padding).expandX();
         layoutTable.add(turnTimer);
-        layoutTable.add(healthBarPlayer1).pad(padding);
-        layoutTable.add(player1BalanceLabel).pad(padding);
-        layoutTable.add(currentPlayer1).row();
-
+        layoutTable.add(healthBarPlayer1).pad(padding).expandX();
+        layoutTable.add(player1BalanceLabel).pad(padding).expandX();
+        layoutTable.add(currentPlayer1).pad(padding).expandX().row();
         layoutTable.add(invisibleLabel).row();
         layoutTable.add(invisibleLabel);
         layoutTable.add(invisibleLabel);
         layoutTable.add(invisibleLabel);
-        layoutTable.add(nextRoundButton);
+        layoutTable.add(nextRoundButton).pad(padding).expandX().row();
+        layoutTable.add(invisibleLabel);
     }
 
+    /*
     /**
      * Erstellt einen FastForwardButton und gibt ihn zurück
      *
      * @param uiMessenger Der UiMessenger für die Kommunikation
      * @param speedUp     Die Geschwindigkeitssteigerung für die Schnellvorlauf-Funktion
      * @return Ein neues FastForwardButton-Objekt
-     */
+
     private FastForwardButton setupFastForwardButton(UiMessenger uiMessenger, float speedUp) {
 
         FastForwardButton button = new FastForwardButton(new TextureRegionDrawable(AssetContainer.IngameAssets.fastForwardButton),
@@ -201,6 +208,7 @@ public class Hud implements Disposable {
                 uiMessenger, speedUp);
         return button;
     }
+    */
 
     /**
      * Gibt den InputHandler zurück
@@ -360,7 +368,7 @@ public class Hud implements Disposable {
      * Passt die Punktzahlen im HUD basierend auf dem gegebenen Array an
      *
      * @param scores Ein Array mit den neuen Punktzahlen
-     */
+
     public void adjustScores(float[] scores) {
         this.scores = scores;
 
@@ -368,6 +376,7 @@ public class Hud implements Disposable {
             scoreView.adjustScores(scores);
         }
     }
+     */
 
     /**
      * Passt die Punktzahl für das angegebene Team im HUD an
