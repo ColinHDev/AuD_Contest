@@ -32,6 +32,7 @@ public abstract class Run {
             case Campaign:
             case Replay:
             case Normal:
+            case Christmas_Task:
                 return new SingleGameRun(manager, runConfig);
             case Exam_Admission:
             case Tournament_Phase_1:
