@@ -208,8 +208,11 @@ public class Game extends Executable {
         state = null;
         simulationThread = null;
         gameResults = null;
-        for (PlayerHandler playerHandler : playerHandlers) {
-            playerHandler.dispose();
+        if (playerHandlers != null) {
+            for (PlayerHandler playerHandler : playerHandlers) {
+                playerHandler.dispose();
+            }
+            playerHandlers = null;
         }
     }
 
