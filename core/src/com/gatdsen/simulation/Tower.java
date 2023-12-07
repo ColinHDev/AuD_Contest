@@ -280,6 +280,7 @@ public class Tower extends Tile {
         if (target != null) {
             head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
             Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
+            path.setDuration(0);
             head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path, playerState.getIndex()));
 
             head = target.updateHealth(getDamage(), head);
