@@ -227,6 +227,8 @@ public class PlayerState implements Serializable {
         }
 
         money -= Tower.getPrice(type);
+        Action updateAction = new UpdateCurrencyAction(0, money, index);
+        head.addChild(updateAction);
 
         board[x][y] = new Tower(this, type, x, y, board);
         IntVector2 pos = new IntVector2(x, y);
@@ -279,6 +281,7 @@ public class PlayerState implements Serializable {
      */
     Action spawnEnemies(Action head, int wave) {
         for (int i = 0; i < enemyTypeCount; i++) {
+            if (wave > 99) wave = 80;
             Enemy actual = enemiesToBeSpawned[wave][i];
             spawnTile.getEnemies().add(actual);
             head.addChild(new EnemySpawnAction(0, spawnTile.getPosition(), actual.getLevel(), index));

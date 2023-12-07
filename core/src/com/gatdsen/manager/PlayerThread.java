@@ -8,7 +8,6 @@ import com.gatdsen.manager.player.Bot;
 import com.gatdsen.manager.player.HumanPlayer;
 import com.gatdsen.manager.player.Player;
 import com.gatdsen.simulation.GameState;
-import org.lwjgl.Sys;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
@@ -18,10 +17,10 @@ import java.util.concurrent.*;
  */
 public final class PlayerThread {
 
-    private static final int AI_EXECUTE_GRACE_PERIODE = 100;
-    public static final int AI_EXECUTE_INIT_TIMEOUT = 1000;
-    public static final int AI_EXECUTE_TURN_TIMEOUT = 500 + AI_EXECUTE_GRACE_PERIODE;
-    private static final int AI_CONTROLLER_USES = 200;
+    private static final int BOT_EXECUTE_GRACE_PERIODE = 100;
+    public static final int BOT_EXECUTE_INIT_TIMEOUT = 1000;
+    public static final int BOT_EXECUTE_TURN_TIMEOUT = 500 + BOT_EXECUTE_GRACE_PERIODE;
+    private static final int BOT_CONTROLLER_USES = 200;
 
     public static final int HUMAN_EXECUTE_INIT_TIMEOUT = 30000;
     public static final int HUMAN_EXECUTE_TURN_TIMEOUT = 60000;
@@ -58,10 +57,11 @@ public final class PlayerThread {
         PlayerClassAnalyzer analyzer = new PlayerClassAnalyzer(playerClass);
         Controller controller = createController();
         controller.commands.add(new PlayerInformationCommand(player.getPlayerInformation(), analyzer.getSeedModifier()));
-        if (player.getType().equals(Player.PlayerType.AI)) {
+        if (player.getType().equals(Player.PlayerType.BOT)) {
             String[] illegalImports = analyzer.getIllegalImports();
             if (illegalImports.length > 0) {
                 controller.disqualify();
+                System.err.println("Bot \"" + player.getName() + "\" has been disqualified for using illegal package or class imports: \"" + String.join("\", \"", illegalImports) + "\"");
             }
         }
         controller.endTurn();
@@ -75,20 +75,20 @@ public final class PlayerThread {
         Controller controller = createController();
         StaticGameState staticState = new StaticGameState(state, playerIndex);
         switch (player.getType()) {
-            case Human ->{
+            case HUMAN ->{
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
                     player.init(staticState);
                 });
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_INIT_TIMEOUT);
             }
-            case AI -> {
+            case BOT -> {
                 Future<?> future = executor.execute(() -> {
                     Thread.currentThread().setName("Init_Thread_Player_" + player.getName());
-                    ((Bot) player).setRnd(seed);
+                    ((Bot) player).setRandomSeed(seed);
                     player.init(staticState);
                 });
-                awaitBotFuture(future, controller, AI_EXECUTE_INIT_TIMEOUT);
+                awaitBotFuture(future, controller, BOT_EXECUTE_INIT_TIMEOUT);
             }
         }
         return controller.commands;
@@ -101,14 +101,14 @@ public final class PlayerThread {
             player.executeTurn(new StaticGameState(state, playerIndex), controller);
         });
         Thread futureExecutor = switch (player.getType()) {
-            case Human -> new Thread(() -> {
+            case HUMAN -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
                 inputGenerator.activateTurn((HumanPlayer) player, playerIndex);
                 awaitHumanPlayerFuture(future, controller, HUMAN_EXECUTE_TURN_TIMEOUT);
             });
-            case AI -> new Thread(() -> {
+            case BOT -> new Thread(() -> {
                 Thread.currentThread().setName("Future_Executor_Player_" + player.getName());
-                awaitBotFuture(future, controller, AI_EXECUTE_TURN_TIMEOUT);
+                awaitBotFuture(future, controller, BOT_EXECUTE_TURN_TIMEOUT);
             });
         };
         futureExecutor.start();
@@ -122,6 +122,9 @@ public final class PlayerThread {
             } else {
                 future.get(timeout, TimeUnit.MILLISECONDS);
             }
+        } catch(CancellationException e) {
+            System.out.println("HumanPlayer turn execution was cancelled");
+            e.printStackTrace(System.err);
         } catch (InterruptedException e) {
             future.cancel(true);
             System.out.println("HumanPlayer was interrupted");
@@ -145,6 +148,9 @@ public final class PlayerThread {
             } else {
                 future.get(2 * timeout, TimeUnit.MILLISECONDS);
             }
+        } catch(CancellationException e) {
+            System.out.println("Bot \"" + player.getName() + "\" turn execution was cancelled");
+            e.printStackTrace(System.err);
         } catch (InterruptedException e) {
             future.cancel(true);
             System.out.println("Bot \"" + player.getName() + "\" was interrupted");
@@ -175,7 +181,7 @@ public final class PlayerThread {
 
     private Controller createController() {
         return new Controller(
-                player.getType() == Player.PlayerType.Human ? HUMAN_CONTROLLER_USES : AI_CONTROLLER_USES
+                player.getType() == Player.PlayerType.HUMAN ? HUMAN_CONTROLLER_USES : BOT_CONTROLLER_USES
         );
     }
 
