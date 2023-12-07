@@ -48,7 +48,10 @@ public class Manager {
     }
 
     public Run startRun(RunConfiguration runConfiguration) {
-        return Run.getRun(this, runConfiguration);
+        if (runConfiguration.validate()) {
+            return Run.getRun(this, runConfiguration);
+        }
+        return null;
     }
 
     private void executionManager() {

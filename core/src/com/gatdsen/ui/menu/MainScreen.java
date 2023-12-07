@@ -3,6 +3,7 @@ package com.gatdsen.ui.menu;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
 import com.gatdsen.ui.GADS;
 
@@ -41,8 +42,9 @@ public class MainScreen extends BaseMenuScreen {
         christmasTaskButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                //setRunConfiguration(RunConfiguration.fromGameMode(GameState.GameMode.Christmas_Task), runConfiguration));
                 runConfiguration.gameMode = GameState.GameMode.Christmas_Task;
-                gameInstance.setScreen(GADS.ScreenState.CHRISTMASTASKSCREEN,runConfiguration);
+                gameInstance.setScreen(GADS.ScreenState.CHRISTMASTASKSCREEN, runConfiguration);
             }
         });
         mainMenuTable.add(christmasTaskButton).colspan(4).pad(10).width(200);

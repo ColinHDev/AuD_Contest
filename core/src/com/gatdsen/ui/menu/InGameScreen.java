@@ -62,6 +62,9 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         this.runConfiguration.inputProcessor = hud.getInputHandler();
 
         run = manager.startRun(this.runConfiguration);
+        if (run == null) {
+            throw new RuntimeException("Can't start game with an invalid RunConfiguration!");
+        }
     }
 
     //gets called when the screen becomes the main screen of GADS

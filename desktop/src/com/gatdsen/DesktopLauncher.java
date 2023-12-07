@@ -13,6 +13,7 @@ import org.apache.commons.cli.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -68,7 +69,6 @@ public class DesktopLauncher {
     }
 
     public static void main(String[] args) {
-
         CommandLineParser parser = new DefaultParser();
         CommandLine params;
         try {
@@ -100,10 +100,7 @@ public class DesktopLauncher {
             return;
         }
         runConfig.gameMode = GameState.GameMode.values()[gameMode];
-        if (runConfig.gameMode == GameState.GameMode.Tournament_Phase_1)
-            runConfig.teamCount = 4;
         if (runConfig.gui) {
-            if(runConfig.players!=null) runConfig.teamCount = runConfig.players.size();
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setForegroundFPS(60);
             config.setTitle("Gadsen: Tower Defense");
@@ -111,35 +108,12 @@ public class DesktopLauncher {
             new Lwjgl3Application(new GADS(runConfig), config);
         } else {
             Manager.setSystemReservedProcessorCount(1);
-            boolean invalidConfig = false;
-            if (runConfig.gameMode != GameState.GameMode.Exam_Admission && runConfig.mapName == null) {
-                System.err.println("Param -m is required for no GUI mode (except Exam Admission)");
-                invalidConfig = true;
-            }
-            if (runConfig.players == null) {
-                System.err.println("Param -p is required for no GUI mode");
-                invalidConfig = true;
-            } else if (runConfig.gameMode == GameState.GameMode.Campaign){
-                if( runConfig.players.size() != 1) {
-                    System.err.println("The Campaign can only be played by exactly one player");
-                    invalidConfig = true;
-                }
-
-            }  else if (runConfig.gameMode == GameState.GameMode.Exam_Admission){
-                if( runConfig.players.size() != 1) {
-                    System.err.println("The Exam Admission can only be played by exactly one player");
-                    invalidConfig = true;
-                }
-            }else if (runConfig.players.size() < 2) {
-                System.err.println("At least two players are required");
-                invalidConfig = true;
-            }
-            if (invalidConfig) {
+            Manager manager = Manager.getManager();
+            Run run = manager.startRun(runConfig);
+            if (run == null) {
                 printHelp();
                 return;
             }
-            Manager manager = Manager.getManager();
-            Run run = manager.startRun(runConfig);
             Object lock = new Object();
             synchronized (lock) {
                 run.addCompletionListener((tmp) -> {

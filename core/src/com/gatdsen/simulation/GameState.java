@@ -61,7 +61,7 @@ public class GameState implements Serializable {
         playerStates = new PlayerState[playerCount];
         Arrays.setAll(playerStates, index -> new PlayerState(this, index, 300, 100));
         if (gameMode == GameMode.Christmas_Task) {
-            playerStates[0] = new PlayerState(this, 0, 300000, 1337);
+            playerStates[1] = new PlayerState(this, 0, 300000, 0);
         }
     }
 

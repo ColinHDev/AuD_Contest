@@ -26,11 +26,11 @@ public class TournamentRun extends Run {
         protected int p2 = -1;
 
         int winner = 0;
-        private final GameConfig config;
+        private final RunConfiguration config;
 
         private int completed = 0;
 
-        private BracketNode(GameConfig config) {
+        private BracketNode(RunConfiguration config) {
             this.config = config;
         }
 
@@ -88,13 +88,13 @@ public class TournamentRun extends Run {
             config.players.add(players.get(p1));
             config.players.add(players.get(p2));
             config.mapName = "lukeMap"; //ToDo make dynamic
-            game1 = new Game(config);
+            game1 = new Game(config.asGameConfig());
             game1.addCompletionListener(this::onGameComplete);
             config.mapName = "Gadsrena"; //ToDo make dynamic
-            game2 = new Game(config);
+            game2 = new Game(config.asGameConfig());
             game2.addCompletionListener(this::onGameComplete);
             config.mapName = "mondlandschaft"; //ToDo make dynamic
-            game3 = new Game(config);
+            game3 = new Game(config.asGameConfig());
             game3.addCompletionListener(this::onGameComplete);
             manager.schedule(game1);
             manager.schedule(game2);
@@ -128,7 +128,7 @@ public class TournamentRun extends Run {
     }
 
     private class LooserBracket extends BracketNode{
-        private LooserBracket(GameConfig config) {
+        private LooserBracket(RunConfiguration config) {
             super(config);
         }
 
@@ -145,7 +145,7 @@ public class TournamentRun extends Run {
 
 
 
-    private final ArrayList<Class<? extends Player>> players;
+    private final List<Class<? extends Player>> players;
 
     int completedGames = 0;
 
@@ -159,9 +159,6 @@ public class TournamentRun extends Run {
 
     protected TournamentRun(Manager manager, RunConfiguration runConfig) {
         super(manager, runConfig);
-        if (runConfig.teamCount != 2)
-            System.err.printf("Warning: Only 1v1 is supported in bracket tournaments. Ignoring config.teamCount = %d%n", runConfig.teamCount);
-        runConfig.teamCount = 2;
         players = runConfig.players;
 
         int playerCount = players.size();
@@ -176,7 +173,7 @@ public class TournamentRun extends Run {
             return;
         }
 
-        finalGame = new BracketNode(new GameConfig(runConfig));
+        finalGame = new BracketNode(runConfig.copy());
         finalGame.addCompletionListener(this::onRootCompletion);
 
         List<BracketNode> winnerLeafGames = new ArrayList<>();
@@ -185,7 +182,7 @@ public class TournamentRun extends Run {
         //
         int capacity = 2;
 
-        winnerFinal = new BracketNode(new GameConfig(runConfig));
+        winnerFinal = new BracketNode(runConfig.copy());
 
         winnerLeafGames.add(winnerFinal);
 
@@ -196,8 +193,8 @@ public class TournamentRun extends Run {
             for (BracketNode cur: winnerLeafGames
                  ) {
 
-                BracketNode b1 = new BracketNode(new GameConfig(runConfig));
-                BracketNode b2 = new BracketNode(new GameConfig(runConfig));
+                BracketNode b1 = new BracketNode(runConfig.copy());
+                BracketNode b2 = new BracketNode(runConfig.copy());
 
                 cur.setLeft(b1);
                 cur.setRight(b2);
@@ -205,7 +202,7 @@ public class TournamentRun extends Run {
                 newWinnerLeafGames.add(b1);
                 newWinnerLeafGames.add(b2);
 
-                LooserBracket looserLeaf = new LooserBracket(new GameConfig(runConfig));
+                LooserBracket looserLeaf = new LooserBracket(runConfig.copy());
                 looserLeafGames.add(looserLeaf);
                 looserLeaf.setLeft(b1);
                 looserLeaf.setRight(b2);
@@ -213,10 +210,9 @@ public class TournamentRun extends Run {
 
             looserHeadGames.add(makeTurnament(looserLeafGames, runConfig));
             winnerLeafGames = newWinnerLeafGames;
-            BracketNode newNode = new BracketNode(new GameConfig(runConfig));
             capacity*=2;
         }
-        looserFinal = new BracketNode(new GameConfig(runConfig));
+        looserFinal = new BracketNode(runConfig.copy());
         winnerFinal.addCompletionListener(bracket -> looserFinal.setRight(bracket.getLooser()));
         BracketNode curTail = looserFinal;
         BracketNode next = null;
@@ -225,7 +221,7 @@ public class TournamentRun extends Run {
 
         for (BracketNode cur: looserHeadGames) {
             if (next != null){
-                BracketNode nextTail = new BracketNode(new GameConfig(runConfig));
+                BracketNode nextTail = new BracketNode(runConfig.copy());
                 nextTail.setRight(next);
                 curTail.setLeft(nextTail);
                 curTail = nextTail;
@@ -243,12 +239,12 @@ public class TournamentRun extends Run {
         }
 
 
-        finalGame = new BracketNode(new GameConfig(runConfig));
+        finalGame = new BracketNode(runConfig.copy());
         finalGame.setLeft(winnerFinal);
         finalGame.setRight(looserFinal);
         finalGame.addCompletionListener(this::onRootCompletion);
 
-        redemptionFinal = new LooserBracket(new GameConfig(runConfig));
+        redemptionFinal = new LooserBracket(runConfig.copy());
         redemptionFinal.setLeft(winnerFinal);
         redemptionFinal.setRight(looserFinal);
         redemptionFinal.addCompletionListener(this::onRootCompletion);
@@ -267,7 +263,7 @@ public class TournamentRun extends Run {
                  ) {
                 if (last == null) last = cur;
                 else {
-                    BracketNode next = new BracketNode(new GameConfig(runConfig));
+                    BracketNode next = new BracketNode(runConfig.copy());
                     newNodes.add(cur);
                     next.setLeft(last);
                     next.setRight(cur);
