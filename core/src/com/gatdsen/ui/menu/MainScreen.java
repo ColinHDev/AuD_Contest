@@ -26,8 +26,8 @@ public class MainScreen extends BaseMenuScreen {
     @Override
     Table getContent(Skin skin) {
         Table mainMenuTable = new Table(skin);
-        TextButton weihnachtsaufgabeButton = new TextButton("Weihnachtsaufgabe", skin);
-        weihnachtsaufgabeButton.addListener(new ChangeListener() {
+        TextButton christmasTaskButton = new TextButton("Weihnachtsaufgabe", skin);
+        christmasTaskButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 runConfiguration.gameMode = GameState.GameMode.Normal; //ToDo ändern zu CHRISTMASTASK
@@ -44,7 +44,7 @@ public class MainScreen extends BaseMenuScreen {
         });
         mainMenuTable.setFillParent(false); //sorgt dafür das die Tabelle nicht auf dem gesamten Screen angezeigt wird
         mainMenuTable.center();
-        mainMenuTable.add(weihnachtsaufgabeButton).colspan(4).pad(10).width(200).row();
+        mainMenuTable.add(christmasTaskButton).colspan(4).pad(10).width(200).row();
         mainMenuTable.add(normalGameModeButton).colspan(4).pad(10).width(200);
         return mainMenuTable;
     }
