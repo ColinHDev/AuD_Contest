@@ -13,7 +13,6 @@ import com.gatdsen.ui.menu.buttons.ColoredLabelWithBackground;
  */
 public class TurnTimer extends Table {
 
-	Image timerImage;
 	Label timeDisplay;
 	Timer timer;
 
@@ -22,13 +21,12 @@ public class TurnTimer extends Table {
 	protected float currInterval;
 
 	protected Timer.Task countdown;
-	public TurnTimer(TextureRegion timerTexture) {
+	public TurnTimer() {
 
 
 		this.timer = new Timer();
 		time = 0;
 
-		this.timerImage = new Image(timerTexture);
 		timeDisplay = new ColoredLabelWithBackground("", AssetContainer.MainMenuAssets.skin, Color.RED, new TextureRegionDrawable(AssetContainer.IngameAssets.pixel));
 
 		//add both to the horizontal group for drawing them next to each other
