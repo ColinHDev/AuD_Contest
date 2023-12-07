@@ -282,8 +282,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonTower);
         }
 
-        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action
-                                                                       action, Animator animator) {
+        private static ExpandedAction convertTowerAttackAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             TowerAttackAction towerAttack = (TowerAttackAction) action;
             GameTower tower = towers[towerAttack.getTeam()][towerAttack.getPos().x][towerAttack.getPos().y];
 
@@ -296,8 +295,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(attack);
         }
 
-        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator
-                animator) {
+        private static ExpandedAction convertProjectileAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             ProjectileAction projectileAction = (ProjectileAction) action;
             TileMap board = animator.playerMaps[projectileAction.getTeam()];
             Path path = new AnimatorPath(projectileAction.getPath(), board.getPos(), board.getTileSize());
@@ -337,8 +335,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonProjectile, destroyProjectile);
         }
 
-        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator
-                animator) {
+        private static ExpandedAction generateParticle(ParticleEffectPool effect, Vector2 pos, float dur, Animator animator) {
             DestroyAction<ParticleEntity> destroyParticle = new DestroyAction<>(dur, null, null, (particle) -> {
                 animator.root.remove(particle);
                 particle.free();
@@ -357,8 +354,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(summonParticle, destroyParticle);
         }
 
-        private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action
-                                                                        action, Animator animator) {
+        private static ExpandedAction convertTowerDestroyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             TowerDestroyAction destroyAction = (TowerDestroyAction) action;
 
             DestroyAction<GameTower> destroyTower = new DestroyAction<GameTower>(
@@ -374,8 +370,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(destroyTower);
         }
 
-        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action
-                                                                          action, Animator animator) {
+        private static ExpandedAction convertUpdateCurrencyAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             UpdateCurrencyAction updateCurrency = (UpdateCurrencyAction) action;
 
             MessageUiCurrencyAction currencyAction = new MessageUiCurrencyAction(
@@ -387,8 +382,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(currencyAction);
         }
 
-        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action
-                                                                        action, Animator animator) {
+        private static ExpandedAction convertUpdateHealthAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             UpdateHealthAction updateHealth = (UpdateHealthAction) action;
 
             MessageUiUpdateHealthAction setHealth = new MessageUiUpdateHealthAction(
@@ -401,8 +395,7 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
-        private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator
-                animator) {
+        private static ExpandedAction convertGameOverAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             GameOverAction winAction = (GameOverAction) action;
             MessageUiGameEndedAction gameEndedAction;
             if (winAction.getTeam() < 0) {
@@ -414,8 +407,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             return new ExpandedAction(gameEndedAction);
         }
 
-        private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator
-                animator) {
+        private static ExpandedAction convertDebugPointAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             DebugPointAction debugPointAction = (DebugPointAction) action;
 
             DestroyAction<Entity> destroyAction = new DestroyAction<Entity>(debugPointAction.getDuration(), null, null, animator.root::remove);
@@ -442,8 +434,7 @@ public class Animator implements Screen, AnimationLogProcessor {
         }
 
 
-        private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator
-                animator) {
+        private static ExpandedAction convertScoreAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             ScoreAction scoreAction = (ScoreAction) action;
             //ui Action
             MessageUiScoreAction indicateScoreChangeAction = new MessageUiScoreAction(0, animator.uiMessenger, scoreAction.getTeam(), scoreAction.getNewScore());
