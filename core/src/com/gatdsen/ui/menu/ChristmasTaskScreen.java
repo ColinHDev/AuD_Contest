@@ -2,17 +2,16 @@ package com.gatdsen.ui.menu;
 
 import com.gatdsen.ui.GADS;
 import com.gatdsen.ui.menu.attributes.Attribute;
-import com.gatdsen.ui.menu.attributes.MapAttribute;
 import com.gatdsen.ui.menu.attributes.PlayerAttribute;
 
-public class WeihnachtsaufgabeScreen extends AttributeScreen {
+public class ChristmasTaskScreen extends AttributeScreen {
 
     /**
      * Konstruktor für die Klasse AttributeScreen
      *
      * @param gameInstance Eine Instanz des GADS-Spiels
      */
-    public WeihnachtsaufgabeScreen(GADS gameInstance) {
+    public ChristmasTaskScreen(GADS gameInstance) {
         super(gameInstance);
     }
 

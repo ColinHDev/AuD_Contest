@@ -30,8 +30,8 @@ public class MainScreen extends BaseMenuScreen {
         weihnachtsaufgabeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                runConfiguration.gameMode = GameState.GameMode.Normal; //ToDo ändern zu Weihnachtsaufgabe
-                gameInstance.setScreen(GADS.ScreenState.WEIHNACHTSAUFGABESCREEN,runConfiguration);
+                runConfiguration.gameMode = GameState.GameMode.Normal; //ToDo ändern zu CHRISTMASTASK
+                gameInstance.setScreen(GADS.ScreenState.CHRISTMASTASKSCREEN,runConfiguration);
             }
         });
         TextButton normalGameModeButton = new TextButton("Spielmodus Normal", skin);
