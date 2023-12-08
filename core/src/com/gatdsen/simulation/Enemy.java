@@ -80,10 +80,9 @@ public class Enemy implements Serializable {
             posTile.getEnemies().add(this);
             head.addChild(new EnemyMoveAction(0, posTile.getPrev().getPosition(), posTile.getPosition(), level, playerState.getIndex()));
         } else {
+            posTile.getEnemies().remove(this);
             head = playerState.setHealth(damage, head);
-
-            //TODO Player gets damage
-            // -> Simulation or link Enemy with GameState
+            head.addChild(new EnemyDefeatAction(0, posTile.getPosition(), level, playerState.getIndex()));
         }
         return head;
     }
