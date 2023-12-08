@@ -73,6 +73,8 @@ public class Tower extends Tile {
         this.cooldown = getRechargeTime();
         this.board = board;
         this.inRange = getNeighbours(getRange(), board);
+        setPathList();
+        pathInRange.sort(Comparator.comparingInt(PathTile::getIndex));
     }
 
     /**
@@ -106,7 +108,6 @@ public class Tower extends Tile {
                 pathInRange.add(pathTile);
             }
         }
-        pathInRange.sort(Comparator.comparingInt(PathTile::getIndex));
     }
 
     /**
@@ -257,28 +258,29 @@ public class Tower extends Tile {
      * @return neuer Kopf der Action-Liste
      */
     public Action attack(Action head) {
-        if (getRechargeTime() > 0) {
-            --cooldown;
+        if (pathInRange.isEmpty()) {
             return head;
         }
-        setPathList();
 
-        if (pathInRange.isEmpty()) {
+        if (getRechargeTime() > 0) {
+            --cooldown;
             return head;
         }
 
         int lastIndex = pathInRange.size() - 1;
 
         Enemy target = null;
+
         for (int i = lastIndex; i >= 0; i--) {
             if (!pathInRange.get(i).getEnemies().isEmpty()) {
                 target = pathInRange.get(i).getEnemies().get(0);
                 break;
             }
         }
-        if(target != null) {
+        if (target != null) {
             head.addChild(new TowerAttackAction(0, pos, target.getPosition(), type.ordinal(), playerState.getIndex()));
             Path path = new LinearPath(getPosition().toFloat(), target.getPosition().toFloat(), 1);
+            path.setDuration(0);
             head.addChild(new ProjectileAction(0, ProjectileAction.ProjectileType.STANDARD_TYPE, path, playerState.getIndex()));
 
             head = target.updateHealth(getDamage(), head);

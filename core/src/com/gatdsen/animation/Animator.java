@@ -173,7 +173,7 @@ public class Animator implements Screen, AnimationLogProcessor {
             }
             enemies = new GameEnemy[2][100][100];
 
-            return new ExpandedAction(new IdleAction(0,0));
+            return new ExpandedAction(new IdleAction(0, 0));
         }
 
         private static ExpandedAction convertEnemySpawnAction(com.gatdsen.simulation.action.Action action, Animator animator) {
@@ -185,7 +185,7 @@ public class Animator implements Screen, AnimationLogProcessor {
                         enemies[spawnAction.getTeam()][spawnAction.getPos().x][spawnAction.getPos().y] = enemy;
                     },
                     () -> {
-                        GameEnemy enemy = new GameEnemy(spawnAction.getLevel());
+                        GameEnemy enemy = new GameEnemy(spawnAction.getLevel(), spawnAction.getMaxHealth());
                         enemy.setRelPos(spawnAction.getPos().x * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().x,
                                 spawnAction.getPos().y * animator.playerMaps[0].getTileSize() + animator.playerMaps[spawnAction.getTeam()].getPos().y);
 
@@ -239,16 +239,29 @@ public class Animator implements Screen, AnimationLogProcessor {
         private static ExpandedAction convertEnemyDefeatAction(com.gatdsen.simulation.action.Action action, Animator animator) {
             EnemyDefeatAction defeatAction = (EnemyDefeatAction) action;
 
-            DestroyAction<GameEnemy> killEnemy = new DestroyAction<>(
-                    defeatAction.getDelay(),
-                    enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
-                    null,
-                    (GameEnemy enemy) -> {
-                        animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
-                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
-                    }
-            );
+            DestroyAction<GameEnemy> killEnemy;
 
+            if (enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] != null) {
+                killEnemy = new DestroyAction<>(
+                        defeatAction.getDelay(),
+                        enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
+                        null,
+                        (GameEnemy enemy) -> {
+                            animator.root.remove(enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                            enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
+                        }
+                );
+            } else {
+                killEnemy = new DestroyAction<>(
+                        defeatAction.getDelay(),
+                        temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y],
+                        null,
+                        (GameEnemy enemy) -> {
+                            animator.root.remove(temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y]);
+                            temp_enemies[defeatAction.getTeam()][defeatAction.getPos().x][defeatAction.getPos().y] = null;
+                        }
+                );
+            }
             return new ExpandedAction(killEnemy);
         }
 
@@ -311,9 +324,9 @@ public class Animator implements Screen, AnimationLogProcessor {
             ExpandedAction effects;
             switch (projectileAction.getType()) {
                 //case STANDARD_TYPE:
-                    //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
-                    //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
-                    //break;
+                //effects = generateParticle(IngameAssets.explosionParticle, path.getPos(path.getDuration()), 10f, animator);
+                //moveProjectile.setChildren(new Action[]{destroyProjectile, effects.head});
+                //break;
                 default:
                     moveProjectile.setChildren(new Action[]{destroyProjectile});
             }
@@ -460,9 +473,9 @@ public class Animator implements Screen, AnimationLogProcessor {
             this.state = state;
             playerMaps = new TileMap[state.getPlayerCount()];
             playerMaps[0] = new TileMap(state, 0);
-            playerMaps[0].setRelPos(2.5f * 200, 0);
+            playerMaps[0].setRelPos(0, 0);
             playerMaps[1] = new TileMap(state, 1);
-            playerMaps[1].setRelPos(27.5f * 200, 0);
+            playerMaps[1].setRelPos(viewport.getWorldWidth() - playerMaps[1].getSizeX()*200, 0);
             root.clear();
             root.add(playerMaps[0]);
             root.add(playerMaps[1]);
@@ -567,7 +580,8 @@ public class Animator implements Screen, AnimationLogProcessor {
                 if (remainder >= 0) {
                     //Schedule children to run for the time that's not consumed by their parent
                     Action[] children = cur.getChildren();
-                    if (children != null && children.length > 0) remainders.push(new Remainder(remainder, children));
+                    if (children != null && children.length > 0)
+                        remainders.push(new Remainder(remainder, children));
                 } else {
                     //Add the child to the list of running actions if not completed in the remaining time
                     actionList.add(cur);
