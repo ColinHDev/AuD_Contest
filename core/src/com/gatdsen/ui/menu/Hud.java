@@ -407,6 +407,7 @@ public class Hud implements Disposable {
         //set the color to black
         pixmap.setColor(0, 0, 0, 0.5f);
         pixmap.fill();
+        layoutTable.clear();
         layoutTable.setBackground(new TextureRegionDrawable(new Texture(pixmap)));
         pixmap.dispose();
 
@@ -414,14 +415,17 @@ public class Hud implements Disposable {
 
         //determine sprite
         if (isDraw) {
+            System.out.println("Unentschieden");
             display = new ImagePopup(AssetContainer.IngameAssets.drawDisplay, -1,
                     AssetContainer.IngameAssets.drawDisplay.getRegionWidth() * 2,
                     AssetContainer.IngameAssets.drawDisplay.getRegionHeight() * 2);
         } else if (won) {
+            System.out.println("Gewonnen");
             display = new ImagePopup(AssetContainer.IngameAssets.victoryDisplay, -1,
                     AssetContainer.IngameAssets.victoryDisplay.getRegionWidth() * 2,
                     AssetContainer.IngameAssets.victoryDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
         } else {
+            System.out.println("Verloren");
             display = new ImagePopup(AssetContainer.IngameAssets.lossDisplay, -1,
                     AssetContainer.IngameAssets.lossDisplay.getRegionWidth() * 2,
                     AssetContainer.IngameAssets.lossDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
