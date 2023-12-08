@@ -123,7 +123,7 @@ Thumbs.db
 /util/build/
 /results/*.replay
 
-/build/*.jar
+/*.jar
 
 ### Exclude tiled tmp files
 *.tiled-session

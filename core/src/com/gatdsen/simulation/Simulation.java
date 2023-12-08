@@ -69,7 +69,7 @@ public class Simulation {
             head = playerState.tickTowers(head);
         }
 
-        head = new InitAction();
+        head = new TurnStartAction(0);
         actionLog.addRootAction(head);
 
         for (PlayerState playerState : playerStates) {

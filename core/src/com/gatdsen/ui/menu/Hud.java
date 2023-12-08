@@ -70,8 +70,7 @@ public class Hud implements Disposable {
         layoutTable = setupLayoutTable();
         inputHandler = setupInputHandler(ingameScreen, this);
         inputHandler.setUiMessenger(uiMessenger);
-        turnTimer = new TurnTimer(AssetContainer.IngameAssets.turnTimer);
-        //turnTimer.setCurrentTime(0);
+        turnTimer = new TurnTimer();
         turnPopupContainer = new Container<ImagePopup>();
         layoutHudElements();
         // Kombination von Eingaben von beiden Prozessoren (Spiel und UI)
@@ -525,6 +524,8 @@ public class Hud implements Disposable {
         } else if (playerID == 1) {
             player1Balance = balance;
         }
+        layoutTable.clear();
+        layoutHudElements();
     }
 
     public void initPlayerHealth(int playerID, int maxHealth){
@@ -535,6 +536,8 @@ public class Hud implements Disposable {
             healthBarPlayer1.setRange(0,maxHealth);
             healthBarPlayer1.setValue(maxHealth);
         }
+        layoutTable.clear();
+        layoutHudElements();
     }
 
     public void setPlayerHealth(int playerID, int health) {
@@ -544,5 +547,7 @@ public class Hud implements Disposable {
         } else if (playerID == 1) {
             healthBarPlayer1.setValue(health);
         }
+        layoutTable.clear();
+        layoutHudElements();
     }
 }

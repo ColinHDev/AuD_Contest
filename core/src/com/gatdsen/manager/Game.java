@@ -76,8 +76,15 @@ public class Game extends Executable {
         for (PlayerHandler playerHandler : playerHandlers) {
             seed += playerHandler.getSeedModifier();
         }
+        PlayerState[] playerStates = state.getPlayerStates();
         for (int playerIndex = 0; playerIndex < config.playerCount; playerIndex++) {
+            // Wenn der PlayerState des Spielers deaktiviert ist, da er bspw. disqualifiziert wurde, wird der Spieler
+            // übersprungen und dessen executeTurn() nicht aufgerufen.
+            if (playerStates[playerIndex].isDeactivated()) {
+                continue;
+            }
             PlayerHandler playerHandler = playerHandlers[playerIndex];
+            playerHandler.setPlayerController(simulation.getController(playerIndex));
             futures[playerIndex] = playerHandler.init(state, isDebug, seed, command -> command.run(playerHandler));
         }
         awaitFutures(futures);
