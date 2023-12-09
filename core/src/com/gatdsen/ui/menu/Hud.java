@@ -549,7 +549,6 @@ public class Hud implements Disposable{
             healthBarPlayer1.setValue(health);
             healthBarPlayer1.updateVisualValue();
         }
-
         layoutTable.clear();
         layoutHudElements();
     }

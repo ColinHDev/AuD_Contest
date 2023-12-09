@@ -83,10 +83,12 @@ public abstract class BaseMenuScreen extends ConfigScreen {
 
 
         menuTable = new Table(skin);
+        Label invisibleLabel = new Label("",skin);
         menuTable.setFillParent(true);
         menuTable.center();
+        menuTable.add(invisibleLabel).row();
         menuTable.add(titelLabel).colspan(4).pad(10).center().row();
-        menuTable.add(getContent(skin)).center().row();
+        menuTable.add(getContent(skin)).expandY().center().row();
         Table navigationTable = new Table(skin);
 
         if (getPrev() != null) {
@@ -129,6 +131,8 @@ public abstract class BaseMenuScreen extends ConfigScreen {
             navigationTable.add(nextGameButton).colspan(4).pad(10).width(200);
         }
         menuTable.add(navigationTable);
+        menuTable.add(invisibleLabel).row();
+        menuTable.add(invisibleLabel).row();
         mainMenuStage.addActor(menuTable);
     }
 
