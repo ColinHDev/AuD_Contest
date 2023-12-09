@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.Align;
 import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.manager.map.MapRetriever;
 
+import java.util.Arrays;
+
 public class MapAttribute extends Attribute {
 
     SelectBox<String> mapSelectBox;
@@ -25,7 +27,9 @@ public class MapAttribute extends Attribute {
         Label textLabelMap = new Label("Karte:", skin);
         textLabelMap.setAlignment(Align.center);
         mapSelectBox = new SelectBox<>(skin);
-        mapSelectBox.setItems(MapRetriever.getInstance().getMapNames());
+        String[] sortedMapNames = MapRetriever.getInstance().getMapNames();
+        Arrays.sort(sortedMapNames);
+        mapSelectBox.setItems(sortedMapNames);
         mapTable.columnDefaults(0).width(100);
         mapTable.columnDefaults(1).width(100);
         mapTable.add(textLabelMap).colspan(4).pad(10).center();
