@@ -64,7 +64,7 @@ public class Hud implements Disposable{
      * @param ingameScreen Die Instanz der InGameScreen-Klasse
      * @param gameViewport Die Viewport-Instanz für das Spiel
      */
-    public Hud(InGameScreen ingameScreen, Viewport gameViewport, GADS gameInstance){
+    public Hud(InGameScreen ingameScreen, Viewport gameViewport, GADS gameInstance) {
 
         this.gameInstance = gameInstance;
         this.inGameScreen = ingameScreen;
@@ -374,11 +374,11 @@ public class Hud implements Disposable{
      * @param scores Ein Array mit den neuen Punktzahlen
 
     public void adjustScores(float[] scores) {
-        this.scores = scores;
+    this.scores = scores;
 
-        if (scoreView != null) {
-            scoreView.adjustScores(scores);
-        }
+    if (scoreView != null) {
+    scoreView.adjustScores(scores);
+    }
     }
      */
 
@@ -420,7 +420,7 @@ public class Hud implements Disposable{
         //determine sprite
         if (isDraw) {
             gameInstance.setScreen(GADS.ScreenState.DRAWSCREEN, new RunConfiguration());
-        } else if (won) {
+        } else if (won && team == 0) {
             gameInstance.setScreen(GADS.ScreenState.VICTORYSCREEN, new RunConfiguration());
         } else {
             gameInstance.setScreen(GADS.ScreenState.LOSSSCREEN, new RunConfiguration());
@@ -527,13 +527,13 @@ public class Hud implements Disposable{
         layoutHudElements();
     }
 
-    public void initPlayerHealth(int playerID, int maxHealth){
+    public void initPlayerHealth(int playerID, int maxHealth) {
         if (playerID == 0) {
-            healthBarPlayer0.setRange(0,maxHealth);
+            healthBarPlayer0.setRange(0, maxHealth);
             healthBarPlayer0.setValue(maxHealth);
             healthBarPlayer0.updateVisualValue();
         } else if (playerID == 1) {
-            healthBarPlayer1.setRange(0,maxHealth);
+            healthBarPlayer1.setRange(0, maxHealth);
             healthBarPlayer1.setValue(maxHealth);
             healthBarPlayer1.updateVisualValue();
         }

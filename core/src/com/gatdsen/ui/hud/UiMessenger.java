@@ -12,6 +12,7 @@ import com.gatdsen.ui.menu.Hud;
 public class UiMessenger {
 
     private Hud hud;
+    private int playerHealthCallCount = 0;
 
     public UiMessenger(Hud hud) {
         this.hud = hud;
@@ -87,16 +88,11 @@ public class UiMessenger {
      * @param health   Der neue Lebenswert für den Spieler
      */
     public void setPlayerHealth(int playerID, int health) {
-        hud.setPlayerHealth(playerID, health);
-    }
-
-    /**
-     * Initialisiert die Gesundheit eines bestimmten Spielers im HUD
-     *
-     * @param playerID Die ID des Spielers, dessen Gesundheit initialisiert wird
-     * @param health   Der Ausgangswert für die Gesundheit des Spielers
-     */
-    public void initPlayerHealth(int playerID, int health) {
-       hud.initPlayerHealth(playerID, health);
+        if (playerHealthCallCount < 2) {
+            hud.initPlayerHealth(playerID, health);
+        } else {
+            hud.setPlayerHealth(playerID, health);
+        }
+        playerHealthCallCount++;
     }
 }
