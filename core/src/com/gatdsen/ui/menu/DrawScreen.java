@@ -19,6 +19,8 @@ public class DrawScreen extends BaseMenuScreen{
     public DrawScreen(GADS gameInstance) {
         super(gameInstance);
         this.backgroundTextureRegion = AssetContainer.IngameAssets.drawDisplay;
+        menuTable.removeActor(title);
+        this.titleSprite = null;
     }
 
     @Override

@@ -116,7 +116,7 @@ public class GADSAssetManager {
 
         //Main Menu
         MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground_new");
-        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground_new");
+        MainMenuAssets.titleSprite = atlas.findRegion("background/titel_gadsen_towerdefense");
         MainMenuAssets.skin = manager.get(skin, Skin.class);
 
         IngameAssets.victoryDisplay = atlas.findRegion("background/victory");

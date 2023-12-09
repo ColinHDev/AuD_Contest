@@ -19,6 +19,7 @@ public class VictoryScreen extends BaseMenuScreen {
      */
     public VictoryScreen(GADS gameInstance) {
         super(gameInstance);
+        menuTable.removeActor(title);
         this.backgroundTextureRegion = AssetContainer.IngameAssets.victoryDisplay;
     }
 
@@ -29,13 +30,7 @@ public class VictoryScreen extends BaseMenuScreen {
 
     @Override
     Actor getContent(Skin skin) {
-        Table table = new Table();
-        table.setFillParent(true);
-        TextButton textButton = new TextButton("", skin);
-        table.add(textButton).expand().fill().row();
-        textButton.setColor(Color.CLEAR);
-        textButton.setTouchable(Touchable.disabled);
-        return table;
+        return null;
     }
 
     @Override

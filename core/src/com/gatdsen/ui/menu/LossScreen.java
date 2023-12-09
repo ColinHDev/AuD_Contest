@@ -19,6 +19,8 @@ public class LossScreen extends BaseMenuScreen{
     public LossScreen(GADS gameInstance) {
         super(gameInstance);
         this.backgroundTextureRegion = AssetContainer.IngameAssets.lossDisplay;
+        menuTable.removeActor(title);
+        this.titleSprite = null;
     }
 
     @Override
@@ -28,12 +30,7 @@ public class LossScreen extends BaseMenuScreen{
 
     @Override
     Actor getContent(Skin skin) {
-        Table table = new Table();
-        TextButton textButton = new TextButton("", skin);
-        table.add(textButton).expand().fill().row();
-        textButton.setColor(Color.CLEAR);
-        textButton.setTouchable(Touchable.disabled);
-        return table;
+        return null;
     }
 
     @Override
