@@ -1,7 +1,9 @@
 package com.gatdsen.ui.menu;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.gatdsen.ui.GADS;
 import com.gatdsen.ui.assets.AssetContainer;
 
@@ -23,7 +25,14 @@ public class DrawScreen extends BaseMenuScreen{
 
     @Override
     Actor getContent(Skin skin) {
-        return null;
+        Table table = new Table();
+        Label invisibleLabel = new Label("", skin);
+        table.add(invisibleLabel).row();
+        table.add(invisibleLabel).row();
+        table.add(invisibleLabel).row();
+        table.add(invisibleLabel).row();
+        table.add(invisibleLabel).row();
+        return table;
     }
 
     @Override
