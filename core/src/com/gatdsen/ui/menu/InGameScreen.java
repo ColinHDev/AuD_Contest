@@ -42,7 +42,7 @@ public class InGameScreen extends ConfigScreen implements AnimationLogProcessor 
         gameManager = instance;
         gameViewport = new FitViewport(worldWidth, worldHeight + 500);
 
-        hud = new Hud(this, gameViewport);
+        hud = new Hud(this, gameViewport, gameManager);
 
         debugView = new DebugView(AssetContainer.MainMenuAssets.skin);
 

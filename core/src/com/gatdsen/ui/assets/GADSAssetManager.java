@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
-import com.gatdsen.simulation.GameState;
 import com.gatdsen.simulation.action.ProjectileAction;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets;
 import com.gatdsen.ui.assets.AssetContainer.IngameAssets.GameTowerAnimationType;
@@ -116,7 +115,7 @@ public class GADSAssetManager {
 
         //Main Menu
         MainMenuAssets.background = atlas.findRegion("background/mainTitleBackground_new");
-        MainMenuAssets.titleSprite = atlas.findRegion("background/mainTitleBackground_new");
+        MainMenuAssets.titleSprite = atlas.findRegion("background/titel_gadsen_towerdefense");
         MainMenuAssets.skin = manager.get(skin, Skin.class);
 
         IngameAssets.victoryDisplay = atlas.findRegion("background/victory");

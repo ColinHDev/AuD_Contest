@@ -27,7 +27,9 @@ public abstract class BaseMenuScreen extends ConfigScreen {
     protected Stage mainMenuStage;
     protected Camera camera;
     protected TextureRegion backgroundTextureRegion;
+    protected TextureRegion titleSprite;
     protected SpriteBatch menuSpriteBatch;
+    public Table menuTable;
 
     /**
      * Konstruktor für die Klasse BaseMenuScreen
@@ -35,7 +37,7 @@ public abstract class BaseMenuScreen extends ConfigScreen {
      */
     public BaseMenuScreen(GADS gameInstance) {
         this.gameInstance = gameInstance;
-        TextureRegion titleSprite = AssetContainer.MainMenuAssets.titleSprite;
+        this.titleSprite = AssetContainer.MainMenuAssets.titleSprite;
         this.backgroundTextureRegion = AssetContainer.MainMenuAssets.background;
         this.camera = new OrthographicCamera(30, 30 * (Gdx.graphics.getHeight() * 1f / Gdx.graphics.getWidth()));
         menuViewport = new ExtendViewport(titleSprite.getRegionWidth() / 3f, titleSprite.getRegionWidth() + 100, camera);
@@ -77,16 +79,18 @@ public abstract class BaseMenuScreen extends ConfigScreen {
      * Initialisiert den Basismenübildschirm
      */
     public void setupMenuScreen() {
-        Table menuTable;
         Skin skin = AssetContainer.MainMenuAssets.skin;
         Label titelLabel = new Label(getTitelString(), skin);
-
+        title = new Image(titleSprite);
 
         menuTable = new Table(skin);
+        Label invisibleLabel = new Label("",skin);
         menuTable.setFillParent(true);
         menuTable.center();
-        menuTable.add(titelLabel).colspan(4).pad(10).center().row();
-        menuTable.add(getContent(skin)).center().row();
+        menuTable.add(invisibleLabel).row();
+        menuTable.add(titelLabel).pad(10).center().row();
+        menuTable.add(title).pad(10).center().row();
+        menuTable.add(getContent(skin)).expandY().center().row();
         Table navigationTable = new Table(skin);
 
         if (getPrev() != null) {
@@ -128,7 +132,9 @@ public abstract class BaseMenuScreen extends ConfigScreen {
             });
             navigationTable.add(nextGameButton).colspan(4).pad(10).width(200);
         }
-        menuTable.add(navigationTable);
+        menuTable.add(navigationTable).center();
+        menuTable.add(invisibleLabel).row();
+        menuTable.add(invisibleLabel).row();
         mainMenuStage.addActor(menuTable);
     }
 
