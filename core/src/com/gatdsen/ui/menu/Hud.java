@@ -19,7 +19,9 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gatdsen.animation.entity.TileMap;
+import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.simulation.GameState;
+import com.gatdsen.ui.GADS;
 import com.gatdsen.ui.assets.AssetContainer;
 import com.gatdsen.ui.hud.*;
 
@@ -28,7 +30,7 @@ import com.gatdsen.ui.hud.*;
  * Input Handling during the game.
  * Displaying health, inventory
  */
-public class Hud implements Disposable {
+public class Hud implements Disposable{
 
     private static Stage stage;
     private final InputHandler inputHandler;
@@ -50,6 +52,7 @@ public class Hud implements Disposable {
     Viewport hudViewport;
     private int player0Balance = 100;
     private int player1Balance = 100;
+    protected GADS gameInstance;
 
     private int health = 300;
     private ProgressBar healthBarPlayer0 = new ProgressBar(0, health, 1, false, skin);
@@ -61,8 +64,9 @@ public class Hud implements Disposable {
      * @param ingameScreen Die Instanz der InGameScreen-Klasse
      * @param gameViewport Die Viewport-Instanz für das Spiel
      */
-    public Hud(InGameScreen ingameScreen, Viewport gameViewport) {
+    public Hud(InGameScreen ingameScreen, Viewport gameViewport, GADS gameInstance) {
 
+        this.gameInstance = gameInstance;
         this.inGameScreen = ingameScreen;
         hudViewport = new FitViewport(gameViewport.getWorldWidth() / 10, gameViewport.getWorldHeight() / 10);
         this.uiMessenger = new UiMessenger(this);
@@ -370,11 +374,11 @@ public class Hud implements Disposable {
      * @param scores Ein Array mit den neuen Punktzahlen
 
     public void adjustScores(float[] scores) {
-        this.scores = scores;
+    this.scores = scores;
 
-        if (scoreView != null) {
-            scoreView.adjustScores(scores);
-        }
+    if (scoreView != null) {
+    scoreView.adjustScores(scores);
+    }
     }
      */
 
@@ -415,22 +419,12 @@ public class Hud implements Disposable {
 
         //determine sprite
         if (isDraw) {
-            System.out.println("Unentschieden");
-            display = new ImagePopup(AssetContainer.IngameAssets.drawDisplay, -1,
-                    AssetContainer.IngameAssets.drawDisplay.getRegionWidth() * 2,
-                    AssetContainer.IngameAssets.drawDisplay.getRegionHeight() * 2);
-        } else if (won) {
-            System.out.println("Gewonnen");
-            display = new ImagePopup(AssetContainer.IngameAssets.victoryDisplay, -1,
-                    AssetContainer.IngameAssets.victoryDisplay.getRegionWidth() * 2,
-                    AssetContainer.IngameAssets.victoryDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
+            gameInstance.setScreen(GADS.ScreenState.DRAWSCREEN, new RunConfiguration());
+        } else if (won && team == 0) {
+            gameInstance.setScreen(GADS.ScreenState.VICTORYSCREEN, new RunConfiguration());
         } else {
-            System.out.println("Verloren");
-            display = new ImagePopup(AssetContainer.IngameAssets.lossDisplay, -1,
-                    AssetContainer.IngameAssets.lossDisplay.getRegionWidth() * 2,
-                    AssetContainer.IngameAssets.lossDisplay.getRegionHeight() * 2, new Color(Color.WHITE), 2f);
+            gameInstance.setScreen(GADS.ScreenState.LOSSSCREEN, new RunConfiguration());
         }
-        drawImagePopup(display, true);
     }
 
     /**
@@ -533,13 +527,13 @@ public class Hud implements Disposable {
         layoutHudElements();
     }
 
-    public void initPlayerHealth(int playerID, int maxHealth){
+    public void initPlayerHealth(int playerID, int maxHealth) {
         if (playerID == 0) {
-            healthBarPlayer0.setRange(0,maxHealth);
+            healthBarPlayer0.setRange(0, maxHealth);
             healthBarPlayer0.setValue(maxHealth);
             healthBarPlayer0.updateVisualValue();
         } else if (playerID == 1) {
-            healthBarPlayer1.setRange(0,maxHealth);
+            healthBarPlayer1.setRange(0, maxHealth);
             healthBarPlayer1.setValue(maxHealth);
             healthBarPlayer1.updateVisualValue();
         }
@@ -555,7 +549,6 @@ public class Hud implements Disposable {
             healthBarPlayer1.setValue(health);
             healthBarPlayer1.updateVisualValue();
         }
-
         layoutTable.clear();
         layoutHudElements();
     }

@@ -6,10 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.gatdsen.manager.run.config.RunConfiguration;
 import com.gatdsen.ui.assets.GADSAssetManager;
-import com.gatdsen.ui.menu.GamemodeNormalScreen;
-import com.gatdsen.ui.menu.InGameScreen;
-import com.gatdsen.ui.menu.MainScreen;
-import com.gatdsen.ui.menu.ChristmasTaskScreen;
+import com.gatdsen.ui.menu.*;
 
 /**
  * GADS ist die verantwortliche Klasse im LifeCycle der Anwendung.
@@ -32,7 +29,10 @@ public class GADS extends Game {
         NORMALMODESCREEN,
         CHRISTMASTASKSCREEN,
         INGAMESCREEN,
-        LOADSCREEN
+        LOADSCREEN,
+        VICTORYSCREEN,
+        LOSSSCREEN,
+        DRAWSCREEN
     }
 
     /**
@@ -80,6 +80,12 @@ public class GADS extends Game {
                 return new GamemodeNormalScreen(this);
             case CHRISTMASTASKSCREEN:
                 return new ChristmasTaskScreen(this);
+            case VICTORYSCREEN:
+                return new VictoryScreen(this);
+            case DRAWSCREEN:
+                return new DrawScreen(this);
+            case LOSSSCREEN:
+                return new LossScreen(this);
             default:
                 return null;
         }

@@ -78,6 +78,6 @@ public class MainScreen extends BaseMenuScreen {
      */
     @Override
     String getTitelString() {
-        return "Willkommen zu Gadsen: Tower Defense";
+        return "";
     }
 }
