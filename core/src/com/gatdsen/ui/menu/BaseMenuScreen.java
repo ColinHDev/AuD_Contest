@@ -87,10 +87,9 @@ public abstract class BaseMenuScreen extends ConfigScreen {
         Label invisibleLabel = new Label("",skin);
         menuTable.setFillParent(true);
         menuTable.center();
-        menuTable.add(invisibleLabel).row();
-        menuTable.add(titelLabel).pad(10).center().row();
         menuTable.add(title).pad(10).center().row();
-        menuTable.add(getContent(skin)).expandY().center().row();
+        menuTable.add(titelLabel).pad(10).center().row();
+        menuTable.add(getContent(skin)).expandY().top().row();
         Table navigationTable = new Table(skin);
 
         if (getPrev() != null) {
