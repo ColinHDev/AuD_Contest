@@ -45,6 +45,9 @@ public class PlayerState implements Serializable {
                 if (gameState.getMap()[i][j].ordinal() >= GameState.MapTileType.PATH_RIGHT.ordinal()) {
                     board[i][j] = new PathTile(i, j);
                 }
+                if (gameState.getMap()[i][j].ordinal() == GameState.MapTileType.OBSTACLE.ordinal()) {
+                    board[i][j] = new ObstacleTile(i, j);
+                }
             }
         }
 
